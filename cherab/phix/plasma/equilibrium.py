@@ -85,7 +85,7 @@ class PHiXEquilibrium:
         self.r = data[:: self.mesh_N[0] - 1, 0]
         self.z = data[: self.mesh_N[1], 1]
         self.psi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
-        self.psi = self.psi.transpose() * -1
+        self.psi = self.psi.transpose()
 
         # q profile & psi_lcfs, psi_axis
         path_profiles = os.path.join(self.path, "profiles.dat")
@@ -98,8 +98,10 @@ class PHiXEquilibrium:
         # f profile extracted from jphi
         path_jphi = os.path.join(self.path, "jphi.dat")
         data = np.loadtxt(path_jphi)
-        self.j_phi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
+        j_phi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
+        self.j_phi = j_phi.transpose()
+
         psi_1d = self.psi.reshape(-1)
         psi_1d, sorted_index = np.unique(psi_1d, return_index=True)
         psi_1d_normalized = (psi_1d - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
-        self.f_profile = np.stack(psi_1d_normalized, self.j_phi.reshape(-1)[sorted_index])
+        self.f_profile = np.stack((psi_1d_normalized, self.j_phi.reshape(-1)[sorted_index]))
