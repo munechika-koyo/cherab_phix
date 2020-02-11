@@ -29,7 +29,6 @@ class PHiXEquilibrium:
         # temporaly values
         self.x_points = []
         self.strike_points = []
-        self.f_profile = self.q_profile
         self.b_vacuum_radius = 0.0
         self.b_vacuum_magnitude = 0.0
         self.lcfs_polygon = self.limiter_polygon
@@ -96,7 +95,11 @@ class PHiXEquilibrium:
         q_profile_psin = (data[:, 0] - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
         self.q_profile = np.stack((q_profile_psin, data[:, 1]))
 
-        # j_phi
+        # f profile extracted from jphi
         path_jphi = os.path.join(self.path, "jphi.dat")
         data = np.loadtxt(path_jphi)
         self.j_phi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
+        psi_1d = self.psi.reshape(-1)
+        psi_1d, sorted_index = np.unique(psi_1d, return_index=True)
+        psi_1d_normalized = (psi_1d - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
+        self.f_profile = np.stack(psi_1d_normalized, self.j_phi.reshape(-1)[sorted_index])
