@@ -13,6 +13,50 @@ class PHiXEquilibrium:
     ------------
     folder : str
         folder name stored in data folder, default "phix10"
+
+    Attributes
+    --------------
+    path : str
+        The path address to TSC data folder.
+    header : dict
+        header information of TSC output data
+    r : array
+        TSC grid radius axis values.
+    z : array
+        TSC grid height axis values.
+    psi : array
+        TSC psi grid values.
+    j_phi : array
+        TSC j grid values
+    mesh_N : tuple
+        TSC grid size
+    psi_axis : float
+        The psi value at the magnetic axis
+    psi_lcfs : float
+        The psi value at the LCFS
+    magnetic_axis : Point2D
+        The coordinates of the magnetic axis.
+    Ip : float
+        The plasma current value
+    x_points
+        A list or tuple of x-points
+    strike_points
+        A list or tuple of strike-points
+    f_profile
+        The current flux profile on psin (2xN array).
+    q_profile
+        The safety factor (q) profile on psin (2xN array).
+    b_vacuum_radius : float
+        Vacuum B-field reference radius (in meters).
+    b_vacuum_magnitude : float
+        Vacuum B-Field magnitude at the reference radius.
+    lcfs_polygon
+        A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.
+    limiter_polygon
+        A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.
+    time : float
+        The time stamp of the time-slice (in seconds).
+
     """
 
     def __init__(self, folder="phix10"):
