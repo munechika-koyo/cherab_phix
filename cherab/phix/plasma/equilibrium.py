@@ -2,12 +2,13 @@ import os
 import numpy as np
 
 from raysect.core import Point2D
+from cherab.core.math import Interpolate1DCubic, Interpolate2DCubic, ClampOutput2D
 from cherab.tools.equilibrium.efit import EFITEquilibrium
 from cherab.phix.machine.wall_outline import INNER_LIMITER
 
 
-class PHiXEquilibrium:
-    """Read and process TSC equilibrium data
+class TSCEquilibrium:
+    """Read and process Tokamak Simulation Code equilibrium data
 
     Parameters
     ------------
@@ -24,12 +25,12 @@ class PHiXEquilibrium:
         TSC grid radius axis values.
     z : array
         TSC grid height axis values.
-    psi : array
-        TSC psi grid values.
+    psi_data : array
+        TSC psi grid values :math:`N_r \\times N_z`.
     j_phi : array
-        TSC j grid values
+        TSC j grid values :math:`N_r \\times N_z`.
     mesh_N : tuple
-        TSC grid size
+        TSC grid size :math:`(N_z, N_r)`.
     psi_axis : float
         The psi value at the magnetic axis
     psi_lcfs : float
@@ -67,6 +68,17 @@ class PHiXEquilibrium:
         # load TSC data
         self._load_tsc_params()
 
+        # interpolate poloidal flux grid data
+        self.psi = Interpolate2DCubic(self.r, self.z, self.psi_data)
+        self.psi_axis = self.psi(self.magnetic_axis)
+        self.psi_lcfs = self._calc_psi_lcfs()
+        self.psi_normalised = ClampOutput2D(
+            Interpolate2DCubic(
+                self.r, self.z, (self.psi_data - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
+            ),
+            min=0,
+        )
+
     def create_EFIT(self):
         """Return EFIT equilibrium instance
         """
@@ -81,7 +93,7 @@ class PHiXEquilibrium:
         return EFITEquilibrium(
             self.r,
             self.z,
-            self.psi,
+            self.psi_data,
             self.psi_axis,
             self.psi_lcfs,
             self.magnetic_axis,
@@ -128,9 +140,10 @@ class PHiXEquilibrium:
         data = np.loadtxt(path_flux)
         self.r = data[:: self.mesh_N[0] - 1, 0]
         self.z = data[: self.mesh_N[1], 1]
-        self.psi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
-        self.psi = self.psi.transpose()
+        self.psi_data = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
+        self.psi_data = self.psi_data.transpose()
 
+        """
         # q profile & psi_lcfs, psi_axis
         path_profiles = os.path.join(self.path, "profiles.dat")
         data = np.loadtxt(path_profiles, usecols=(0, 2))
@@ -138,6 +151,7 @@ class PHiXEquilibrium:
         self.psi_axis = data[0, 0]
         q_profile_psin = (data[:, 0] - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
         self.q_profile = np.stack((q_profile_psin, data[:, 1]))
+        """
 
         # f profile extracted from jphi
         path_jphi = os.path.join(self.path, "jphi.dat")
@@ -145,7 +159,14 @@ class PHiXEquilibrium:
         j_phi = data[:, 2].reshape((self.mesh_N[1], -1), order="F")
         self.j_phi = j_phi.transpose()
 
+        """
         psi_1d = self.psi.reshape(-1)
         psi_1d, sorted_index = np.unique(psi_1d, return_index=True)
         psi_1d_normalized = (psi_1d - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
         self.f_profile = np.stack((psi_1d_normalized, self.j_phi.reshape(-1)[sorted_index]))
+        """
+
+    def _calc_psi_lcfs(self):
+        """calculation of psi at LCFS
+        """
+

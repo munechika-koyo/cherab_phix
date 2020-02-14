@@ -1,1 +1,2 @@
-from .equilibrium import PHiXEquilibrium
+from .equilibrium import TSCEquilibrium
+from .plasma import import_plasma
