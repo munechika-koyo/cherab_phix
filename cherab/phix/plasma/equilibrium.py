@@ -53,22 +53,22 @@ class TSCEquilibrium(EFITEquilibrium):
     time : float
         The time stamp of the time-slice (in seconds).
     psi: Function2D
-        The poloidal flux in the r-z plane, :math:`\psi(r,z)`.
+        The poloidal flux in the r-z plane, :math:`\\psi(r,z)`.
     psi_normalised: Function2D
-        The normalised poloidal flux in the r-z plane, :math:`\psi_n(r,z)`.
+        The normalised poloidal flux in the r-z plane, :math:`\\psi_n(r,z)`.
     g : Function2D
         The current flux profile function.
     q: Function1D
-        The safety factor :math:`q` at the specified normalised poloidal flux, :math:`q(\psi_n)`.
+        The safety factor :math:`q` at the specified normalised poloidal flux, :math:`q(\\psi_n)`.
     b_field: VectorFunction2D
         A 2D function that returns the magnetic field vector at the specified
       point in the r-z plane, :math:`B(r, z)`.
     toroidal_vector: VectorFunction2D
-        The toroidal flux coordinate basis vector, :math:`\hat{\phi}(r, z)`.
+        The toroidal flux coordinate basis vector, :math:`\\hat{\\phi}(r, z)`.
     poloidal_vector: VectorFunction2D
-        The poloidal flux coordinate basis vector, :math:`\hat{ \theta }(r, z)`.
+        The poloidal flux coordinate basis vector, :math:`\\hat{ \\theta }(r, z)`.
     surface_normal: VectorFunction2D
-        The surface normal flux coordinate basis vector, :math:`\hat{\psi}(r, z)`.
+        The surface normal flux coordinate basis vector, :math:`\\hat{\\psi}(r, z)`.
     inside_lcfs: Function2D
         A 2D function that identifies if a given (r, z) coordinate lies inside or outside
       the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
@@ -112,9 +112,6 @@ class TSCEquilibrium(EFITEquilibrium):
             extrapolation_range=1.0,
             extrapolation_type="quadratic",
         )
-
-        # populate points
-        # super()._process_points(self._magnetic_axis, self._x_point, [])
 
         # populate polygons and inside/outside functions
         limiter_polygon = INNER_LIMITER[0:-1, :].transpose()
