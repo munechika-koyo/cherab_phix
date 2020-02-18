@@ -5,6 +5,7 @@ from raysect.core import Point2D
 from raysect.optical import Vector3D
 from cherab.core.math import Interpolate1DCubic, Interpolate2DCubic, ClampOutput2D
 from cherab.core.math import ConstantVector2D, VectorFunction2D
+from cherab.core.math import PythonVectorFunction2D
 from cherab.tools.equilibrium.efit import EFITEquilibrium
 from cherab.phix.machine.wall_outline import INNER_LIMITER
 
@@ -39,23 +40,43 @@ class TSCEquilibrium(EFITEquilibrium):
         The psi value at the LCFS
     magnetic_axis : Point2D
         The coordinates of the magnetic axis.
+    x_point : Point2D
+        The coodinates of x-point
     Ip : float
         The plasma current value
     q0 : float
         The q value at the magnetic axis.
-    x_points
-        A list or tuple of x-points
-    f_profile
-        The current flux profile on psin (2xN array).
-    q_profile
-        The safety factor (q) profile on psin (2xN array).
     lcfs_polygon
         A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.
     limiter_polygon
         A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.
     time : float
         The time stamp of the time-slice (in seconds).
-
+    psi: Function2D
+        The poloidal flux in the r-z plane, :math:`\psi(r,z)`.
+    psi_normalised: Function2D
+        The normalised poloidal flux in the r-z plane, :math:`\psi_n(r,z)`.
+    g : Function2D
+        The current flux profile function.
+    q: Function1D
+        The safety factor :math:`q` at the specified normalised poloidal flux, :math:`q(\psi_n)`.
+    b_field: VectorFunction2D
+        A 2D function that returns the magnetic field vector at the specified
+      point in the r-z plane, :math:`B(r, z)`.
+    toroidal_vector: VectorFunction2D
+        The toroidal flux coordinate basis vector, :math:`\hat{\phi}(r, z)`.
+    poloidal_vector: VectorFunction2D
+        The poloidal flux coordinate basis vector, :math:`\hat{ \theta }(r, z)`.
+    surface_normal: VectorFunction2D
+        The surface normal flux coordinate basis vector, :math:`\hat{\psi}(r, z)`.
+    inside_lcfs: Function2D
+        A 2D function that identifies if a given (r, z) coordinate lies inside or outside
+      the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
+      lies inside the LCFS. A value of 0.0 is returned outside the LCFS.
+    inside_limiter: Function2D
+        A 2D function that identifies if a given (r, z) coordinate lies inside or
+      outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
+      lies inside the limit polygon. A value of 0.0 is returned outside the polygon.
     """
 
     def __init__(self, folder="phix10"):
@@ -84,7 +105,13 @@ class TSCEquilibrium(EFITEquilibrium):
         # store equilibrium attributes
         self.r_range = self.r_data.min(), self.r_data.max()
         self.z_range = self.z_data.min(), self.z_data.max()
-        self.q = Interpolate1DCubic(self.q_profile[0, :], self.q_profile[1, :])
+        self.q = Interpolate1DCubic(
+            self._q_profile[0, :],
+            self._q_profile[1, :],
+            extrapolate=True,
+            extrapolation_range=1.0,
+            extrapolation_type="quadratic",
+        )
 
         # populate points
         # super()._process_points(self._magnetic_axis, self._x_point, [])
@@ -95,12 +122,12 @@ class TSCEquilibrium(EFITEquilibrium):
 
         # calculate b-field
         dpsi_dr, dpsi_dz = super()._calculate_differentials(self.r_data, self.z_data, self.psi_data)
-        self.b_field = MagneticField(dpsi_dr, dpsi_dz, self.g)
+        self.b_field = PythonVectorFunction2D(MagneticField(dpsi_dr, dpsi_dz, self.g))
 
         # populate flux coordinate attributes
         self.toroidal_vector = ConstantVector2D(Vector3D(0, 1, 0))
-        # self.poloidal_vector = PoloidalFieldVector(self.b_field)
-        # self.surface_normal = FluxSurfaceNormal(self.b_field)
+        self.poloidal_vector = PythonVectorFunction2D(PoloidalFieldVector(self.b_field))
+        self.surface_normal = PythonVectorFunction2D(FluxSurfaceNormal(self.b_field))
 
         # generate interpolator to map from psi normalised to outboard major radius
         super()._generate_psin_to_r_mapping()
@@ -155,7 +182,7 @@ class TSCEquilibrium(EFITEquilibrium):
         # q profile
         data = np.loadtxt(os.path.join(self.path, "q.dat"), dtype=np.float64)
         q_profile_psin = (data[:, 0] - self.psi_axis) / (self.psi_lcfs - self.psi_axis)
-        self.q_profile = np.stack((q_profile_psin, data[:, 1]))
+        self._q_profile = np.stack((q_profile_psin, data[:, 1]))
 
         # lcfs polygon
         self._lcfs_polygon = np.loadtxt(
@@ -172,9 +199,14 @@ class MagneticField(VectorFunction2D):
     """
     A 2D magnetic field vector function derived from TSC data.
 
-    :param dpsi_dr: A 2D function of the radius differential of poloidal flux.
-    :param dpsi_dz: A 2D function of the height differential of poloidal flux.
-    :param g_func: A 1D function containing a current flux profile.
+    Parameters
+    -----------
+    dpsi_dr: Function2D
+        A 2D function of the radius differential of poloidal flux.
+    dpsi_dz: Function2D
+        A 2D function of the height differential of poloidal flux.
+    g_func: Function2D
+        A 1D function containing a current flux profile.
     """
 
     def __init__(self, dpsi_dr, dpsi_dz, g_profile):
@@ -192,3 +224,43 @@ class MagneticField(VectorFunction2D):
         bt = self._g_profile(r, z) / r
 
         return Vector3D(br, bt, bz)
+
+
+class PoloidalFieldVector(VectorFunction2D):
+    """2D poloidal flux coordinate basis vector
+
+    """
+
+    def __init__(self, field):
+        self._field = field
+
+    def __call__(self, r, z):
+        b = self._field(r, z)
+        # if zero vector is undefined, strictly this should raise an exception
+        # however for practical convenience the vector is set to zero
+        if b.x == 0 and b.z == 0:
+            return Vector3D(0, 0, 0)
+
+        # only need in plane components of field
+        return Vector3D(b.x, 0, b.z).normalise()
+
+
+class FluxSurfaceNormal(VectorFunction2D):
+    """2D surface normal flux coordinate basis vector
+
+    """
+
+    def __init__(self, field):
+        self._field = field
+
+    def __call__(self, r, z):
+
+        b = self._field(r, z)
+
+        # if zero vector is undefined, strictly this should raise an exception
+        # however for practical convenience the vector is set to zero
+        if b.x == 0 and b.z == 0:
+            return Vector3D(0, 0, 0)
+
+        # cross product of poloidal and toroidal unit vectors
+        return Vector3D(-b.z, 0, b.x).normalise()
