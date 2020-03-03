@@ -72,4 +72,4 @@ def import_plasma(parent, folder="phix10"):
         # RecombinationLine(ciii_777),
     ]
 
-    return plasma
+    return plasma, eq
