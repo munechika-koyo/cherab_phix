@@ -55,9 +55,9 @@ def import_plasma(parent, folder="phix10"):
     h_beta = Line(elements.hydrogen, 0, (4, 2))  # , wavelength=486.135)
     h_gamma = Line(elements.hydrogen, 0, (5, 2))  # , wavelength=434.0472)
     h_delta = Line(elements.hydrogen, 0, (6, 2))  # , wavelength=410.1734)
-    ciii_777 = Line(
-        elements.carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
-    )  # , wavelength=770.743)
+    # ciii_777 = Line(
+    #     elements.carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
+    # )  # , wavelength=770.743)
     plasma.models = [
         Bremsstrahlung(),
         ExcitationLine(h_alpha),

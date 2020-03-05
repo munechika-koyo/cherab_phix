@@ -15,25 +15,9 @@ world = World()
 # import plasma
 plasma, eq = import_plasma(world)
 
+
 # calculate ray-tracing
-# plt.ion()
-
-"""
-r = Ray(
-    origin=Point3D(-1, 0, 0),
-    direction=Vector3D(1, 0, 0),
-    min_wavelength=300,
-    max_wavelength=800,
-    bins=500,
-)
-s = r.trace(world)
-plt.plot(s.wavelengths, s.samples)
-plt.xlabel("Wavelength (nm)")
-plt.ylabel("Radiance (W/m^2/str/nm)")
-plt.title("Sampled Spectrum")
-plt.show()
-
-"""
+plt.ion()
 
 # camera
 # import camera extinct paras
@@ -57,7 +41,7 @@ sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=500, cut
 camera = LensCamera(
     pixels=(256, 512),
     width=25.6e-3 * 256 / 1280,
-    focal_length=1e-2,
+    focal_length=1.0e-2,
     working_distance=50.0e-2,
     F_value=2 * (22 - 3.5) / 10 + 3.5,
     parent=world,
