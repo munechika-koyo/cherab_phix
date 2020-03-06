@@ -7,6 +7,7 @@ from raysect.optical import World
 from raysect.optical.observer import RGBPipeline2D
 from raysect.optical.observer import RGBAdaptiveSampler2D
 from cherab.phix.plasma import import_plasma
+from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer.camera import LensCamera
 
 # generate scene world
@@ -15,6 +16,8 @@ world = World()
 # import plasma
 plasma, eq = import_plasma(world)
 
+# import phix mesh
+mesh = import_phix_mesh(world, reflection=True)
 
 # calculate ray-tracing
 plt.ion()
