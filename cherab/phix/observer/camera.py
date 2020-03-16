@@ -56,6 +56,7 @@ class LensCamera(TargettedCCDArray):
 
         # Lens (material: N-BK7)
         material = schott("N-BK7")
+        material.transmission_only = True
         diamiter = self._focal_length / self._F_value
         # calculate curvature by using thin lens model
         curvature = 2 * (material.index.sample(375, 780, 10).mean() - 1) * self._focal_length
@@ -68,7 +69,7 @@ class LensCamera(TargettedCCDArray):
             curvature,  # The radius of curvature of the spherical front surface.
             parent=camera,
             transform=translate(0, 0, -center_thickness / 2),
-            material=schott("N-BK7"),
+            material=material,
         )
         # aperture
         # aperture_radius = 0.5 * self._focal_length / self._F_value

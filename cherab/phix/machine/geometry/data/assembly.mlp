@@ -1,7 +1,7 @@
 <!DOCTYPE MeshLabDocument>
 <MeshLabProject>
  <MeshGroup>
-  <MLMesh label="vessel_wall_half.STL" filename="vessel_wall_half.STL">
+  <MLMesh label="FBC_half_down.STL" filename="FBC_half_down.STL">
    <MLMatrix44>
 1 0 0 0 
 0 1 0 0 
@@ -9,15 +9,7 @@
 0 0 0 1 
 </MLMatrix44>
   </MLMesh>
-  <MLMesh label="vaccum_flange.STL" filename="vaccum_flange.STL">
-   <MLMatrix44>
-1 0 0 0 
-0 1 0 0 
-0 0 1 0 
-0 0 0 1 
-</MLMatrix44>
-  </MLMesh>
-  <MLMesh label="rail_half.STL" filename="rail_half.STL">
+  <MLMesh label="FBC_half_up.STL" filename="FBC_half_up.STL">
    <MLMatrix44>
 1 0 0 0 
 0 1 0 0 
@@ -26,22 +18,6 @@
 </MLMatrix44>
   </MLMesh>
   <MLMesh label="FL_half.STL" filename="FL_half.STL">
-   <MLMatrix44>
-1 0 0 0 
-0 1 0 0 
-0 0 1 0 
-0 0 0 1 
-</MLMatrix44>
-  </MLMesh>
-  <MLMesh label="FBC_half.STL" filename="FBC_half.STL">
-   <MLMatrix44>
-1 0 0 0 
-0 1 0 0 
-0 0 1 0 
-0 0 0 1 
-</MLMatrix44>
-  </MLMesh>
-  <MLMesh label="rail_connection_half.STL" filename="rail_connection_half.STL">
    <MLMatrix44>
 1 0 0 0 
 0 1 0 0 
@@ -58,6 +34,54 @@
 </MLMatrix44>
   </MLMesh>
   <MLMesh label="limiter_box.STL" filename="limiter_box.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="MG_port.STL" filename="MG_port.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="rail_connection_half.STL" filename="rail_connection_half.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="rail_half_down.STL" filename="rail_half_down.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="rail_half_up.STL" filename="rail_half_up.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="vaccum_flange.STL" filename="vaccum_flange.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="vessel_wall_half.STL" filename="vessel_wall_half.STL">
    <MLMatrix44>
 1 0 0 0 
 0 1 0 0 
