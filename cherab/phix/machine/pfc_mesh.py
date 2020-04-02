@@ -6,6 +6,7 @@ from raysect.optical.material import AbsorbingSurface, RoughConductor
 from raysect.primitive.mesh import Mesh
 
 from cherab.phix.machine.material import RoughSUS316L
+from cherab.phix.machine.material import PCTFE
 
 
 CADMESH_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "geometry", "data")
@@ -15,7 +16,10 @@ ZXY_to_XYZ = rotate_z(90) * rotate_x(90)
 
 # Component
 # [path, matelial, copy times, angle offset]
-VESSEL = [(os.path.join(CADMESH_PATH, "vessel_wall_half.rsm"), RoughSUS316L(SUS_ROUGHNESS), 2, 0)]
+# stenless group
+VESSEL = [
+    (os.path.join(CADMESH_PATH, "vessel_wall_half_finite.rsm"), RoughSUS316L(SUS_ROUGHNESS), 2, 0)
+]
 VACCUM_Flange = [
     (os.path.join(CADMESH_PATH, "vaccum_flange.rsm"), RoughSUS316L(SUS_ROUGHNESS), 1, 0)
 ]
@@ -27,7 +31,9 @@ FBC_up = [(os.path.join(CADMESH_PATH, "FBC_half_up.rsm"), RoughSUS316L(0.25), 2,
 FBC_down = [(os.path.join(CADMESH_PATH, "FBC_half_down.rsm"), RoughSUS316L(0.25), 2, -45)]
 RAIL_up = [(os.path.join(CADMESH_PATH, "rail_half_up.rsm"), RoughSUS316L(0.25), 2, 0)]
 RAIL_down = [(os.path.join(CADMESH_PATH, "rail_half_down.rsm"), RoughSUS316L(0.25), 2, 0)]
-RAIL_con = [(os.path.join(CADMESH_PATH, "rail_connection_half.rsm"), RoughSUS316L(0.25), 2, 0)]
+# teflon group
+RAIL_con = [(os.path.join(CADMESH_PATH, "rail_connection_half.rsm"), PCTFE, 2, 0)]
+VESSEL_TEFLON = [(os.path.join(CADMESH_PATH, "vessel_teflon_gasket_half.rsm"), PCTFE, 2, 0)]
 
 # Complete PHiX mesh for Plasma Facing Compornents
 # PHiX_MESH = VESSEL + VACCUM_Flange + MG_port + LIMITER_225 + LIMITER_BOX + FL
@@ -42,6 +48,7 @@ PHiX_MESH = (
     + RAIL_up
     + RAIL_down
     + RAIL_con
+    + VESSEL_TEFLON
 )
 
 
