@@ -10,7 +10,7 @@ from cherab.phix.machine.material import PCTFE
 
 
 CADMESH_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "geometry", "data")
-SUS_ROUGHNESS = 0.0625
+SUS_ROUGHNESS = 0.0125
 # transform ZYX axis to YXZ coordinate
 ZXY_to_XYZ = rotate_z(90) * rotate_x(90)
 
@@ -32,8 +32,8 @@ FBC_down = [(os.path.join(CADMESH_PATH, "FBC_half_down.rsm"), RoughSUS316L(0.25)
 RAIL_up = [(os.path.join(CADMESH_PATH, "rail_half_up.rsm"), RoughSUS316L(0.25), 2, 0)]
 RAIL_down = [(os.path.join(CADMESH_PATH, "rail_half_down.rsm"), RoughSUS316L(0.25), 2, 0)]
 # teflon group
-RAIL_con = [(os.path.join(CADMESH_PATH, "rail_connection_half.rsm"), PCTFE, 2, 0)]
-VESSEL_TEFLON = [(os.path.join(CADMESH_PATH, "vessel_teflon_gasket_half.rsm"), PCTFE, 2, 0)]
+RAIL_con = [(os.path.join(CADMESH_PATH, "rail_connection_half.rsm"), PCTFE(), 2, 0)]
+VESSEL_TEFLON = [(os.path.join(CADMESH_PATH, "vessel_teflon_gasket_half.rsm"), PCTFE(), 2, 0)]
 
 # Complete PHiX mesh for Plasma Facing Compornents
 # PHiX_MESH = VESSEL + VACCUM_Flange + MG_port + LIMITER_225 + LIMITER_BOX + FL
