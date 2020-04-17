@@ -9,6 +9,7 @@ from raysect.optical.observer import RGBAdaptiveSampler2D
 from cherab.phix.plasma import import_plasma
 from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer.camera import LensCamera
+from cherab.phix.machine.material import SUS316L
 
 # generate scene world
 world = World()
@@ -17,7 +18,7 @@ world = World()
 plasma, eq = import_plasma(world)
 
 # import phix mesh
-mesh = import_phix_mesh(world, reflection=True)
+mesh = import_phix_mesh(world, vessel_material=SUS316L(), reflection=True)
 
 # calculate ray-tracing
 plt.ion()
@@ -36,25 +37,28 @@ camera_rot = AffineMatrix3D(camera_rot) * rotate_z(180)
 # set pipelines and sampler
 rgb = RGBPipeline2D(display_unsaturated_fraction=0.98, name="sRGB")
 pipelines = [rgb]
-sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=500, cutoff=0.05)
+sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=10, cutoff=0.05)
 
 # camera = PinholeCamera(
 #     (256, 512), parent=world, pipelines=pipelines, transform=camera_trans * camera_rot
 # )
+pixsel = (128, 256)
 camera = LensCamera(
-    pixels=(256, 512),
+    pixels=pixsel,
     width=25.6e-3 * 256 / 1280,
     focal_length=1.0e-2,
     working_distance=50.0e-2,
-    F_value=2 * (22 - 3.5) / 10 + 3.5,
+    F_value=3 * (22 - 3.5) / 10 + 3.5,
     parent=world,
     pipelines=pipelines,
     transform=camera_trans * camera_rot,
 )
-camera.frame_sampler = sampler
+# camera.frame_sampler = sampler
+camera.min_wavelength = 400
+camera.max_wavelength = 780
 camera.spectral_rays = 1
-camera.spectral_bins = 15
-camera.pixel_samples = 100
+camera.spectral_bins = 20
+camera.pixel_samples = 5
 
 plt.ion()
 camera.observe()

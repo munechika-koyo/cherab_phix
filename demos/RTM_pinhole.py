@@ -6,12 +6,10 @@ from raysect.core.math import AffineMatrix3D, translate, rotate_z
 from raysect.optical import World
 from raysect.optical.observer import PinholeCamera, RGBPipeline2D, PowerPipeline2D
 from raysect.optical.observer import RGBAdaptiveSampler2D, MonoAdaptiveSampler2D
+from cherab.tools.raytransfer import RayTransferPipeline2D
 from cherab.phix.plasma import import_plasma
 from cherab.phix.machine import import_phix_mesh
-
-# from cherab.phix.machine.material import SUS316L
-
-# from raysect.optical.library import Aluminium
+from cherab.phix.tools import import_phix_rtm
 
 # generate scene world
 world = World()
@@ -21,7 +19,12 @@ plasma, eq = import_plasma(world)
 
 # import phix mesh
 mesh = import_phix_mesh(world, reflection=True)
-# mesh = import_phix_mesh(world, vessel_material=SUS316L(), reflection=True)
+
+# set Ray Transfer Matrix
+rtm = import_phix_rtm(world, equilibrium=eq, grid_size=2.0e-3)
+
+# creating ray transfer pipeline
+rtp = RayTransferPipeline2D()
 
 # calculate ray-tracing
 plt.ion()
@@ -42,7 +45,8 @@ rgb = RGBPipeline2D(display_unsaturated_fraction=1.0, name="sRGB")
 power = PowerPipeline2D(display_unsaturated_fraction=1.0, name="Power")
 rgb_sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=100, cutoff=0.05)
 mono_sampler = MonoAdaptiveSampler2D(power, min_samples=100)
-pipelines = [rgb, power]
+# pipelines = [rgb, power]
+pipelines = [rtp]
 
 pixsel = (128, 256)  # [px]
 # pixsel = (256, 512)  # [px]
@@ -53,19 +57,20 @@ camera = PinholeCamera(
     pixsel, fov=fov * 2, parent=world, pipelines=pipelines, transform=camera_trans * camera_rot
 )
 
-camera.frame_sampler = mono_sampler
-camera.min_wavelength = 400
-camera.max_wavelength = 780
+# camera.frame_sampler = mono_sampler
+camera.min_wavelength = 600
+camera.max_wavelength = 601
 camera.spectral_rays = 1
-camera.spectral_bins = 20
-# camera.pixel_samples = 10
+camera.spectral_bins = rtm.bins
+camera.pixel_samples = 10
 
 plt.ion()
 camera.observe()
 
-filename = f"../output/test_pinhole_camera({datetime.datetime.now()})"
-rgb.save(filename + ".png")
-np.save(filename, power.frame.mean)
-power.save(filename + "_power")
+filename = f"../output/test_pinhole_camera_rtm({datetime.datetime.now()})"
+# rgb.save(filename + ".png")
+# np.save(filename, power.frame.mean)
+# power.save(filename + "_power")
+np.save(filename, rtp.matrix)
 plt.ioff()
 # plt.show()
