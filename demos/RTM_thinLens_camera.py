@@ -1,32 +1,30 @@
 import os
 import numpy as np
-from matplotlib import pyplot as plt, cm, colors
 import datetime
 
 from raysect.optical import World
-from raysect.optical.observer import RGBPipeline2D, PowerPipeline2D
-from raysect.optical.observer import RGBAdaptiveSampler2D, FullFrameSampler2D
+from raysect.optical.observer import FullFrameSampler2D
 from cherab.tools.raytransfer import RayTransferPipeline2D
 from cherab.phix.observer import import_phix_camera
-from cherab.phix.plasma import import_plasma
+from cherab.phix.plasma import TSCEquilibrium
 from cherab.phix.machine import import_phix_mesh
+from cherab.phix.tools import import_phix_rtm
 
 
 # generate scene world
 world = World()
-# import plasma
-plasma, eq = import_plasma(world)
+# import phix equilibrium
+eq = TSCEquilibrium()
 # import phix machine configuration
 mesh = import_phix_mesh(world, reflection=True)
+# import phix raytrasfer matrix
+rtm = import_phix_rtm(world, equilibrium=eq)
 # import phix camera
 camera = import_phix_camera(world)
 
-
 # set camera's parameters
-rgb = RGBPipeline2D(display_unsaturated_fraction=1.0, name="sRGB", display_progress=False)
-power = PowerPipeline2D(display_progress=False, name="power")
-# rtp = RayTransferPipeline2D()
-camera.pipelines = [rgb, power]
+rtp = RayTransferPipeline2D()
+camera.pipelines = [rtp]
 
 pixels = (128, 256)  # [px]
 camera.pixels = pixels
@@ -34,11 +32,11 @@ camera.pixels = pixels
 # focus_pixel = (64, 128)
 # mask = np.zeros(pixels, dtype=np.bool)
 # mask[focus_pixel[0] - 1, focus_pixel[1] - 1] = True
-# camera.frame_sampler = FullFrameSampler2D(mask)
+camera.frame_sampler = FullFrameSampler2D()
 camera.min_wavelength = 650
 camera.max_wavelength = 660
 camera.spectral_rays = 1
-camera.spectral_bins = 1
+camera.spectral_bins = rtm.bins
 camera.per_pixel_samples = 10
 camera.lens_samples = 20
 camera.observe()
@@ -46,7 +44,6 @@ camera.observe()
 # save results
 dt_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 filename = os.path.join("..", "output", f"thin_lens_camera({dt_now})")
-rgb.save(filename + ".png")
-np.save(filename + "_power", power.frame.mean)
+np.save(filename + "_power", rtp.matrix)
 # power.save(filename + "_power")
 print(f"successfully saved {filename.split(os.path.sep)[-1]}")
