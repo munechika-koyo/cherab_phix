@@ -16,7 +16,7 @@ def import_phix_rtm(parent, equilibrium=None, grid_size=2.0e-3):
     equilibrium : object
         EFITEquilibrium object, by default None
     grid_size : float, optional
-        1 voxel size $(dr=dz)$, by default 2.0e-3 [m]
+        1 voxel size :math:`(dr=dz)`, by default 2.0e-3 [m]
 
     Returns
     -------
