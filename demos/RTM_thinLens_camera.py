@@ -44,6 +44,6 @@ camera.observe()
 # save results
 dt_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 filename = os.path.join("..", "output", f"thin_lens_camera({dt_now})")
-np.save(filename + "_power", rtp.matrix)
+np.save(filename + "_RTM", rtp.matrix)
 # power.save(filename + "_power")
 print(f"successfully saved {filename.split(os.path.sep)[-1]}")
