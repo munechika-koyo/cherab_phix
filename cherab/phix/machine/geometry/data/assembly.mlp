@@ -89,6 +89,54 @@
 0 0 0 1 
 </MLMatrix44>
   </MLMesh>
+  <MLMesh label="vessel_wall_half2.STL_copy" filename="symmetry_polygons/FBC_half_down.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="rail_connection_half2.STL_copy" filename="symmetry_polygons/rail_connection_half2.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="FBC_half_down2.STL_copy" filename="symmetry_polygons/FBC_half_down2.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="FBC_half_up2.STL_copy" filename="symmetry_polygons/FBC_half_up2.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="FL_half2.STL_copy" filename="symmetry_polygons/FL_half2.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
+  <MLMesh label="rail_half_down2.STL_copy" filename="symmetry_polygons/rail_half_down2.ply">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+  </MLMesh>
  </MeshGroup>
  <RasterGroup/>
 </MeshLabProject>

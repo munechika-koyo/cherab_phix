@@ -28,4 +28,7 @@ __pycache__/
 sftp-config.json
 .vscode
 cherab_phix.egg-info/
+/cherab/phix/machine/geometry/data/vessel_wall_half_finite.rsm
 output/
+/cherab/phix/machine/geometry/data/symmetry_poligons/
+/cherab/phix/machine/geometry/data/symmetry_polygons
