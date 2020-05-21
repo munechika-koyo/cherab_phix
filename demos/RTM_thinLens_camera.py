@@ -10,6 +10,9 @@ from cherab.phix.plasma import TSCEquilibrium
 from cherab.phix.machine import import_phix_mesh
 from cherab.phix.tools import import_phix_rtm
 
+# ------------ obtain cherab_phix path ----------------------
+DIR = os.path.dirname(__file__).split(sep="demos")[0]
+# -----------------------------------------------------------
 
 # generate scene world
 world = World()
@@ -43,7 +46,7 @@ camera.observe()
 
 # save results
 dt_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-filename = os.path.join("..", "output", f"thin_lens_camera({dt_now})")
+filename = os.path.join(DIR, "output", f"thin_lens_camera({dt_now})")
 np.save(filename + "_RTM", rtp.matrix)
 # power.save(filename + "_power")
 print(f"successfully saved {filename.split(os.path.sep)[-1]}")

@@ -1,4 +1,4 @@
-from scipy.constants import electron_mass, atomic_mass
+from scipy.constants import electron_mass, atomic_mass, Boltzmann, convert_temperature
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -26,18 +26,39 @@ class PHiXSpecies:
     electron_distribution : Function3D
         electron distribution function
     composition : list
-        composition of plasma species
+        composition of plasma species, each information of whixh is
+            element,
+            charge,
+            density_distribution,
+            temperature_distribution,
+            bulk_velocity_distribution.
     """
 
     def __init__(self, equilibrium=None):
+        if equilibrium is None:
+            raise ValueError("equilibrium argument must be input.")
+
         self.eq = equilibrium
-        # mapping temp. and density on flux surface
-        temp1d = Interpolate1DLinear([0, 1], [42, 16])
-        dens1d = Interpolate1DLinear([0, 1], [4.6e18, 3.5e17])
-        temperature = self.eq.map3d(temp1d, value_outside_lcfs=16)
+        self.te_range = (42, 16)
+        self.ne_range = (4.6e18, 3.5e17)
+
+        # mapping electron temperture and density on flux surface
+        temp1d = Interpolate1DLinear([0, 1], self.te_range)
+        dens1d = Interpolate1DLinear([0, 1], self.ne_range)
+        temperature = self.eq.map3d(temp1d, value_outside_lcfs=self.te_range[1])
         e_density = self.eq.map3d(dens1d)
+
+        # assuming neutral hydrogen's density is equal to electron density
         h1_density = e_density
-        h0_density = Constant3D(3e17)
+
+        # assuming hydrogen atomic density is derived from background gass pressure & lab temperature
+        _background_pressure = 1.0e-2  # nitrogen pressure [Pa]
+        _lab_Temp = 25  # [Celsius]
+        h0_density = Constant3D(
+            _background_pressure
+            / 0.49  # nitrogen pressure -> hydrogen pressure
+            / (Boltzmann * convert_temperature(_lab_Temp, "Celsius", "Kelvin"))
+        )
 
         bulk_velocity = ConstantVector3D(Vector3D(0, 0, 0))
 
@@ -66,13 +87,13 @@ class PHiXSpecies:
             bulk_velocity=bulk_velocity,
         )
         # C iii (C+2)
-        self.set_species(
-            element="carbon",
-            charge=2,
-            density=h0_density,
-            temperature=temperature,
-            bulk_velocity=bulk_velocity,
-        )
+        # self.set_species(
+        #     element="carbon",
+        #     charge=2,
+        #     density=h0_density,
+        #     temperature=temperature,
+        #     bulk_velocity=bulk_velocity,
+        # )
 
     def __repr__(self):
         return f"{self.composition}"

@@ -9,8 +9,9 @@ from cherab.phix.plasma import TSCEquilibrium, PHiXSpecies
 from cherab.phix.machine.wall_outline import VESSEL_WALL
 
 
-def import_plasma(parent, folder="phix10"):
+def import_plasma(parent, folder="phix10", species=None):
     """Helper function of generating PHiX plasma
+    As emissions, H:math:`\\alpha`, H:math:`\\beta`, H:math:`\\gamma`, H:math:`\\delta` are applied.
 
     Parameters
     ----------
@@ -18,6 +19,8 @@ def import_plasma(parent, folder="phix10"):
         Raysect's scene-graph parent node
     folder : str
         folder name in which TSC data is stored
+    species : object , optional
+        user-defined species object
     """
     print(f"loading plasma (data from: {folder})...")
     # create TSCEquilibrium instance
@@ -46,7 +49,7 @@ def import_plasma(parent, folder="phix10"):
     plasma.geometry_transform = translate(0, 0, VESSEL_WALL[:, 1].min())
 
     # apply species to plasma
-    species = PHiXSpecies(equilibrium=eq)
+    species = species or PHiXSpecies(equilibrium=eq)
     plasma.composition = species.composition
     plasma.electron_distribution = species.electron_distribution
 
