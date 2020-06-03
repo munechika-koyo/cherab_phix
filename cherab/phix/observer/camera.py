@@ -31,6 +31,7 @@ def import_phix_camera(paret, path=None):
     object
         cherab.phix's ThinLensCCDArray object
     """
+    print("importing PHiX camera...")
     # initialise parameters
     path = None or CARIB_PATH
 

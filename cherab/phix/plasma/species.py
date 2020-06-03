@@ -42,11 +42,17 @@ class PHiXSpecies:
         self.te_range = (42, 16)
         self.ne_range = (4.6e18, 3.5e17)
 
+        psi = np.linspace(0, 1)
+
         # mapping electron temperture and density on flux surface
-        temp1d = Interpolate1DLinear([0, 1], self.te_range)
-        dens1d = Interpolate1DLinear([0, 1], self.ne_range)
-        temperature = self.eq.map3d(temp1d, value_outside_lcfs=self.te_range[1])
-        e_density = self.eq.map3d(dens1d)
+        self.temp1d = Interpolate1DLinear(
+            psi, (self.te_range[1] - self.te_range[0]) * psi ** 2 + self.te_range[0]
+        )
+        self.dens1d = Interpolate1DLinear(
+            psi, (self.ne_range[1] - self.ne_range[0]) * psi ** 2 + self.ne_range[0]
+        )
+        temperature = self.eq.map3d(self.temp1d, value_outside_lcfs=self.te_range[1])
+        e_density = self.eq.map3d(self.dens1d)
 
         # assuming neutral hydrogen's density is equal to electron density
         h1_density = e_density
