@@ -57,7 +57,10 @@ class InversionMethod:
 
         # set matrix in the regularization term
         self._L_inv = None
-        self.L_inv = L_inv or np.identity(self._vh.shape[1])
+        if L_inv is not None:
+            self.L_inv = L_inv
+        else:
+            self.L_inv = np.identity(self._vh.shape[1])
 
         # initial data values and dot(u, b)
         self._data = None
@@ -94,9 +97,9 @@ class InversionMethod:
 
     @L_inv.setter
     def L_inv(self, value):
-        inv_mat = np.array(value)
+        inv_mat = np.asarray(value)
         n, m = inv_mat.shape
-        if n != self._vh.shape[1] & n == m:
+        if m != self._vh.shape[1] & n == m:
             raise ValueError("L_inv must be a square ")
         self._L_inv = inv_mat
 

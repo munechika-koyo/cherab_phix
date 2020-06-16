@@ -230,14 +230,10 @@ class Lcurve(InversionMethod):
         tuple
             (fig, axes), each of which is matplotlib objects
         """
-        # compute the curvature if self.curvatures doesn't exist.
-        if self.curvatures is None:
-            self._curvatures = np.array(
-                [
-                    curvature(self.rho(i), self.eta(i), self.eta_diff(i), beta=i)
-                    for i in self.lambdas
-                ]
-            )
+        # compute the curvature
+        self._curvatures = np.array(
+            [curvature(self.rho(i), self.eta(i), self.eta_diff(i), beta=i) for i in self.lambdas]
+        )
 
         # plotting
         fig = fig or plt.figure()
