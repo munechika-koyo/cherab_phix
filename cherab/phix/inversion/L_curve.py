@@ -155,7 +155,7 @@ class Lcurve(InversionMethod):
             self.optimize()
 
         # return optimized solution and parameter
-        return (self.inverted_solution(beta=self.lambda_opt), self.lambda_opt)
+        return self.inverted_solution(beta=self.lambda_opt)
 
     def plot_L_curve(self, fig=None, axes=None, scatter_plot="off", scatter_annotate=True):
         """plotting the L curve in log-log scale
