@@ -33,7 +33,7 @@ def import_phix_camera(paret, path=None):
     """
     print("importing PHiX camera...")
     # initialise parameters
-    path = None or CARIB_PATH
+    path = path or CARIB_PATH
 
     # import camera extinct parameters
     translation_vector = np.loadtxt(os.path.join(path, "translation_vector.csv"))
