@@ -13,18 +13,8 @@ class GCV(InversionMethod):
 
     Parameters
     -----------
-    s : vector_like
-        singular values in :math:`s`
-    u : array_like
-        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
-    vh : array_like
-        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
-    L_inv : array-like
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
-    data : vector_like
-        given data for inversion calculation
-    beta : float, optional
-        regularization parameter, by default 1.0e-2
+    Parameters in this class are identified to base class `InversionMethod`.
+    See base class docstrings.
 
     Attributes
     ----------
@@ -37,10 +27,14 @@ class GCV(InversionMethod):
     plot_gcv
     """
 
-    def __init__(self, s=None, u=None, vh=None, L_inv=None, data=None, beta=None):
+    def __init__(
+        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
+    ):
         self._lambda_opt = None
         self._gcvs = None
-        super().__init__(s=s, u=u, vh=vh, L_inv=L_inv, data=data, beta=beta)
+        super().__init__(
+            s=s, u=u, vh=vh, inversion_base_vectors=None, L_inv=L_inv, data=data, beta=beta
+        )
 
     @property
     def lambda_opt(self):
@@ -133,7 +127,7 @@ class GCV(InversionMethod):
             self.optimize()
 
         # return optimized solution and parameter
-        return (self.inverted_solution(beta=self.lambda_opt), self.lambda_opt)
+        return self.inverted_solution(beta=self.lambda_opt)
 
     def plot_gcv(self, fig=None, axes=None):
         """Plotting GCV vs regularization parameters in log-log scale

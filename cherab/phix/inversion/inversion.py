@@ -19,6 +19,9 @@ class InversionMethod:
         SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
     vh : array_like
         SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
+    inversion_base_vectors : array-like
+        The components of inversions base represented as `L_inv @ vh.T`.
+        If this valuable is None, it is automatically computed when computing the inverted solution.
     L_inv : array-like
         inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
     data : vector_like
@@ -33,6 +36,8 @@ class InversionMethod:
         by, default `np.identity(self._vh.shape[1])`
     data : vector_like
         given data for inversion calculation
+    inversion_base_vectors : array-like
+        The components of inversions base represented as `L_inv @ vh.T`.
     beta : float
         regularization parameter, by default 1.0e-2
     lambdas : 1D array-like
@@ -49,18 +54,23 @@ class InversionMethod:
     inveted_solution : calculate the inverted solution
     """
 
-    def __init__(self, s=None, u=None, vh=None, L_inv=None, data=None, beta=None):
+    def __init__(
+        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
+    ):
         # set SVD values
         self._s = s
         self._u = u
         self._vh = vh
 
+        # inversion base
+        self._inversion_base_vectors = None
+        if inversion_base_vectors is not None:
+            self.inversion_base_vectors = inversion_base_vectors
+
         # set matrix in the regularization term
         self._L_inv = None
         if L_inv is not None:
             self.L_inv = L_inv
-        else:
-            self.L_inv = np.identity(self._vh.shape[1])
 
         # initial data values and dot(u, b)
         self._data = None
@@ -72,12 +82,6 @@ class InversionMethod:
         self._lambda = None
         self.beta = beta or 1.0e-2
         self._lambdas = 10 ** np.linspace(-5, 5, 100)
-
-        # initialize the norms values
-        self._w = None
-        self._rho = None
-        self._eta = None
-        self._eta_diff = None
 
     @property
     def s(self):
@@ -102,6 +106,19 @@ class InversionMethod:
         if m != self._vh.shape[1] & n == m:
             raise ValueError("L_inv must be a square ")
         self._L_inv = inv_mat
+
+    @property
+    def inversion_base_vectors(self):
+        return self._inversion_base_vectors
+
+    @inversion_base_vectors.setter
+    def inversion_base_vectors(self, mat):
+        mat = np.asarray(mat)
+        if mat.shape[1] != self._s.size:
+            raise ValueError(
+                "the number of columns of Image Base matrix must be same as the one of singular values"
+            )
+        self._inversion_base_vectors = mat
 
     @property
     def data(self):
@@ -254,31 +271,9 @@ class InversionMethod:
         """
         self._lambda = beta or self._lambda
         w = self.w()
-        return np.dot((self._L_inv @ self._vh.T), (w / self._s) * self._ub)
-
-
-def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
-    """calculate curvature for L-curve method
-    L-curve method is used to solve the ill-posed inversion equation.
-    L-curve is the trajectory of the point :math:`(log||Ax - b||, log||L(x - x_0)||)`
-    varying the generalization parameter `beta`.
-    This function returns the value of curvature at one point corresponding to one beta.
-
-    Parameters
-    ----------
-    rho : float, required
-        `rho` is the residual of least squared :math:`\\rho = ||Ax - b||^2`
-    eta : float, required
-        `eta` is the squared norm of generalization term :math:`\\eta = ||L(x - x_0)||^2`
-    eta_dif : float, required
-        `eta_dif` is the differencial of `eta`
-    beta : float, optional
-        generalization parameter, by default 1.0e-2
-    """
-    return (
-        -2.0
-        * rho
-        * eta
-        * (eta * beta ** 2.0 + beta * rho + rho * eta / eta_dif)
-        / ((beta * eta) ** 2.0 + rho ** 2.0) ** 1.5
-    )
+        if self._inversion_base_vectors is None:
+            if self._L_inv is not None:
+                self.inversion_base_vectors = self._L_inv @ self.vh.T
+            else:
+                self.inversion_base_vectors = np.transpose(self.vh)
+        return np.dot(self._inversion_base_vectors, (w / self._s) * self._ub)

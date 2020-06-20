@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from .inversion import InversionMethod, curvature
+from .inversion import InversionMethod
 
 
 class Lcurve(InversionMethod):
@@ -11,18 +11,8 @@ class Lcurve(InversionMethod):
 
     Parameters
     -----------
-    s : vector_like
-        singular values in :math:`s`
-    u : array_like
-        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
-    vh : array_like
-        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
-    L_inv : array-like
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
-    data : vector_like
-        given data for inversion calculation
-    beta : float, optional
-        regularization parameter, by default 1.0e-2
+    Parameters in this class are identified to base class `InversionMethod`.
+    See base class docstrings.
 
     Attributes
     ----------
@@ -36,13 +26,23 @@ class Lcurve(InversionMethod):
     plot_curvature
     """
 
-    def __init__(self, s=None, u=None, vh=None, L_inv=None, data=None, beta=None):
+    def __init__(
+        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
+    ):
         # initialize originaly valuables
         self._lambda_opt = None
         self._curvatures = None
 
         # inheritation
-        super().__init__(s=s, u=u, vh=vh, L_inv=L_inv, data=data, beta=beta)
+        super().__init__(
+            s=s,
+            u=u,
+            vh=vh,
+            inversion_base_vectors=inversion_base_vectors,
+            L_inv=L_inv,
+            data=data,
+            beta=beta,
+        )
 
     @property
     def lambda_opt(self):
@@ -250,8 +250,40 @@ class Lcurve(InversionMethod):
                 marker="x",
             )
 
+        lambda_range = (self.lambdas.min(), self.lambdas.max())
+        # Draw a y=0 dashed line
+        ax.plot(lambda_range, [0, 0], color="k", linestyle="dashed", linewidth=1)
+        # x range limitation
+        ax.set_xlim(*lambda_range)
         # labels
         ax.set_xlabel("Regularization parameter $\\lambda$")
         ax.set_ylabel("Curvature of L curve")
 
         return (fig, ax)
+
+
+def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
+    """calculate curvature for L-curve method
+    L-curve method is used to solve the ill-posed inversion equation.
+    L-curve is the trajectory of the point :math:`(log||Ax - b||, log||L(x - x_0)||)`
+    varying the generalization parameter `beta`.
+    This function returns the value of curvature at one point corresponding to one beta.
+
+    Parameters
+    ----------
+    rho : float, required
+        `rho` is the residual of least squared :math:`\\rho = ||Ax - b||^2`
+    eta : float, required
+        `eta` is the squared norm of generalization term :math:`\\eta = ||L(x - x_0)||^2`
+    eta_dif : float, required
+        `eta_dif` is the differencial of `eta`
+    beta : float, optional
+        generalization parameter, by default 1.0e-2
+    """
+    return (
+        -2.0
+        * rho
+        * eta
+        * (eta * beta ** 2.0 + beta * rho + rho * eta / eta_dif)
+        / ((beta * eta) ** 2.0 + rho ** 2.0) ** 1.5
+    )
