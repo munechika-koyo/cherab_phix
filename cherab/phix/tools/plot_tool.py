@@ -26,7 +26,17 @@ def plot_ray(ray, world=None):
     plt.show()
 
 
-def show_phix_profile(profiles, fig=None, clabel="", cmap="inferno", rtm=None, vmin=0.0):
+def show_phix_profile(
+    profiles,
+    fig=None,
+    clabel="",
+    cmap="inferno",
+    rtm=None,
+    vmax=None,
+    vmin=None,
+    axes_pad=0.02,
+    cbar_mode="single"
+):
     """show in-phix-limiter 2D profile such as emission profile.
 
     Parameters
@@ -42,12 +52,18 @@ def show_phix_profile(profiles, fig=None, clabel="", cmap="inferno", rtm=None, v
         color map, by default "inferno"
     rtm : cherab.raytransfer object, optional
         cherab's raytransfer objects, by default phix's one using TSCEquilibrium()
+    vmax : float, optional
+        to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
     vmin : float, optional
-        imshow's vmin argument
+        to set the lower color limitation, by default minimal value of all profiles, if cbar_mode=="single"
+    axes_pad : float, optional
+        ImageGrid's para to set the interval between axes, by default 0.02
+    cbar_mode : str, optional
+        ImgeGrid's para to set colorbars in "single" axes or "each" axes, by default "single"
 
     Returns
     -------
-    (fig, grid) : tuple
+    (fig, grids) : tuple
         one tuple containing matplotlib objects (figure, ImageGrid)
     """
     # transform the type of argument if it is not list type.
@@ -62,10 +78,17 @@ def show_phix_profile(profiles, fig=None, clabel="", cmap="inferno", rtm=None, v
 
     # set ImageGrid
     fig = fig or plt.figure()
-    grid = ImageGrid(fig, 111, (1, len(profiles)), cbar_mode="single", cbar_pad=0)
+    grids = ImageGrid(
+        fig, 111, (1, len(profiles)), axes_pad=axes_pad, cbar_mode=cbar_mode, cbar_pad=0.0
+    )
 
     # define some valuables in advance
-    vmax = max([np.asarray(profile).max() for profile in profiles])
+    vmax = vmax or [np.asarray(profile).max() for profile in profiles]
+    vmin = vmin or [np.asarray(profile).min() for profile in profiles]
+    if cbar_mode == "single":
+        vmax = [np.max(vmax) for i in range(len(profiles))]
+        vmin = [np.max(vmin) for i in range(len(profiles))]
+
     extent = (
         rtm.material.rmin,
         rtm.material.rmin + rtm.material.dr * rtm.material.grid_shape[0],
@@ -80,32 +103,37 @@ def show_phix_profile(profiles, fig=None, clabel="", cmap="inferno", rtm=None, v
     imgs = []
     for i, profile in enumerate(profiles):
         imgs.append(
-            grid[i].imshow(
+            grids[i].imshow(
                 np.transpose(profile),
                 origin="lower",
                 extent=extent,
                 cmap=cmap,
-                vmax=vmax,
-                vmin=vmin,
+                vmax=vmax[i],
+                vmin=vmin[i],
             )
         )
 
         # fill the outer in-limiter to white
-        grid[i].fill(xpos, ypos, color="w", alpha=1.0)
-        grid[i].fill(xpos, ypos_up, color="w", alpha=1.0)
+        grids[i].fill(xpos, ypos, color="w", alpha=1.0)
+        grids[i].fill(xpos, ypos_up, color="w", alpha=1.0)
 
         # plot edge of OUTER LIMITER
-        grid[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
-        grid[i].plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "w")
+        grids[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
+        grids[i].plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "w")
 
         # axis label
-        grid[i].set_xlabel("$R$[m]")
+        grids[i].set_xlabel("$R$[m]")
 
-    grid[0].set_ylabel("$Z$[m]")
+    grids[0].set_ylabel("$Z$[m]")
 
     # colobar
-    cbar = grid.cbar_axes[0].colorbar(imgs[-1])
-    cbar.ax.xaxis.set_visible(False)
-    cbar.set_label_text(clabel)
+    if cbar_mode == "each":
+        cbars = [grids.cbar_axes[i].colorbar(img) for i, img in enumerate(imgs)]
+        [cbars[i].ax.xaxis.set_visible(False) for i in range(len(imgs))]
+        cbars[-1].set_label_text(clabel)
+    else:
+        cbar = grids.cbar_axes[0].colorbar(imgs[-1])
+        cbar.ax.xaxis.set_visible(False)
+        cbar.set_label_text(clabel)
 
-    return (fig, grid)
+    return (fig, grids)
