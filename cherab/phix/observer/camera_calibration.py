@@ -5,7 +5,9 @@ import numpy as np
 # from matplotlib import pyplot
 
 # absolute path to data directory
-CARIB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+CARIB_PATH = os.path.join(
+    os.path.abspath(os.path.dirname(__file__)), "fast_camera", "caliblation_data"
+)
 
 # manual input image Points corresponding to model points (Limiter edge points)
 IMAGEPOINTS = np.array(
