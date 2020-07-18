@@ -12,7 +12,7 @@ from cherab.phix.observer import ThinLensCCDArray
 
 
 # path to direction storing camera's extinction parameters
-CARIB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+CARIB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "calibration_data")
 
 
 def import_phix_camera(paret, path=None):
