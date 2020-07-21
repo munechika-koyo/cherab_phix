@@ -50,9 +50,9 @@ def spectrum_to_rgb_ampere(spectrum):
     g = 0
     b = 0
     for index in range(spectrum.bins):
-        r += spectrum.delta_wavelength * spectrum.samples_mv[index] * resampled_rgb[index, 0]
-        g += spectrum.delta_wavelength * spectrum.samples_mv[index] * resampled_rgb[index, 1]
-        b += spectrum.delta_wavelength * spectrum.samples_mv[index] * resampled_rgb[index, 2]
+        r += spectrum.delta_wavelength * spectrum.samples[index] * resampled_rgb[index, 0]
+        g += spectrum.delta_wavelength * spectrum.samples[index] * resampled_rgb[index, 1]
+        b += spectrum.delta_wavelength * spectrum.samples[index] * resampled_rgb[index, 2]
 
     return r, g, b
 

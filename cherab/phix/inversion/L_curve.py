@@ -5,7 +5,8 @@ from .inversion import InversionMethod
 
 class Lcurve(InversionMethod):
     """L curve criterion inversion method inheriting InversionMethod class.
-    L curve is the trajectory of the point :math:`(\\log||Ax-b||, \\log||L(x-x_0)||)`.
+    L curve is the trajectory of the point :math:`(\\log||Ax-b||, \\log||L(x-x_0)||)`, those of which
+    mean Residual norm and Regularization norm, respectively.
     The "corner" of this curve is assosiated with optimized point of regularization parameter.
     This theory is mentioned by P.C.Hansen.
 
@@ -23,25 +24,19 @@ class Lcurve(InversionMethod):
     optimized_solution : function
         returning inverted solution at the optimal lambda
     plot_L_curv
+        plotting L curve in loglog-scale.
     plot_curvature
+        plotting carvature of L curve
     """
 
-    def __init__(
-        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
-    ):
+    def __init__(self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None):
         # initialize originaly valuables
         self._lambda_opt = None
         self._curvatures = None
 
         # inheritation
         super().__init__(
-            s=s,
-            u=u,
-            vh=vh,
-            inversion_base_vectors=inversion_base_vectors,
-            L_inv=L_inv,
-            data=data,
-            beta=beta,
+            s=s, u=u, vh=vh, inversion_base_vectors=inversion_base_vectors, L_inv=L_inv, data=data, beta=beta
         )
 
     @property
@@ -72,9 +67,7 @@ class Lcurve(InversionMethod):
         curvs_cache = np.zeros_like(lambdas)
 
         # calculate one time
-        curvs_cache = np.array(
-            [curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_cache]
-        )
+        curvs_cache = np.array([curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_cache])
         curvs = curvs_cache.tolist()
         # search maximum curvature index
         index_max = np.argmax(curvs_cache)
@@ -100,9 +93,7 @@ class Lcurve(InversionMethod):
                     zero_crossings_i = zero_crossings_i[zero_crossings_near]
 
                     # calculate FWFH in logscale
-                    fwfh_log = np.abs(
-                        np.log10(lambdas_cache[zero_crossings_i]) - np.log10(self._lambda_opt)
-                    )
+                    fwfh_log = np.abs(np.log10(lambdas_cache[zero_crossings_i]) - np.log10(self._lambda_opt))
                     # if zero_crossings_i is leftside of peak
                     if zero_crossings_i < index_max:
                         lambda_left_log = np.log10(lambdas_cache[zero_crossings_i])
@@ -121,10 +112,7 @@ class Lcurve(InversionMethod):
                 lambdas_cache = 10 ** np.linspace(lambda_left_log, lambda_right_log, 100)
                 # compute curvature
                 curvs_cache = np.array(
-                    [
-                        curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j)
-                        for j in lambdas_cache
-                    ]
+                    [curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_cache]
                 )
                 # search maximum curvature index
                 index_max = np.argmax(curvs_cache)
@@ -191,9 +179,7 @@ class Lcurve(InversionMethod):
 
         # plot some points of L curve and annotate with regularization parameters label
         if isinstance(scatter_plot, int):
-            lambdas = 10 ** np.linspace(
-                np.log10(self.lambdas.min()), np.log10(self.lambdas.max()), scatter_plot
-            )
+            lambdas = 10 ** np.linspace(np.log10(self.lambdas.min()), np.log10(self.lambdas.max()), scatter_plot)
             for _lambda in lambdas:
                 point = (self.residual_norm(_lambda), self.regularization_norm(_lambda))
                 ax.scatter(point[0], point[1], edgecolors="C0", marker="o", facecolor="none")
@@ -203,15 +189,12 @@ class Lcurve(InversionMethod):
         # plot L curve corner if already optimize method excuted
         if self.lambda_opt is not None:
             ax.scatter(
-                self.residual_norm(self.lambda_opt),
-                self.regularization_norm(self.lambda_opt),
-                c="r",
-                marker="x",
+                self.residual_norm(self.lambda_opt), self.regularization_norm(self.lambda_opt), c="r", marker="x"
             )
 
         # labels
-        ax.set_xlabel("Residual norm $||Ax-b||$")
-        ax.set_ylabel("Regularization norm $||L(x - x_0)||$")
+        ax.set_xlabel("Residual norm")
+        ax.set_ylabel("Regularization norm")
 
         return (fig, ax)
 
@@ -243,12 +226,7 @@ class Lcurve(InversionMethod):
         # indicate the max point as the optimal point
         if self.lambda_opt is not None:
             self.beta = self.lambda_opt
-            ax.scatter(
-                self.beta,
-                curvature(self.rho(), self.eta(), self.eta_diff(), beta=self.beta),
-                c="r",
-                marker="x",
-            )
+            ax.scatter(self.beta, curvature(self.rho(), self.eta(), self.eta_diff(), beta=self.beta), c="r", marker="x")
 
         lambda_range = (self.lambdas.min(), self.lambdas.max())
         # Draw a y=0 dashed line
