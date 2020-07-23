@@ -5,14 +5,11 @@ import numpy as np
 # from matplotlib import pyplot
 
 # absolute path to data directory
-CARIB_PATH = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), "fast_camera", "caliblation_data"
-)
+CARIB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "fast_camera", "calibration_data")
 
 # manual input image Points corresponding to model points (Limiter edge points)
 IMAGEPOINTS = np.array(
-    [(150, 118), (153, 411), (66, 400), (28, 315), (25, 220), (62, 135), (221, 20), (226, 500)],
-    dtype="double",
+    [(150, 118), (153, 411), (66, 400), (28, 315), (25, 220), (62, 135), (221, 20), (226, 500)], dtype="double"
 )
 
 
@@ -22,9 +19,9 @@ class Calibration:
     Parameters
     ---------
     focal_length: float, optional
-        camera's focal length, by default 10mm
+        camera's focal length [m], by default 10mm
     pixel_pitch: float, optional
-        camera's pixel pitch, by default 20$\\mu$m
+        camera's pixel pitch [m], by default 20$\\mu$m
     dist_coeffs: array of 4x1
         distortion coefficients 4, 5 or 8 elements,
         by default numpy.zeros(4, 1)
@@ -112,14 +109,10 @@ class Calibration:
     @dist_coeffs.setter
     def dist_coeffs(self, value):
         if len(value) not in (4, 5, 8):
-            raise ValueError(
-                "distortion coefficients must be a vector consisting of 4, 5, or 8 elements."
-            )
+            raise ValueError("distortion coefficients must be a vector consisting of 4, 5, or 8 elements.")
         self._dist_coeffs = value
 
-    def calibrate(
-        self, path=CARIB_PATH, model_points=None, image_points=None, ref_image_filename=None
-    ):
+    def calibrate(self, path=CARIB_PATH, model_points=None, image_points=None, ref_image_filename=None):
         """calibration of camera and obtain position & orientation
 
         Parameters
@@ -139,10 +132,10 @@ class Calibration:
         """
         # initialization of parameters
         ref_image_filename = ref_image_filename or os.path.join(path, "shot_10722.png")
-        model_points = model_points or np.loadtxt(
-            os.path.join(CARIB_PATH, "LimiterPoints.csv"), delimiter=","
-        )
-        image_points = image_points or IMAGEPOINTS
+        if model_points is None:
+            model_points = np.loadtxt(os.path.join(CARIB_PATH, "LimiterPoints.csv"), delimiter=",")
+        if image_points is None:
+            image_points = IMAGEPOINTS
 
         # import reference image file
         im = cv2.imread(ref_image_filename, cv2.IMREAD_COLOR)
@@ -153,31 +146,23 @@ class Calibration:
 
         # solve Perspective problem (PnP problem)
         (success, rotation_vector, self._translation_vector) = cv2.solvePnP(
-            model_points,
-            image_points,
-            self._camera_matrix,
-            self._dist_coeffs,
-            flags=cv2.SOLVEPNP_ITERATIVE,
+            model_points, image_points, self._camera_matrix, self._dist_coeffs, flags=cv2.SOLVEPNP_ITERATIVE
         )
-        self._rotation_mat, _ = cv2.Rodrigues(rotation_vector)
+        self._rotation_matrix, _ = cv2.Rodrigues(rotation_vector)
 
         # display results of calibration
         print("model Points [m]:\n{0}".format(model_points))
         print("Translation Vector:\n{0}".format(self._translation_vector))
         print("Rotaion Vector:\n{0}".format(rotation_vector))
-        print("Rotaion Matrix:\n{0}".format(self._rotation_mat))
+        print("Rotaion Matrix:\n{0}".format(self._rotation_matrix))
 
         # save translation_vector, rotation_matrix csv file into path directory
         np.savetxt(os.path.join(path, "translation_vector.csv"), self._translation_vector)
-        np.savetxt(os.path.join(path, "rotation_matrix.csv"), self._rotation_mat)
+        np.savetxt(os.path.join(path, "rotation_matrix.csv"), self._rotation_matrix)
 
         # reprojection model projectPoints
         (reprojectP, jacobian) = cv2.projectPoints(
-            model_points,
-            rotation_vector,
-            self._translation_vector,
-            self._camera_matrix,
-            self._dist_coeffs,
+            model_points, rotation_vector, self._translation_vector, self._camera_matrix, self._dist_coeffs
         )
         """
         with open('reprojectedPoints.csv','a') as f_handle:
@@ -234,7 +219,8 @@ class Calibration:
             cv2.line(im, origin, zaxis, (255, 0, 0), 2)
 
         # display results
-        cv2.imshow("Red: selected points, Green: reprojected points", im)
+        # cv2.imshow("Red: selected points, Green: reprojected points", im)
+        cv2.imwrite(os.path.join(path, "reprojected_image.png"), im)
 
     def calc_camera_matrix(self, image_size):
         """compute camera matrix
@@ -248,8 +234,7 @@ class Calibration:
         _focal_length = self._focal_length / self._pixel_pitch
         center = (0.5 * image_size[1], 0.5 * image_size[0])
         camera_matrix = np.array(
-            [[_focal_length, 0, center[0]], [0, _focal_length, center[1]], [0, 0, 1]],
-            dtype="double",
+            [[_focal_length, 0, center[0]], [0, _focal_length, center[1]], [0, 0, 1]], dtype="double"
         )
         return camera_matrix
 
@@ -268,8 +253,10 @@ class Calibration:
         array([x, y, z]): (3, ) numpy.ndarray
             camera position in world coordinates
         """
-        _rotation_matrix = rotation_matrix or self._rotation_matrix
-        _translation_vector = translation_vector or self._tranlation_vector
+        if rotation_matrix is None:
+            _rotation_matrix = self.rotation_matrix
+        if translation_vector is None:
+            _translation_vector = self.translation_vector
         if _rotation_matrix is None or _translation_vector is None:
             raise ValueError("rotation matrix or translation vector have not been defined yet.")
 
@@ -297,7 +284,7 @@ class Calibration:
         if self._rotation_matrix is None:
             rotation_matrix = rotation_matrix
         else:
-            rotation_matrix = self._rotation_matrix
+            rotation_matrix = self.rotation_matrix
 
         if not isinstance(rotation_matrix, type(np.array([]))):
             raise ValueError("rotation matrix must be numpy array.")
@@ -305,10 +292,7 @@ class Calibration:
             raise ValueError("rotaion matrix must be (3, 3) array.")
         assert self._isRotationMatrix(rotation_matrix)
 
-        sy = np.sqrt(
-            rotation_matrix[0, 0] * rotation_matrix[0, 0]
-            + rotation_matrix[1, 0] * rotation_matrix[1, 0]
-        )
+        sy = np.sqrt(rotation_matrix[0, 0] * rotation_matrix[0, 0] + rotation_matrix[1, 0] * rotation_matrix[1, 0])
 
         singular = sy < 1e-6
 
@@ -351,7 +335,7 @@ class Calibration:
         if self._rotation_matrix is None:
             rotation_matrix = rotation_matrix
         else:
-            rotation_matrix = self._rotation_matrix
+            rotation_matrix = self.rotation_matrix
 
         if not isinstance(rotation_matrix, type(np.array([]))):
             raise ValueError("rotation matrix must be numpy array.")
