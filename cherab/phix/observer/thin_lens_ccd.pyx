@@ -137,6 +137,15 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_image_geometry()
 
     @property
+    def pixel_area(self):
+        """
+        One pixel area in the CCD sensor
+
+        rtype: float
+        """
+        return self._pixel_area
+
+    @property
     def focal_length(self):
         return self._focal_length
 
@@ -171,6 +180,15 @@ cdef class ThinLensCCDArray(Observer2D):
             raise ValueError("Working distance must be greater than 0.")
         self._working_distance = working_distance
         self._update_lens_geometry()
+
+    @property
+    def lens_radias(self):
+        """
+        Lens Radius [m]
+
+        rtype: float
+        """
+        return self._lens_radius
 
     @property
     def lens_samples(self):

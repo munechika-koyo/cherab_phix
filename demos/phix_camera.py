@@ -9,7 +9,7 @@ from cherab.phix.plasma import import_plasma
 from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer import import_phix_camera
 
-3
+
 # ------------ obtain cherab_phix path ----------------------
 DIR = os.path.abspath(__file__).split(sep="demos")[0]
 # -----------------------------------------------------------
@@ -25,8 +25,8 @@ camera = import_phix_camera(world)
 
 # set pipelines and sampler
 rgb = RGBPipeline2D(display_unsaturated_fraction=1.0, name="sRGB", display_progress=False)
-# power = PowerPipeline2D(display_progress=False, name="power")
-camera.pipelines = [rgb]  # , power]
+power = PowerPipeline2D(display_progress=False, name="power")
+camera.pipelines = [rgb, power]
 sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=10, cutoff=0.05)
 
 # camera.frame_sampler = sampler

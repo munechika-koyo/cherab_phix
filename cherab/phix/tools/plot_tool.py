@@ -1,5 +1,6 @@
+import os
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, ticker
 from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
 from cherab.phix.plasma import TSCEquilibrium
@@ -26,7 +27,7 @@ def plot_ray(ray, world=None):
     plt.show()
 
 
-def show_phix_profile(
+def show_phix_profiles(
     profiles,
     fig=None,
     clabel="",
@@ -35,9 +36,11 @@ def show_phix_profile(
     vmax=None,
     vmin=None,
     axes_pad=0.02,
-    cbar_mode="single"
+    cbar_mode="single",
+    scientific_notation=False,
 ):
-    """show in-phix-limiter 2D profile such as emission profile.
+    """show in-phix-limiter 2D profiles such as emission profile.
+    This function can show several 2D profiles with matplotlib  imshow style
 
     Parameters
     ----------
@@ -60,6 +63,8 @@ def show_phix_profile(
         ImageGrid's para to set the interval between axes, by default 0.02
     cbar_mode : str, optional
         ImgeGrid's para to set colorbars in "single" axes or "each" axes, by default "single"
+    scientific_notation : bool, optional
+        whether or not to set colorbar fomat with scientific notation, by default Flase
 
     Returns
     -------
@@ -78,16 +83,16 @@ def show_phix_profile(
 
     # set ImageGrid
     fig = fig or plt.figure()
-    grids = ImageGrid(
-        fig, 111, (1, len(profiles)), axes_pad=axes_pad, cbar_mode=cbar_mode, cbar_pad=0.0
-    )
+    grids = ImageGrid(fig, 111, (1, len(profiles)), axes_pad=axes_pad, cbar_mode=cbar_mode, cbar_pad=0.0)
 
     # define some valuables in advance
-    vmax = vmax or [np.asarray(profile).max() for profile in profiles]
-    vmin = vmin or [np.asarray(profile).min() for profile in profiles]
+    if vmax is None:
+        vmax = [np.asarray(profile).max() for profile in profiles]
+    if vmin is None:
+        vmin = [np.asarray(profile).min() for profile in profiles]
     if cbar_mode == "single":
         vmax = [np.max(vmax) for i in range(len(profiles))]
-        vmin = [np.max(vmin) for i in range(len(profiles))]
+        vmin = [np.min(vmin) for i in range(len(profiles))]
 
     extent = (
         rtm.material.rmin,
@@ -100,18 +105,8 @@ def show_phix_profile(
     ypos_up = np.array([0.166, 0.166, 0.06])
 
     # show 2D profile
-    imgs = []
     for i, profile in enumerate(profiles):
-        imgs.append(
-            grids[i].imshow(
-                np.transpose(profile),
-                origin="lower",
-                extent=extent,
-                cmap=cmap,
-                vmax=vmax[i],
-                vmin=vmin[i],
-            )
-        )
+        grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, vmax=vmax[i], vmin=vmin[i])
 
         # fill the outer in-limiter to white
         grids[i].fill(xpos, ypos, color="w", alpha=1.0)
@@ -127,13 +122,121 @@ def show_phix_profile(
     grids[0].set_ylabel("$Z$[m]")
 
     # colobar
+    # TODO: need to find out why the first colorbar does not show with scientific notation
+    # when show more than 2 gird images.
+    fmt = ticker.ScalarFormatter(useMathText=True)
+    if scientific_notation is True:
+        fmt.set_powerlimits((0, 0))
+
     if cbar_mode == "each":
-        cbars = [grids.cbar_axes[i].colorbar(img) for i, img in enumerate(imgs)]
-        [cbars[i].ax.xaxis.set_visible(False) for i in range(len(imgs))]
+        cbars = [grids.cbar_axes[i].colorbar(grid.images[0], format=fmt) for i, grid in enumerate(grids)]
+        [cbars[i].ax.xaxis.set_visible(False) for i in range(len(grids))]
+        [cbars[i].ax.yaxis.set_offset_position("left") for i in range(len(grids))]
         cbars[-1].set_label_text(clabel)
     else:
-        cbar = grids.cbar_axes[0].colorbar(imgs[-1])
+        cbar = grids.cbar_axes[0].colorbar(grids[-1].images[0], format=fmt)
         cbar.ax.xaxis.set_visible(False)
+        cbar.ax.yaxis.set_offset_position("left")
         cbar.set_label_text(clabel)
 
     return (fig, grids)
+
+
+def show_phix_profile(
+    axes,
+    profile,
+    cmap="inferno",
+    rtm=None,
+    vmax=None,
+    vmin=None,
+    toggle_contour=True,
+    levels=None,
+    scientific_notation=False,
+):
+    """show phix one in-limiter profile using pcolormesh and contour if you want.
+
+    Parameters
+    ----------
+    axes : object
+        matplotlib Axes object
+    profiles : list or 2D-array
+         2D-array-like (nr, nz) profile inner PHiX limiter
+    cmap : str, optional
+        color map, by default "inferno"
+    rtm : cherab.raytransfer object, optional
+        cherab's raytransfer objects, by default phix's one using TSCEquilibrium()
+    vmax : float, optional
+        to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
+    vmin : float, optional
+        to set the lower color limitation, by default minimal value of all profiles, if cbar_mode=="single"
+    toggle_contour : bool, optional
+        toggle whether or not to show contour plot as well as pcolormesh, by default True
+    levels : 1D array-like, optional
+        contour's level array, by default number of levels is 10 in range of 0 to max value
+    scientific_notation : bool, optional
+        whether or not to set colorbar fomat with scientific notation, by default Flase
+
+    Returns
+    ------
+    contour: matplotlib contour object
+    """
+    # set axes option
+    axes.set_aspect("equal")
+
+    # import phix raytransfer object
+    if rtm is None:
+        world = World()
+        eq = TSCEquilibrium(folder="phix10")
+        rtm = import_phix_rtm(world, equilibrium=eq)
+
+    # RZ grid
+    z = np.linspace(-1 * rtm.transform[2, 3], rtm.transform[2, 3], rtm.material.grid_shape[2])
+    r = np.linspace(
+        rtm.material.rmin, rtm.material.rmin + rtm.material.dr * rtm.material.grid_shape[0], rtm.material.grid_shape[0]
+    )
+    R, Z = np.meshgrid(r, z)
+
+    # set vmax, vmin
+    if vmax is None:
+        vmax = np.asarray_chkfinite(profile).max()
+    if vmin is None:
+        vmin = np.asarray_chkfinite(profile).min()
+
+    # set contour levels
+    if levels is None:
+        levels = np.linspace(0, vmax, 8)
+
+    # limiter pos
+    xpos = np.array([0.362, 0.42, 0.42])
+    ypos = np.array([-0.165, -0.165, -0.06])
+    ypos_up = np.array([0.166, 0.166, 0.06])
+
+    # show pcolormesh
+    axes.pcolormesh(R, Z, np.flipud(profile.T), cmap=cmap, vmax=vmax, vmin=vmin)
+
+    # plot contour
+    if toggle_contour is True:
+        contour = axes.contour(R, Z, np.flipud(profile.T), levels, colors="w", linewidths=1)
+
+    # fill the outer in-limiter to white
+    axes.fill(xpos, ypos, color="w", alpha=1.0)
+    axes.fill(xpos, ypos_up, color="w", alpha=1.0)
+    # plot edge of OUTER LIMITER
+    axes.plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
+    axes.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "w")
+    # axis label
+    # axes.set_xlabel("$R$[m]")
+    # axes.set_ylabel("$Z$[m]")
+
+    return contour
+
+
+if __name__ == "__main__":
+    DIR = os.path.dirname(__file__).split("/cherab/")[0]
+    profile = np.load(
+        os.path.join(DIR, "output", "data", "experiment", "shot_17393", "camera_data", "reconstraction", "1060.npy")
+    )
+
+    fig, ax = plt.subplots()
+    con = show_phix_profile(ax, profile, cmap="inferno")
+    plt.show()

@@ -1,0 +1,186 @@
+<!DOCTYPE MeshLabDocument>
+<MeshLabProject>
+ <MeshGroup>
+  <MLMesh visible="1" filename="FBC_half_down.STL" label="FBC_half_down.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="FBC_half_down2.STL" label="FBC_half_down2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="FBC_half_up.STL" label="FBC_half_up.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="FBC_half_up2.STL" label="FBC_half_up2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="FL_half.STL" label="FL_half.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="FL_half2.STL" label="FL_half2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="limiter_225.STL" label="limiter_225.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="limiter_box.STL" label="limiter_box.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="MG_port.STL" label="MG_port.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_connection_half.STL" label="rail_connection_half.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_connection_half2.STL" label="rail_connection_half2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_half_down.STL" label="rail_half_down.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_half_down2.STL" label="rail_half_down2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_half_up.STL" label="rail_half_up.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="rail_half_up2.STL" label="rail_half_up2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="vaccum_flange.STL" label="vaccum_flange.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="vessel_teflon_gasket_half.STL" label="vessel_teflon_gasket_half.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="vessel_teflon_gasket_half2.STL" label="vessel_teflon_gasket_half2.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="vessel_wall1_finite.STL" label="vessel_wall1_finite.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+  <MLMesh visible="1" filename="vessel_wall2_finite.STL" label="vessel_wall2_finite.STL">
+   <MLMatrix44>
+1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</MLMatrix44>
+   <RenderingOption wireColor="64 64 64 255" boxColor="234 234 234 255" pointSize="3" pointColor="131 149 69 255" wireWidth="1" solidColor="192 192 192 255">100001000000000000000000000001010100000010100000000100111011110000001001</RenderingOption>
+  </MLMesh>
+ </MeshGroup>
+ <RasterGroup/>
+</MeshLabProject>

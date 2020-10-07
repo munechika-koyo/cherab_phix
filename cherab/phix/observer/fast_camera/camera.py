@@ -1,30 +1,32 @@
 import os
 import numpy as np
 from raysect.optical import translate, AffineMatrix3D
-
-# from raysect.optical.observer import TargettedCCDArray
-
 from cherab.phix.observer import ThinLensCCDArray
-
-# from raysect.primitive.lens.spherical import BiConvex
-# from raysect.optical.material import NullMaterial
-# from raysect.optical.library import schott
+from calcam import Calibration
 
 
-# path to direction storing camera's extinction parameters
-CARIB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), "calibration_data")
+# -------------- Load Default calcam calibration data -----------------
+CALCAM = os.path.join(os.path.dirname(__file__), "calibration_data", "shot_17393.ccc")
+cam = Calibration(CALCAM)
+ROT_MAT = cam.get_cam_to_lab_rotation()
+CAM_POS = cam.get_pupilpos()
+# -------------------------------------------------------------------
 
 
-def import_phix_camera(paret, path=None):
-    """importing phix lens camera set as defalut camera parameters
+def import_phix_camera(paret, rotation_matrix=None, camera_pos=None):
+    """importing phix lens camera configured by defalut camera parameters
+    Default camera's extrinsics is loaded from
+    "../cherab/phix/observer/fast_camera/calibration_data/shot_17393.ccc".
+    This file is created by calcam package (See: https://github.com/euratom-software/calcam)
 
     Parameters
     ----------
     parent : Node
         Raysect's scene-graph paret node
-    path : str, optional
-        absolute path to the directory storing camera's extinction parameters,
-        by default "../cherab/phix/observer/data"
+    rotation_matrx : 2D array-like, optional
+        camera's rotation matrix, by default calcam cam_to_lab_rotation()
+    camera_pos : 1D array-like, optional
+        camera's pupil position (in unit [m]), by defalut calcam pupilpos()
 
     Returns
     --------
@@ -33,14 +35,12 @@ def import_phix_camera(paret, path=None):
     """
     print("importing PHiX camera...")
     # initialise parameters
-    path = path or CARIB_PATH
+    if rotation_matrix is None:
+        rotation_matrix = ROT_MAT
+    if camera_pos is None:
+        camera_pos = CAM_POS
 
-    # import camera extinct parameters
-    translation_vector = np.loadtxt(os.path.join(path, "translation_vector.csv"))
-    rotation_mat = np.loadtxt(os.path.join(path, "rotation_matrix.csv"))
-
-    orientation = rotation_mat.T
-    camera_pos = -np.dot(orientation, translation_vector.reshape((3, 1)))
+    orientation = rotation_matrix
     camera_trans = translate(*camera_pos)
     camera_rot = np.block([[orientation, np.zeros((3, 1))], [np.array([0, 0, 0, 1])]])
     camera_rot = AffineMatrix3D(camera_rot)

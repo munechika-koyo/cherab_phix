@@ -47,7 +47,7 @@ class Lcurve(InversionMethod):
     def curvatures(self):
         return self._curvatures
 
-    def optimize(self, itemax=3):
+    def optimize(self, itemax=5):
         """excute the optimization of L-curve regularization
         In particular, this method is used to search the optimal regularization parameter
         computing curvature. The optimal regularization parameter corresponds to the maximum
@@ -59,7 +59,7 @@ class Lcurve(InversionMethod):
         Parameters
         ----------
         itemax : int, optional
-            iteration times, by default 3
+            iteration times, by default 5
         """
         # preparete local values and caches
         lambdas_cache = self._lambdas.copy()
@@ -130,17 +130,21 @@ class Lcurve(InversionMethod):
         self._curvatures = curvs[index_sort]
         print(f"completed the optimization (iteration times : {itemax})")
 
-    def optimized_solution(self):
+    def optimized_solution(self, itemax=5):
         """calculation inverted solution using L-curve criterion optimization
+
+        Parameters
+        ----------
+        itemax : int, optional
+            iteration times of optimization method, by default 5
 
         Returns
         -------
         numpy.ndarry
             optimised inverted solution vector
         """
-        if self.lambda_opt is None:
-            # excute optimization
-            self.optimize()
+        # excute optimization
+        self.optimize(itemax)
 
         # return optimized solution and parameter
         return self.inverted_solution(beta=self.lambda_opt)

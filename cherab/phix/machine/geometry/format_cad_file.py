@@ -6,12 +6,13 @@ from raysect.optical import World
 from raysect.primitive import import_stl
 
 
-CADMESH_PATH = os.path.abspath(os.path.dirname(__file__))
-PFC_PATH_LIST = glob.glob(os.path.join(CADMESH_PATH, "data/*.STL"))
+GEOMETRY_PATH = os.path.dirname(__file__)
+STL_PATH_LIST = glob.glob(os.path.join(GEOMETRY_PATH, "data", "STLfiles", "*.STL"))
+RSM_PATH = os.path.join(GEOMETRY_PATH, "data", "RSMfiles")
 
 world = World()
 
-for pfc_fname in PFC_PATH_LIST:
+for pfc_fname in STL_PATH_LIST:
     print(f"transforming {pfc_fname.split('.STL')[0]} into .rsm file")
-    mesh = import_stl(pfc_fname, scaling=1.0e-3, parent=world)  # [mm] -> [m]
-    mesh.save(pfc_fname.split(".STL")[0] + ".rsm")
+    mesh = import_stl(pfc_fname, scaling=1.0, parent=world)
+    mesh.save(os.path.join(RSM_PATH, os.path.splitext(os.path.split(pfc_fname)[-1])[0] + ".rsm"))
