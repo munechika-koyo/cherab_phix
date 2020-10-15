@@ -13,7 +13,7 @@ CAM_POS = cam.get_pupilpos()
 # -------------------------------------------------------------------
 
 
-def import_phix_camera(paret, rotation_matrix=None, camera_pos=None):
+def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
     """importing phix lens camera configured by defalut camera parameters
     Default camera's extrinsics is loaded from
     "../cherab/phix/observer/fast_camera/calibration_data/shot_17393.ccc".
@@ -22,7 +22,7 @@ def import_phix_camera(paret, rotation_matrix=None, camera_pos=None):
     Parameters
     ----------
     parent : Node
-        Raysect's scene-graph paret node
+        Raysect's scene-graph parent node
     rotation_matrx : 2D array-like, optional
         camera's rotation matrix, by default calcam cam_to_lab_rotation()
     camera_pos : 1D array-like, optional
@@ -51,7 +51,7 @@ def import_phix_camera(paret, rotation_matrix=None, camera_pos=None):
         focal_length=1.0e-2,
         working_distance=50.0e-2,
         F_value=0 * (22 - 3.5) / 10 + 3.5,
-        parent=paret,
+        parent=parent,
         pipelines=None,
         transform=camera_trans * camera_rot,
         name="PHiX fast-visible camera",
