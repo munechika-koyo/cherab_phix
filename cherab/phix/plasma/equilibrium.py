@@ -5,7 +5,7 @@ from raysect.core import Point2D
 from raysect.optical import Vector3D
 from cherab.core.math import Interpolate1DCubic, Interpolate2DCubic, ClampOutput2D
 from cherab.core.math import ConstantVector2D, VectorFunction2D
-from cherab.core.math import PythonVectorFunction2D
+from raysect.core.math.function.vector3d import Function2D as PythonVectorFunction2D
 from cherab.tools.equilibrium.efit import EFITEquilibrium
 from cherab.phix.machine.wall_outline import INNER_LIMITER
 
