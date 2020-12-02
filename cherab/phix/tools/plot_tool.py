@@ -1,6 +1,8 @@
 import os
 import numpy as np
-from matplotlib import pyplot as plt, ticker
+from matplotlib import pyplot as plt
+from matplotlib.colors import LogNorm, Normalize
+from matplotlib.ticker import LogFormatterSciNotation, LogLocator, NullFormatter, ScalarFormatter, LinearLocator
 from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
 from cherab.phix.plasma import TSCEquilibrium
@@ -38,6 +40,7 @@ def show_phix_profiles(
     axes_pad=0.02,
     cbar_mode="single",
     scientific_notation=False,
+    plot_mode="scalar"
 ):
     """show in-phix-limiter 2D profiles such as emission profile.
     This function can show several 2D profiles with matplotlib  imshow style
@@ -65,6 +68,8 @@ def show_phix_profiles(
         ImgeGrid's para to set colorbars in "single" axes or "each" axes, by default "single"
     scientific_notation : bool, optional
         whether or not to set colorbar fomat with scientific notation, by default Flase
+    plot_mode : str, optional
+        plot 2D mesh as "scalor" or "log", by default "scalar"
 
     Returns
     -------
@@ -106,7 +111,17 @@ def show_phix_profiles(
 
     # show 2D profile
     for i, profile in enumerate(profiles):
-        grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, vmax=vmax[i], vmin=vmin[i])
+        # color limit
+        if plot_mode == "log":
+            if min(vmin) <= 0:
+                raise ValueError("profile must not have 0 or less.")
+
+            norm = LogNorm(vmin=vmin[i], vmax=vmax[i])
+        else:
+            norm = Normalize(vmin=vmin[i], vmax=vmax[i])
+
+        # imshow
+        grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, norm=norm)
 
         # fill the outer in-limiter to white
         grids[i].fill(xpos, ypos, color="w", alpha=1.0)
@@ -124,17 +139,38 @@ def show_phix_profiles(
     # colobar
     # TODO: need to find out why the first colorbar does not show with scientific notation
     # when show more than 2 gird images.
-    fmt = ticker.ScalarFormatter(useMathText=True)
+    if plot_mode == "log":
+        fmt = LogFormatterSciNotation()
+        major_locator = LogLocator(base=10, numticks=None)
+        # minor_locator = LogLocator(base=10)
+        minor_locator = LogLocator(base=10, subs=tuple(np.arange(0.1, 1.0, 0.1)), numticks=12)
+    else:
+        fmt = ScalarFormatter(useMathText=True)
+        major_locator = LinearLocator()
+        minor_locator = LinearLocator()
+
     if scientific_notation is True:
         fmt.set_powerlimits((0, 0))
 
     if cbar_mode == "each":
-        cbars = [grids.cbar_axes[i].colorbar(grid.images[0], format=fmt) for i, grid in enumerate(grids)]
-        [cbars[i].ax.xaxis.set_visible(False) for i in range(len(grids))]
-        [cbars[i].ax.yaxis.set_offset_position("left") for i in range(len(grids))]
-        cbars[-1].set_label_text(clabel)
+        cbar = None  # initialization
+        for i, grid in enumerate(grids):
+            cbar = grids.cbar_axes[i].colorbar(grid.images[0])
+            cbar.cbar_axis.set_major_locator(major_locator)
+            cbar.cbar_axis.set_minor_locator(minor_locator)
+            cbar.cbar_axis.set_major_formatter(fmt)
+            cbar.cbar_axis.set_minor_formatter(NullFormatter())
+            cbar.ax.xaxis.set_visible(False)
+            cbar.ax.yaxis.set_offset_position("left")
+        cbar.set_label_text(clabel)
     else:
-        cbar = grids.cbar_axes[0].colorbar(grids[-1].images[0], format=fmt)
+        cbar = grids.cbar_axes[0].colorbar(grids[-1].images[0])
+        cbar.cbar_axis.set_major_locator(major_locator)
+        cbar.cbar_axis.set_minor_locator(minor_locator)
+        cbar.cbar_axis.set_major_formatter(fmt)
+        cbar.cbar_axis.set_minor_formatter(NullFormatter())
+        cbar.ax.xaxis.set_visible(False)
+        cbar.ax.yaxis.set_offset_position("left")
         cbar.ax.xaxis.set_visible(False)
         cbar.ax.yaxis.set_offset_position("left")
         cbar.set_label_text(clabel)
@@ -217,6 +253,8 @@ def show_phix_profile(
     # plot contour
     if toggle_contour is True:
         contour = axes.contour(R, Z, np.flipud(profile.T), levels, colors="w", linewidths=1)
+    else:
+        contour = None
 
     # fill the outer in-limiter to white
     axes.fill(xpos, ypos, color="w", alpha=1.0)
