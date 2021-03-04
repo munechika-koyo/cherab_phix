@@ -7,7 +7,7 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
 from cherab.phix.plasma import TSCEquilibrium
 from cherab.phix.tools.raytransfer import import_phix_rtm
-from cherab.phix.machine.wall_outline import OUTER_LIMITER, INNER_LIMITER
+from cherab.phix.machine.wall_outline import OUTER_LIMITER
 
 
 def plot_ray(ray, world=None):
@@ -40,7 +40,7 @@ def show_phix_profiles(
     axes_pad=0.02,
     cbar_mode="single",
     scientific_notation=False,
-    plot_mode="scalar"
+    plot_mode="scalar",
 ):
     """show in-phix-limiter 2D profiles such as emission profile.
     This function can show several 2D profiles with matplotlib  imshow style
@@ -99,15 +99,16 @@ def show_phix_profiles(
         vmax = [np.max(vmax) for i in range(len(profiles))]
         vmin = [np.min(vmin) for i in range(len(profiles))]
 
+    # set image extent
     extent = (
         rtm.material.rmin,
         rtm.material.rmin + rtm.material.dr * rtm.material.grid_shape[0],
         rtm.transform[2, 3],
         -1 * rtm.transform[2, 3],
     )
-    xpos = np.array([0.362, 0.42, 0.42])
-    ypos = np.array([-0.165, -0.165, -0.06])
-    ypos_up = np.array([0.166, 0.166, 0.06])
+
+    # set mask array
+    mask = np.logical_not(rtm.mask.squeeze())
 
     # show 2D profile
     for i, profile in enumerate(profiles):
@@ -120,16 +121,13 @@ def show_phix_profiles(
         else:
             norm = Normalize(vmin=vmin[i], vmax=vmax[i])
 
+        # maske profile out of limiter
+        profile = np.ma.masked_array(profile, mask)
         # imshow
         grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, norm=norm)
 
-        # fill the outer in-limiter to white
-        grids[i].fill(xpos, ypos, color="w", alpha=1.0)
-        grids[i].fill(xpos, ypos_up, color="w", alpha=1.0)
-
         # plot edge of OUTER LIMITER
         grids[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
-        grids[i].plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "w")
 
         # axis label
         grids[i].set_xlabel("$R$[m]")
@@ -242,13 +240,11 @@ def show_phix_profile(
     if levels is None:
         levels = np.linspace(0, vmax, 8)
 
-    # limiter pos
-    xpos = np.array([0.362, 0.42, 0.42])
-    ypos = np.array([-0.165, -0.165, -0.06])
-    ypos_up = np.array([0.166, 0.166, 0.06])
-
+    # set masked profile
+    mask = np.logical_not(rtm.mask.squeeze())
+    profile = np.ma.masked_array(profile, mask)
     # show pcolormesh
-    axes.pcolormesh(R, Z, np.flipud(profile.T), cmap=cmap, vmax=vmax, vmin=vmin)
+    axes.pcolormesh(R, Z, np.flipud(profile.T), cmap=cmap, vmax=vmax, vmin=vmin, shading="auto")
 
     # plot contour
     if toggle_contour is True:
@@ -256,12 +252,8 @@ def show_phix_profile(
     else:
         contour = None
 
-    # fill the outer in-limiter to white
-    axes.fill(xpos, ypos, color="w", alpha=1.0)
-    axes.fill(xpos, ypos_up, color="w", alpha=1.0)
     # plot edge of OUTER LIMITER
     axes.plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
-    axes.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "w")
     # axis label
     # axes.set_xlabel("$R$[m]")
     # axes.set_ylabel("$Z$[m]")
