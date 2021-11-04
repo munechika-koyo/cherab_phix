@@ -136,10 +136,7 @@ def import_phix_mesh(
         # directory, filename = os.path.split(mesh_path)
         # mesh_name, ext = filename.split(".")
 
-        try:
-            roughness = material.roughness
-        except AttributeError:
-            roughness = None
+        roughness = getattr(material, "roughness", None)
 
         print(f'importing {mesh_name}, {str(material).split(" ")[0].split(".")[-1]}, roughness: {roughness}')
 
