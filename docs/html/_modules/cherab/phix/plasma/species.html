@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cherab.phix.plasma.species &mdash; cherab-phix Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> cherab-phix
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/machine.html">1. Machine module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/plasma.html">2. Plasma module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">3. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">4. Tools module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">cherab-phix</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cherab.phix.plasma.species</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cherab.phix.plasma.species</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">electron_mass</span><span class="p">,</span> <span class="n">atomic_mass</span><span class="p">,</span> <span class="n">Boltzmann</span><span class="p">,</span> <span class="n">convert_temperature</span>
+
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Cherab and raysect imports</span>
+<span class="kn">from</span> <span class="nn">cherab.core</span> <span class="kn">import</span> <span class="n">Species</span><span class="p">,</span> <span class="n">Maxwellian</span><span class="p">,</span> <span class="n">elements</span>
+<span class="kn">from</span> <span class="nn">cherab.core.math</span> <span class="kn">import</span> <span class="n">Constant3D</span><span class="p">,</span> <span class="n">ConstantVector3D</span>
+<span class="kn">from</span> <span class="nn">cherab.core.math</span> <span class="kn">import</span> <span class="n">Interpolate1DLinear</span>
+<span class="kn">from</span> <span class="nn">cherab.core.math</span> <span class="kn">import</span> <span class="n">sample3d</span>
+<span class="kn">from</span> <span class="nn">raysect.optical</span> <span class="kn">import</span> <span class="n">Vector3D</span>
+
+<span class="kn">from</span> <span class="nn">cherab.phix.machine.wall_outline</span> <span class="kn">import</span> <span class="n">INNER_LIMITER</span>
+
+
+<div class="viewcode-block" id="PHiXSpecies"><a class="viewcode-back" href="../../../../api_reference/plasma.html#cherab.phix.plasma.PHiXSpecies">[docs]</a><span class="k">class</span> <span class="nc">PHiXSpecies</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class representing PHiX plasma species</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------------</span>
+<span class="sd">    equilibrium : object, required</span>
+<span class="sd">        EFIT equilibrium object, default None</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    electron_distribution : Function3D</span>
+<span class="sd">        electron distribution function</span>
+<span class="sd">    composition : list</span>
+<span class="sd">        composition of plasma species, each information of whixh is</span>
+<span class="sd">            element,</span>
+<span class="sd">            charge,</span>
+<span class="sd">            density_distribution,</span>
+<span class="sd">            temperature_distribution,</span>
+<span class="sd">            bulk_velocity_distribution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equilibrium</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">equilibrium</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;equilibrium argument must be input.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eq</span> <span class="o">=</span> <span class="n">equilibrium</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">te_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ne_range</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.6e18</span><span class="p">,</span> <span class="mf">3.5e17</span><span class="p">)</span>
+
+        <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># mapping electron temperture and density on flux surface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp1d</span> <span class="o">=</span> <span class="n">Interpolate1DLinear</span><span class="p">(</span>
+            <span class="n">psi</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">te_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">te_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">psi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">te_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dens1d</span> <span class="o">=</span> <span class="n">Interpolate1DLinear</span><span class="p">(</span>
+            <span class="n">psi</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ne_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ne_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">psi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ne_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eq</span><span class="o">.</span><span class="n">map3d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp1d</span><span class="p">,</span> <span class="n">value_outside_lcfs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">te_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">e_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eq</span><span class="o">.</span><span class="n">map3d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dens1d</span><span class="p">)</span>
+
+        <span class="c1"># assuming neutral hydrogen&#39;s density is equal to electron density</span>
+        <span class="n">h1_density</span> <span class="o">=</span> <span class="n">e_density</span>
+
+        <span class="c1"># assuming hydrogen atomic density is derived from background gass pressure &amp; lab temperature</span>
+        <span class="n">_background_pressure</span> <span class="o">=</span> <span class="mf">1.0e-2</span>  <span class="c1"># nitrogen pressure [Pa]</span>
+        <span class="n">_lab_Temp</span> <span class="o">=</span> <span class="mi">25</span>  <span class="c1"># [Celsius]</span>
+        <span class="n">h0_density</span> <span class="o">=</span> <span class="n">Constant3D</span><span class="p">(</span>
+            <span class="n">_background_pressure</span>
+            <span class="o">/</span> <span class="mf">0.49</span>  <span class="c1"># nitrogen pressure -&gt; hydrogen pressure</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">Boltzmann</span> <span class="o">*</span> <span class="n">convert_temperature</span><span class="p">(</span><span class="n">_lab_Temp</span><span class="p">,</span> <span class="s2">&quot;Celsius&quot;</span><span class="p">,</span> <span class="s2">&quot;Kelvin&quot;</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="n">bulk_velocity</span> <span class="o">=</span> <span class="n">ConstantVector3D</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># set electron distribution assuming Maxwellian</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electron_distribution</span> <span class="o">=</span> <span class="n">Maxwellian</span><span class="p">(</span>
+            <span class="n">e_density</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">bulk_velocity</span><span class="p">,</span> <span class="n">electron_mass</span>
+        <span class="p">)</span>
+
+        <span class="c1"># initialize composition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">composition</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># append species to composition list</span>
+        <span class="c1"># H</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_species</span><span class="p">(</span>
+            <span class="n">element</span><span class="o">=</span><span class="s2">&quot;hydrogen&quot;</span><span class="p">,</span>
+            <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">density</span><span class="o">=</span><span class="n">h0_density</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">bulk_velocity</span><span class="o">=</span><span class="n">bulk_velocity</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># H+</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_species</span><span class="p">(</span>
+            <span class="n">element</span><span class="o">=</span><span class="s2">&quot;hydrogen&quot;</span><span class="p">,</span>
+            <span class="n">charge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">density</span><span class="o">=</span><span class="n">h1_density</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">bulk_velocity</span><span class="o">=</span><span class="n">bulk_velocity</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># C iii (C+2)</span>
+        <span class="c1"># self.set_species(</span>
+        <span class="c1">#     element=&quot;carbon&quot;,</span>
+        <span class="c1">#     charge=2,</span>
+        <span class="c1">#     density=h0_density,</span>
+        <span class="c1">#     temperature=temperature,</span>
+        <span class="c1">#     bulk_velocity=bulk_velocity,</span>
+        <span class="c1"># )</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="PHiXSpecies.set_species"><a class="viewcode-back" href="../../../../api_reference/plasma.html#cherab.phix.plasma.PHiXSpecies.set_species">[docs]</a>    <span class="k">def</span> <span class="nf">set_species</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">element</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">charge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">density</span><span class="o">=</span><span class="n">Constant3D</span><span class="p">(</span><span class="mf">1.0e19</span><span class="p">),</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">Constant3D</span><span class="p">(</span><span class="mf">1.0e2</span><span class="p">),</span>
+        <span class="n">bulk_velocity</span><span class="o">=</span><span class="n">ConstantVector3D</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;add species to composition which is assumed to be Maxwellian distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------</span>
+<span class="sd">        element : str, required</span>
+<span class="sd">            element name registored in cherabs elements.pyx, by default None</span>
+<span class="sd">        charge : int, required</span>
+<span class="sd">            element&#39;s charge state, by default 0</span>
+<span class="sd">        density : Function3D, optional</span>
+<span class="sd">            density distribution, by default Constant3D(1.0e19)</span>
+<span class="sd">        temperature : Function3D, optional</span>
+<span class="sd">            temperature distribution, by default Constant3D(1.0e2)</span>
+<span class="sd">        bulk_velocity : VectorFunction3D, optional</span>
+<span class="sd">            bulk velocity, by default ConstantVector3D(0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Parameter &#39;element&#39; is required to be input.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># extract specified element object</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;elements.</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;element name &#39;</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&#39; is not implemented.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;You can implement manually using Element class&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="c1"># element mass</span>
+        <span class="n">element_mass</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">atomic_weight</span> <span class="o">*</span> <span class="n">atomic_mass</span>
+
+        <span class="c1"># Maxwellian distribution</span>
+        <span class="n">distribution</span> <span class="o">=</span> <span class="n">Maxwellian</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">bulk_velocity</span><span class="p">,</span> <span class="n">element_mass</span><span class="p">)</span>
+
+        <span class="c1"># append plasma.composition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Species</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">distribution</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PHiXSpecies.plot_distribution"><a class="viewcode-back" href="../../../../api_reference/plasma.html#cherab.phix.plasma.PHiXSpecies.plot_distribution">[docs]</a>    <span class="k">def</span> <span class="nf">plot_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;plot species temperature &amp; density profile</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        res : float, optional</span>
+<span class="sd">            Spactial resolution for sampling, by default 0.001</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># grid</span>
+        <span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eq</span><span class="o">.</span><span class="n">r_range</span>
+        <span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eq</span><span class="o">.</span><span class="n">z_range</span>
+        <span class="n">nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">r_max</span> <span class="o">-</span> <span class="n">r_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">nz</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">z_max</span> <span class="o">-</span> <span class="n">z_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">)</span>
+
+        <span class="c1"># electron sampling</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">dens</span> <span class="o">=</span> <span class="n">sample3d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electron_distribution</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="p">(</span><span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">nr</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">sample3d</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electron_distribution</span><span class="o">.</span><span class="n">effective_temperature</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">nr</span><span class="p">),</span>
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">nz</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># plot</span>
+        <span class="k">for</span> <span class="n">sample</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">dens</span><span class="p">,</span> <span class="n">temp</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;electron density[1/m$^3$]&quot;</span><span class="p">,</span> <span class="s2">&quot;electron temperature[eV]&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;gouraud&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">autoscale</span><span class="p">(</span><span class="n">tight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">INNER_LIMITER</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">INNER_LIMITER</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;R (meters)&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Z (meters)&quot;</span><span class="p">)</span>
+
+        <span class="c1"># species sampling</span>
+        <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">dens</span> <span class="o">=</span> <span class="n">sample3d</span><span class="p">(</span>
+                <span class="n">species</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="p">(</span><span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">nr</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">sample3d</span><span class="p">(</span>
+                <span class="n">species</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">effective_temperature</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">r_min</span><span class="p">,</span> <span class="n">r_max</span><span class="p">,</span> <span class="n">nr</span><span class="p">),</span>
+                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span> <span class="n">nz</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="c1"># plot</span>
+            <span class="k">for</span> <span class="n">sample</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">dens</span><span class="p">,</span> <span class="n">temp</span><span class="p">],</span>
+                <span class="p">[</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">species</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">species</span><span class="o">.</span><span class="n">charge</span><span class="si">}</span><span class="s2"> density [1/m$^3$]&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">species</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="n">species</span><span class="o">.</span><span class="n">charge</span><span class="si">}</span><span class="s2"> temperature [eV]&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;gouraud&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">autoscale</span><span class="p">(</span><span class="n">tight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">INNER_LIMITER</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">INNER_LIMITER</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;R (meters)&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Z (meters)&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PHiXSpecies.plot_1d_profile"><a class="viewcode-back" href="../../../../api_reference/plasma.html#cherab.phix.plasma.PHiXSpecies.plot_1d_profile">[docs]</a>    <span class="k">def</span> <span class="nf">plot_1d_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;plot r vs electron density or temperature 1D profile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eq</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electron_distribution</span><span class="o">.</span><span class="n">density</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electron_distribution</span><span class="o">.</span><span class="n">effective_temperature</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">func</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">funcs</span><span class="p">,</span>
+            <span class="p">[</span><span class="s2">&quot;density [1/m$^3$]&quot;</span><span class="p">,</span> <span class="s2">&quot;temperature [eV]&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;electron density&quot;</span><span class="p">,</span> <span class="s2">&quot;electron temperature&quot;</span><span class="p">],</span>
+        <span class="p">):</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">sample3d</span><span class="p">(</span>
+                <span class="n">func</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">magnetic_axis</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">eq</span><span class="o">.</span><span class="n">limiter_polygon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">100</span><span class="p">),</span>
+                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">magnetic_axis</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">eq</span><span class="o">.</span><span class="n">magnetic_axis</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;R [m]&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Koyo Munechika
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

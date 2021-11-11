@@ -4,16 +4,16 @@ from .inversion import InversionMethod
 
 
 class GCV(InversionMethod):
-    """Generalized Cross-Validation (GCV) criterion inversion method inheriting InversionMethod class.
+    """Generalized Cross-Validation (GCV) criterion inversion method inheriting :py:class:`.InversionMethod` class.
     GCV criterion function represents as follows:
-    ..:math:
+
+    .. math::
+
         GCV(\\lambda) := \\frac{||Ax_\\lambda - b||^2}{\\left[1 - \\sum_{i=1}^N w_i(\\lambda)\\right]^2}
 
     The optimal regularization paramter is estimated at the minimal of GCV.
 
-    Parameters
-    -----------
-    Parameters in this class are identified to base class `InversionMethod`.
+    Parameters in this class are identified to base class :py:class:`.InversionMethod`.
     See base class docstrings.
 
     Attributes
@@ -50,7 +50,7 @@ class GCV(InversionMethod):
         computing gcv function. The optimal regularization parameter corresponds to the minimal
         gcv. This procedure is iterated by up to the itemax times. Every time iterately calculating,
         the range of regularization parameters is narrowed to FWHM around the minimal point.
-        The optimal regularization parameter is stored to self._lambda_opt which can be seen self.lambda_opt property.
+        The optimal regularization parameter is stored to self._lambda_opt which can be seen :py:attr:`.lambda_opt` property.
         And, lambadas and gcvs is updated and stored to properties.
 
         Parameters
@@ -140,7 +140,7 @@ class GCV(InversionMethod):
             matplotlib Axes object, by default None
 
         Returns
-        ------
+        -------
         tuple
             (fig, axes), each of which is matplotlib objects
         """

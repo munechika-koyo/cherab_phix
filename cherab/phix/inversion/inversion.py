@@ -4,17 +4,48 @@ from numpy.linalg import norm
 
 
 class InversionMethod:
-    """Inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices)
-    This provides the users useful tools for regularization computation using SVD components.
+    """Inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).
+    This provides users useful tools for regularization computation using SVD components.
+    The estimated solution :math:`x_\\lambda` is defined by the following linear equation:
+
+    .. math::
+
+        Ax = b,
+
+    Where :math:`A` is a :math:`M \\times N` matrix. Adding the regularization term,
+    the estimated solution :math:`x_\\lambda` is derived from the following equation:
+
+    .. math::
+
+        x_\\lambda :&= \\text{argmin} \\{ ||Ax-b||^2 + \\lambda ||L(x - x_0)||^2 \\} \\
+
+                   &= ( A^\\intercal A + \\lambda L^\\intercal L )^{-1} (A^\\intercal\\ b + \\lambda L^\\intercal Lx_0),
+
+    Where :math:`\\lambda` is the reguralization parameter, :math:`L` is a matrix operator in regularization term (e.g. laplacian)
+    and :math:`x_0` is a prior assumption.
+
     The SVD components are based on the following equation:
 
     .. math::
+
         u * s * vh = AL^{-1}
+
+    Using this components, The :math:`x_\\lambda` can be reconstructed as follows:
+
+    .. math::
+
+        x_\\lambda = \\sum_{i=0}^{K} w_i(\\lambda)\\frac{u_i \\cdot b}{\\sigma_i} L^{-1} v_i, \\quad (K \\equiv \\min(M, N)),
+
+    :math:`w_i` is defined as follows:
+
+    .. math::
+
+        w_i \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
 
     Parameters
     -----------
     s : vector_like
-        singular values in :math:`s`
+        singular values :math:`\\sigma_i` in :math:`s` vectors.
     u : array_like
         SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
     vh : array_like
@@ -54,9 +85,7 @@ class InversionMethod:
     inveted_solution : calculate the inverted solution
     """
 
-    def __init__(
-        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
-    ):
+    def __init__(self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None):
         # set SVD values
         self._s = s
         self._u = u
@@ -115,9 +144,7 @@ class InversionMethod:
     def inversion_base_vectors(self, mat):
         mat = np.asarray(mat)
         if mat.shape[1] != self._s.size:
-            raise ValueError(
-                "the number of columns of Image Base matrix must be same as the one of singular values"
-            )
+            raise ValueError("the number of columns of Image Base matrix must be same as the one of singular values")
         self._inversion_base_vectors = mat
 
     @property
@@ -160,13 +187,13 @@ class InversionMethod:
         """calculate window function using regularization parameter as a valuable
         and using singular values.
 
-        Parameter
-        ---------
+        Parameters
+        -----------
         beta : float, optional
             regularization parameter, by default None
 
-        Return
-        ------
+        Returns
+        --------
         numpy.ndarray (N, )
             window function :math:`\\frac{1}{1 + \\lambda / \\sigma_i^2}`
         """
@@ -174,15 +201,16 @@ class InversionMethod:
         return 1.0 / (1.0 + self._lambda / self._s ** 2.0)
 
     def rho(self, beta=None):
-        """calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.
+        """
+        calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         beta : float, optional
             regularization parameter, by default None
 
-        Return
-        ------
+        Returns
+        --------
         numpy.ndarray (N, )
             squared residual norm
         """
@@ -190,15 +218,16 @@ class InversionMethod:
         return norm((1.0 - self.w()) * self._ub) ** 2.0
 
     def eta(self, beta=None):
-        """calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`
+        """
+        calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         beta : float, optional
             regularization parameter, by default self._lambda
 
-        Return
-        ------
+        Returns
+        -------
         numpy.ndarray (N, )
             squared regularization norm
         """
@@ -208,13 +237,13 @@ class InversionMethod:
     def eta_diff(self, beta=None):
         """calculate differential of `eta` by regularization parameter
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         beta : float, optional
             regularization parameter, by default self._lambda
 
-        Return
-        ------
+        Returns
+        -------
         numpy.ndarray (N, )
             differential of squared regularization norm
         """
@@ -264,7 +293,7 @@ class InversionMethod:
         beta : float, optional
             regularization parameter, by default None
 
-        Return
+        Returns
         -------
         numpy.ndarray
             solution vector

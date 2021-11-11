@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. Plasma module &mdash; cherab-phix Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Inversion module" href="inversion.html" />
+    <link rel="prev" title="1. Machine module" href="machine.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> cherab-phix
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="machine.html">1. Machine module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Plasma module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inversion.html">3. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">4. Tools module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cherab-phix</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li><span class="section-number">2. </span>Plasma module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api_reference/plasma.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="plasma-module">
+<h1><span class="section-number">2. </span>Plasma module<a class="headerlink" href="#plasma-module" title="Permalink to this headline">¶</a></h1>
+<p>This module is defined to handle a couple of plasma quantities duaring the phix discharge.</p>
+<span class="target" id="module-cherab.phix.plasma"></span><dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.plasma.</span></span><span class="sig-name descname"><span class="pre">PHiXSpecies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">equilibrium</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/species.html#PHiXSpecies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing PHiX plasma species</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>equilibrium</strong> (<em>object</em><em>, </em><em>required</em>) – EFIT equilibrium object, default None</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies.electron_distribution">
+<span class="sig-name descname"><span class="pre">electron_distribution</span></span><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies.electron_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>electron distribution function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function3D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies.composition">
+<span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies.composition" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>composition of plasma species, each information of whixh is</dt><dd><p>element,
+charge,
+density_distribution,
+temperature_distribution,
+bulk_velocity_distribution.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies.plot_1d_profile">
+<span class="sig-name descname"><span class="pre">plot_1d_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/species.html#PHiXSpecies.plot_1d_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies.plot_1d_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot r vs electron density or temperature 1D profile</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies.plot_distribution">
+<span class="sig-name descname"><span class="pre">plot_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/species.html#PHiXSpecies.plot_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies.plot_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot species temperature &amp; density profile</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>res</strong> (<em>float</em><em>, </em><em>optional</em>) – Spactial resolution for sampling, by default 0.001</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.plasma.PHiXSpecies.set_species">
+<span class="sig-name descname"><span class="pre">set_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">FloatFunction()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">FloatFunction()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bulk_velocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Vector3DFunction()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/species.html#PHiXSpecies.set_species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.PHiXSpecies.set_species" title="Permalink to this definition">¶</a></dt>
+<dd><p>add species to composition which is assumed to be Maxwellian distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> (<em>str</em><em>, </em><em>required</em>) – element name registored in cherabs elements.pyx, by default None</p></li>
+<li><p><strong>charge</strong> (<em>int</em><em>, </em><em>required</em>) – element’s charge state, by default 0</p></li>
+<li><p><strong>density</strong> (<em>Function3D</em><em>, </em><em>optional</em>) – density distribution, by default Constant3D(1.0e19)</p></li>
+<li><p><strong>temperature</strong> (<em>Function3D</em><em>, </em><em>optional</em>) – temperature distribution, by default Constant3D(1.0e2)</p></li>
+<li><p><strong>bulk_velocity</strong> (<em>VectorFunction3D</em><em>, </em><em>optional</em>) – bulk velocity, by default ConstantVector3D(0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.plasma.</span></span><span class="sig-name descname"><span class="pre">TSCEquilibrium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'phix10'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/equilibrium.html#TSCEquilibrium"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and process Tokamak Simulation Code equilibrium data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>folder</strong> (<em>str</em>) – folder name stored in data folder, default “phix10”</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path address to TSC data folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.header">
+<span class="sig-name descname"><span class="pre">header</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.header" title="Permalink to this definition">¶</a></dt>
+<dd><p>header information of TSC output data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.r_data">
+<span class="sig-name descname"><span class="pre">r_data</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.r_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>TSC grid radius axis values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.z_data">
+<span class="sig-name descname"><span class="pre">z_data</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.z_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>TSC grid height axis values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.psi_data">
+<span class="sig-name descname"><span class="pre">psi_data</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.psi_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>TSC psi grid values <span class="math notranslate nohighlight">\(N_r \times N_z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.j_phi_data">
+<span class="sig-name descname"><span class="pre">j_phi_data</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.j_phi_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>TSC j grid values <span class="math notranslate nohighlight">\(N_r \times N_z\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.mesh_N">
+<span class="sig-name descname"><span class="pre">mesh_N</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.mesh_N" title="Permalink to this definition">¶</a></dt>
+<dd><p>TSC grid size <span class="math notranslate nohighlight">\((N_z, N_r)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.psi_axis">
+<span class="sig-name descname"><span class="pre">psi_axis</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.psi_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The psi value at the magnetic axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.psi_lcfs">
+<span class="sig-name descname"><span class="pre">psi_lcfs</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.psi_lcfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The psi value at the LCFS</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.magnetic_axis">
+<span class="sig-name descname"><span class="pre">magnetic_axis</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.magnetic_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The coordinates of the magnetic axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Point2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.x_point">
+<span class="sig-name descname"><span class="pre">x_point</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.x_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>The coodinates of x-point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Point2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.Ip">
+<span class="sig-name descname"><span class="pre">Ip</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.Ip" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plasma current value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.q0">
+<span class="sig-name descname"><span class="pre">q0</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.q0" title="Permalink to this definition">¶</a></dt>
+<dd><p>The q value at the magnetic axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.lcfs_polygon">
+<span class="sig-name descname"><span class="pre">lcfs_polygon</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.lcfs_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.limiter_polygon">
+<span class="sig-name descname"><span class="pre">limiter_polygon</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.limiter_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.time">
+<span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>The time stamp of the time-slice (in seconds).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.psi">
+<span class="sig-name descname"><span class="pre">psi</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>The poloidal flux in the r-z plane, <span class="math notranslate nohighlight">\(\psi(r,z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.psi_normalised">
+<span class="sig-name descname"><span class="pre">psi_normalised</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.psi_normalised" title="Permalink to this definition">¶</a></dt>
+<dd><p>The normalised poloidal flux in the r-z plane, <span class="math notranslate nohighlight">\(\psi_n(r,z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.g">
+<span class="sig-name descname"><span class="pre">g</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current flux profile function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>The safety factor <span class="math notranslate nohighlight">\(q\)</span> at the specified normalised poloidal flux, <span class="math notranslate nohighlight">\(q(\psi_n)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function1D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.b_field">
+<span class="sig-name descname"><span class="pre">b_field</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.b_field" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>A 2D function that returns the magnetic field vector at the specified</p>
+</div></blockquote>
+<p>point in the r-z plane, <span class="math notranslate nohighlight">\(B(r, z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>VectorFunction2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.toroidal_vector">
+<span class="sig-name descname"><span class="pre">toroidal_vector</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.toroidal_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>The toroidal flux coordinate basis vector, <span class="math notranslate nohighlight">\(\hat{\phi}(r, z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>VectorFunction2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.poloidal_vector">
+<span class="sig-name descname"><span class="pre">poloidal_vector</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.poloidal_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>The poloidal flux coordinate basis vector, <span class="math notranslate nohighlight">\(\hat{ \theta }(r, z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>VectorFunction2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.surface_normal">
+<span class="sig-name descname"><span class="pre">surface_normal</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.surface_normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>The surface normal flux coordinate basis vector, <span class="math notranslate nohighlight">\(\hat{\psi}(r, z)\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>VectorFunction2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.inside_lcfs">
+<span class="sig-name descname"><span class="pre">inside_lcfs</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.inside_lcfs" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>A 2D function that identifies if a given (r, z) coordinate lies inside or outside</p>
+</div></blockquote>
+<p>the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
+lies inside the LCFS. A value of 0.0 is returned outside the LCFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.inside_limiter">
+<span class="sig-name descname"><span class="pre">inside_limiter</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.inside_limiter" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>A 2D function that identifies if a given (r, z) coordinate lies inside or</p>
+</div></blockquote>
+<p>outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
+lies inside the limit polygon. A value of 0.0 is returned outside the polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Function2D</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cherab.phix.plasma.import_plasma">
+<span class="sig-prename descclassname"><span class="pre">cherab.phix.plasma.</span></span><span class="sig-name descname"><span class="pre">import_plasma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'phix10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/plasma/plasma.html#import_plasma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.plasma.import_plasma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function of generating PHiX plasma
+As emissions, H:math:<cite>alpha</cite>, H:math:<cite>beta</cite>, H:math:<cite>gamma</cite>, H:math:<cite>delta</cite> are applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>Node</em>) – Raysect’s scene-graph parent node</p></li>
+<li><p><strong>folder</strong> (<em>str</em>) – folder name in which TSC data is stored</p></li>
+<li><p><strong>species</strong> (<em>object</em><em> , </em><em>optional</em>) – user-defined species object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inversion.html" class="btn btn-neutral float-right" title="3. Inversion module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="machine.html" class="btn btn-neutral float-left" title="1. Machine module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Koyo Munechika
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

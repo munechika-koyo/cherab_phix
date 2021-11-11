@@ -1,0 +1,958 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Inversion module &mdash; cherab-phix Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. Tools module" href="tools.html" />
+    <link rel="prev" title="2. Plasma module" href="plasma.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> cherab-phix
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="machine.html">1. Machine module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plasma.html">2. Plasma module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">4. Tools module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">cherab-phix</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li><span class="section-number">3. </span>Inversion module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api_reference/inversion.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="inversion-module">
+<h1><span class="section-number">3. </span>Inversion module<a class="headerlink" href="#inversion-module" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.inversion.</span></span><span class="sig-name descname"><span class="pre">InversionMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inversion_base_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_inv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).
+This provides users useful tools for regularization computation using SVD components.
+The estimated solution <span class="math notranslate nohighlight">\(x_\lambda\)</span> is defined by the following linear equation:</p>
+<div class="math notranslate nohighlight">
+\[Ax = b,\]</div>
+<p>Where <span class="math notranslate nohighlight">\(A\)</span> is a <span class="math notranslate nohighlight">\(M \times N\)</span> matrix. Adding the regularization term,
+the estimated solution <span class="math notranslate nohighlight">\(x_\lambda\)</span> is derived from the following equation:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}x_\lambda :&amp;= \text{argmin} \{ ||Ax-b||^2 + \lambda ||L(x - x_0)||^2 \} \\\           &amp;= ( A^\intercal A + \lambda L^\intercal L )^{-1} (A^\intercal\ b + \lambda L^\intercal Lx_0),\end{aligned}\end{align} \]</div>
+<p>Where <span class="math notranslate nohighlight">\(\lambda\)</span> is the reguralization parameter, <span class="math notranslate nohighlight">\(L\)</span> is a matrix operator in regularization term (e.g. laplacian)
+and <span class="math notranslate nohighlight">\(x_0\)</span> is a prior assumption.</p>
+<p>The SVD components are based on the following equation:</p>
+<div class="math notranslate nohighlight">
+\[u * s * vh = AL^{-1}\]</div>
+<p>Using this components, The <span class="math notranslate nohighlight">\(x_\lambda\)</span> can be reconstructed as follows:</p>
+<div class="math notranslate nohighlight">
+\[x_\lambda = \sum_{i=0}^{K} w_i(\lambda)\frac{u_i \cdot b}{\sigma_i} L^{-1} v_i, \quad (K \equiv \min(M, N)),\]</div>
+<p><span class="math notranslate nohighlight">\(w_i\)</span> is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[w_i \equiv \frac{1}{1 + \lambda / \sigma_i^2}.\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>vector_like</em>) – singular values <span class="math notranslate nohighlight">\(\sigma_i\)</span> in <span class="math notranslate nohighlight">\(s\)</span> vectors.</p></li>
+<li><p><strong>u</strong> (<em>array_like</em>) – SVD left singular vectors forms as one matrix like <span class="math notranslate nohighlight">\(u = (u_1, u_2, ...)\)</span></p></li>
+<li><p><strong>vh</strong> (<em>array_like</em>) – SVD right singular vectors forms as one matrix like <span class="math notranslate nohighlight">\(vh = (v_1, v_2, ...)^T\)</span></p></li>
+<li><p><strong>inversion_base_vectors</strong> (<em>array-like</em>) – The components of inversions base represented as <cite>L_inv &#64; vh.T</cite>.
+If this valuable is None, it is automatically computed when computing the inverted solution.</p></li>
+<li><p><strong>L_inv</strong> (<em>array-like</em>) – inversion matrix in the regularization term. <cite>L_inv</cite> == <span class="math notranslate nohighlight">\(L^{-1}\)</span> in <span class="math notranslate nohighlight">\(||L(x - x_0)||^2\)</span></p></li>
+<li><p><strong>data</strong> (<em>vector_like</em>) – given data for inversion calculation</p></li>
+<li><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default 1.0e-2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.L_inv">
+<span class="sig-name descname"><span class="pre">L_inv</span></span><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.L_inv" title="Permalink to this definition">¶</a></dt>
+<dd><p>inversion matrix in the regularization term. <cite>L_inv</cite> == <span class="math notranslate nohighlight">\(L^{-1}\)</span> in <span class="math notranslate nohighlight">\(||L(x - x_0)||^2\)</span>
+by, default <cite>np.identity(self._vh.shape[1])</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>given data for inversion calculation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>vector_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.inversion_base_vectors">
+<span class="sig-name descname"><span class="pre">inversion_base_vectors</span></span><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.inversion_base_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>The components of inversions base represented as <cite>L_inv &#64; vh.T</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>regularization parameter, by default 1.0e-2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.lambdas">
+<span class="sig-name descname"><span class="pre">lambdas</span></span><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.lambdas" title="Permalink to this definition">¶</a></dt>
+<dd><p>regularization paramters list, by default <cite>10 ** np.linspace(-5, 5, 100)</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>1D array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">w</span> <span class="pre">:</span> <span class="pre">window</span> <span class="pre">function</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">rho</span> <span class="pre">:</span> <span class="pre">squared</span> <span class="pre">residual</span> <span class="pre">norm</span> <span class="pre">:math:`||Ax_\lambda</span> <span class="pre">-</span> <span class="pre">b||^2`</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">eta</span> <span class="pre">:</span> <span class="pre">squared</span> <span class="pre">regularization</span> <span class="pre">norm</span> <span class="pre">:math:`||Lx_\lambda||^2`</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">eta_dif</span> <span class="pre">:</span> <span class="pre">the</span> <span class="pre">differencial</span> <span class="pre">of</span> <span class="pre">eta</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.residual_norm">
+<span class="sig-name descname"><span class="pre">residual_norm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.residual_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.residual_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.regularization_norm">
+<span class="sig-name descname"><span class="pre">regularization_norm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.regularization_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.regularization_norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">inveted_solution</span> <span class="pre">:</span> <span class="pre">calculate</span> <span class="pre">the</span> <span class="pre">inverted</span> <span class="pre">solution</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.eta">
+<span class="sig-name descname"><span class="pre">eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.eta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared regularization norm <span class="math notranslate nohighlight">\(\eta = ||L(x - x_0)||^2\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.eta_diff">
+<span class="sig-name descname"><span class="pre">eta_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.eta_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.eta_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate differential of <cite>eta</cite> by regularization parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>differential of squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.inverted_solution">
+<span class="sig-name descname"><span class="pre">inverted_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.inverted_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.inverted_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the inverted solution using given regularization parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>solution vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">regularization_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.regularization_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\eta} = ||L (x - x_0)||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">residual_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.residual_norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\rho} = ||Ax - b||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.rho"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared residual norm <span class="math notranslate nohighlight">\(\rho = ||Ax - b||^2\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.InversionMethod.w">
+<span class="sig-name descname"><span class="pre">w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/inversion.html#InversionMethod.w"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.InversionMethod.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate window function using regularization parameter as a valuable
+and using singular values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>window function <span class="math notranslate nohighlight">\(\frac{1}{1 + \lambda / \sigma_i^2}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.inversion.</span></span><span class="sig-name descname"><span class="pre">Lcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inversion_base_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_inv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.Lcurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>L curve criterion inversion method inheriting InversionMethod class.
+L curve is the trajectory of the point <span class="math notranslate nohighlight">\((\log||Ax-b||, \log||L(x-x_0)||)\)</span>, those of which
+mean Residual norm and Regularization norm, respectively.
+The “corner” of this curve is assosiated with optimized point of regularization parameter.
+This theory is mentioned by P.C.Hansen.</p>
+<p>Parameters in this class are identified to base class <a class="reference internal" href="#cherab.phix.inversion.InversionMethod" title="cherab.phix.inversion.InversionMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">InversionMethod</span></code></a>.
+See base class docstrings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.optimal">
+<span class="sig-name descname"><span class="pre">optimal</span></span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>searching the optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.lambda_opt">
+<span class="sig-name descname"><span class="pre">lambda_opt</span></span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.lambda_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.optimized_solution">
+<span class="sig-name descname"><span class="pre">optimized_solution</span></span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.optimized_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.Lcurve.optimized_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>returning inverted solution at the optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.plot_L_curv">
+<span class="sig-name descname"><span class="pre">plot_L_curv</span></span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.plot_L_curv" title="Permalink to this definition">¶</a></dt>
+<dd><p>plotting L curve in loglog-scale.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.plot_curvature">
+<span class="sig-name descname"><span class="pre">plot_curvature</span></span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.plot_curvature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.Lcurve.plot_curvature" title="Permalink to this definition">¶</a></dt>
+<dd><p>plotting carvature of L curve</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.eta">
+<span class="sig-name descname"><span class="pre">eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared regularization norm <span class="math notranslate nohighlight">\(\eta = ||L(x - x_0)||^2\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.eta_diff">
+<span class="sig-name descname"><span class="pre">eta_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.eta_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate differential of <cite>eta</cite> by regularization parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>differential of squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.inverted_solution">
+<span class="sig-name descname"><span class="pre">inverted_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.inverted_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the inverted solution using given regularization parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>solution vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.optimize">
+<span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itemax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.optimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.Lcurve.optimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>excute the optimization of L-curve regularization
+In particular, this method is used to search the optimal regularization parameter
+computing curvature. The optimal regularization parameter corresponds to the maximum
+curvature. This procedure is iterated by up to the itemax times. Every time iterately calculating,
+the range of regularization parameters is narrowed to FWHM around the maximum point.
+The optimal regularization parameter is stored to self._lambda_opt which can be seen <a class="reference internal" href="#cherab.phix.inversion.Lcurve.lambda_opt" title="cherab.phix.inversion.Lcurve.lambda_opt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">lambda_opt</span></code></a> property.
+And, lambadas and curvatures is updated and stored to properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>itemax</strong> (<em>int</em><em>, </em><em>optional</em>) – iteration times, by default 5</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">optimized_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itemax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.optimized_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculation inverted solution using L-curve criterion optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>itemax</strong> (<em>int</em><em>, </em><em>optional</em>) – iteration times of optimization method, by default 5</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimised inverted solution vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.plot_L_curve">
+<span class="sig-name descname"><span class="pre">plot_L_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter_annotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.plot_L_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.Lcurve.plot_L_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>plotting the L curve in log-log scale
+The range of regularization parameters uses self.lambdas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>figure object</em><em>, </em><em>optional</em>) – matplotlib figure object, by default None.</p></li>
+<li><p><strong>axes</strong> (<em>Axes object</em><em>, </em><em>optional</em>) – matplotlib Axes object, by default None.</p></li>
+<li><p><strong>scatter_plot</strong> (<em>str</em><em> or </em><em>int</em><em>, </em><em>optional</em>) – whether or not to plot some L curve points,
+by default “off”. if yes and you want to manually define the number of points,
+put in the numbers. For example, scatter_plot=10.</p></li>
+<li><p><strong>scatter_annotate</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether or not to annotate the scatter_points, by default True.
+This key argument is valid if only <cite>scatter_plot</cite> is not “off”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(fig, axes), each of which is matplotlib objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">plot_curvature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/L_curve.html#Lcurve.plot_curvature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plotting L-curve curvature vs regularization parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>figure object</em><em>, </em><em>optional</em>) – matplotlib figure object, by default None</p></li>
+<li><p><strong>axes</strong> (<em>Axes object</em><em>, </em><em>optional</em>) – matplotlib Axes object, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(fig, axes), each of which is matplotlib objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.regularization_norm">
+<span class="sig-name descname"><span class="pre">regularization_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.regularization_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\eta} = ||L (x - x_0)||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.residual_norm">
+<span class="sig-name descname"><span class="pre">residual_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.residual_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\rho} = ||Ax - b||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared residual norm <span class="math notranslate nohighlight">\(\rho = ||Ax - b||^2\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.Lcurve.w">
+<span class="sig-name descname"><span class="pre">w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.Lcurve.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate window function using regularization parameter as a valuable
+and using singular values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>window function <span class="math notranslate nohighlight">\(\frac{1}{1 + \lambda / \sigma_i^2}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.inversion.</span></span><span class="sig-name descname"><span class="pre">GCV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inversion_base_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L_inv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.GCV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalized Cross-Validation (GCV) criterion inversion method inheriting <a class="reference internal" href="#cherab.phix.inversion.InversionMethod" title="cherab.phix.inversion.InversionMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">InversionMethod</span></code></a> class.
+GCV criterion function represents as follows:</p>
+<div class="math notranslate nohighlight">
+\[GCV(\lambda) := \frac{||Ax_\lambda - b||^2}{\left[1 - \sum_{i=1}^N w_i(\lambda)\right]^2}\]</div>
+<p>The optimal regularization paramter is estimated at the minimal of GCV.</p>
+<p>Parameters in this class are identified to base class <a class="reference internal" href="#cherab.phix.inversion.InversionMethod" title="cherab.phix.inversion.InversionMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">InversionMethod</span></code></a>.
+See base class docstrings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.optimal">
+<span class="sig-name descname"><span class="pre">optimal</span></span><a class="headerlink" href="#cherab.phix.inversion.GCV.optimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>searching optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.lambda_opt">
+<span class="sig-name descname"><span class="pre">lambda_opt</span></span><a class="headerlink" href="#cherab.phix.inversion.GCV.lambda_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.optimized_solution">
+<span class="sig-name descname"><span class="pre">optimized_solution</span></span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.optimized_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.GCV.optimized_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>returning inverted solultion at the optimal lambda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.plot_gcv">
+<span class="sig-name descname"><span class="pre">plot_gcv</span></span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.plot_gcv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.GCV.plot_gcv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.eta">
+<span class="sig-name descname"><span class="pre">eta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared regularization norm <span class="math notranslate nohighlight">\(\eta = ||L(x - x_0)||^2\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.eta_diff">
+<span class="sig-name descname"><span class="pre">eta_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.eta_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate differential of <cite>eta</cite> by regularization parameter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>differential of squared regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.gcv">
+<span class="sig-name descname"><span class="pre">gcv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.gcv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.GCV.gcv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computation of GCV criterion function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the value of GCV function at given regularization parameter</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.inverted_solution">
+<span class="sig-name descname"><span class="pre">inverted_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.inverted_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the inverted solution using given regularization parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>solution vector</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.optimize">
+<span class="sig-name descname"><span class="pre">optimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itemax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.optimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.inversion.GCV.optimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>excute the optimization of gcv regularization
+In particular, this method is used to search the optimal regularization parameter
+computing gcv function. The optimal regularization parameter corresponds to the minimal
+gcv. This procedure is iterated by up to the itemax times. Every time iterately calculating,
+the range of regularization parameters is narrowed to FWHM around the minimal point.
+The optimal regularization parameter is stored to self._lambda_opt which can be seen <a class="reference internal" href="#cherab.phix.inversion.GCV.lambda_opt" title="cherab.phix.inversion.GCV.lambda_opt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">lambda_opt</span></code></a> property.
+And, lambadas and gcvs is updated and stored to properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>itemax</strong> (<em>int</em><em>, </em><em>optional</em>) – iteration times, by default 3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">optimized_solution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.optimized_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculation inverted solution using GCV criterion optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>optimised inverted solution vector</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.ndarry</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">plot_gcv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/inversion/gcv.html#GCV.plot_gcv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plotting GCV vs regularization parameters in log-log scale</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>figure object</em><em>, </em><em>optional</em>) – matplotlib figure object, by default None</p></li>
+<li><p><strong>axes</strong> (<em>Axes object</em><em>, </em><em>optional</em>) – matplotlib Axes object, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(fig, axes), each of which is matplotlib objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.regularization_norm">
+<span class="sig-name descname"><span class="pre">regularization_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.regularization_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\eta} = ||L (x - x_0)||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>regularization norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.residual_norm">
+<span class="sig-name descname"><span class="pre">residual_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.residual_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the residual norm <span class="math notranslate nohighlight">\(\sqrt{\rho} = ||Ax - b||\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – reguralization parameter, by default self._lambda</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.rho" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate squared residual norm <span class="math notranslate nohighlight">\(\rho = ||Ax - b||^2\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>squared residual norm</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.inversion.GCV.w">
+<span class="sig-name descname"><span class="pre">w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.inversion.GCV.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate window function using regularization parameter as a valuable
+and using singular values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – regularization parameter, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>window function <span class="math notranslate nohighlight">\(\frac{1}{1 + \lambda / \sigma_i^2}\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.ndarray (N, )</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tools.html" class="btn btn-neutral float-right" title="4. Tools module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plasma.html" class="btn btn-neutral float-left" title="2. Plasma module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Koyo Munechika
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

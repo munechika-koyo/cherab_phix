@@ -10,9 +10,7 @@ class Lcurve(InversionMethod):
     The "corner" of this curve is assosiated with optimized point of regularization parameter.
     This theory is mentioned by P.C.Hansen.
 
-    Parameters
-    -----------
-    Parameters in this class are identified to base class `InversionMethod`.
+    Parameters in this class are identified to base class :py:class:`.InversionMethod`.
     See base class docstrings.
 
     Attributes
@@ -53,7 +51,7 @@ class Lcurve(InversionMethod):
         computing curvature. The optimal regularization parameter corresponds to the maximum
         curvature. This procedure is iterated by up to the itemax times. Every time iterately calculating,
         the range of regularization parameters is narrowed to FWHM around the maximum point.
-        The optimal regularization parameter is stored to self._lambda_opt which can be seen self.lambda_opt property.
+        The optimal regularization parameter is stored to self._lambda_opt which can be seen :py:attr:`.lambda_opt` property.
         And, lambadas and curvatures is updated and stored to properties.
 
         Parameters
@@ -247,7 +245,7 @@ class Lcurve(InversionMethod):
 def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
     """calculate curvature for L-curve method
     L-curve method is used to solve the ill-posed inversion equation.
-    L-curve is the trajectory of the point :math:`(log||Ax - b||, log||L(x - x_0)||)`
+    L-curve is the trajectory of the point :math:`(\\log||Ax - b||, \\log||L(x - x_0)||)`
     varying the generalization parameter `beta`.
     This function returns the value of curvature at one point corresponding to one beta.
 
@@ -258,7 +256,7 @@ def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
     eta : float, required
         `eta` is the squared norm of generalization term :math:`\\eta = ||L(x - x_0)||^2`
     eta_dif : float, required
-        `eta_dif` is the differencial of `eta`
+        `eta_dif` is the differencial of `eta` :math:`\\frac{d \\eta}{d \\lambda}`
     beta : float, optional
         generalization parameter, by default 1.0e-2
     """
