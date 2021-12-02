@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="3. Inversion module" href="inversion.html" />
+    <link rel="next" title="3. Observer module" href="observer.html" />
     <link rel="prev" title="1. Machine module" href="machine.html" /> 
 </head>
 
@@ -91,8 +91,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="machine.html">1. Machine module</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Plasma module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inversion.html">3. Inversion module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">4. Tools module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observer.html">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">5. Tools module</a></li>
 </ul>
 
             
@@ -390,12 +391,22 @@ bulk_velocity_distribution.</p>
 <dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.lcfs_polygon">
 <span class="sig-name descname"><span class="pre">lcfs_polygon</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.lcfs_polygon" title="Permalink to this definition">¶</a></dt>
 <dd><p>A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.limiter_polygon">
 <span class="sig-name descname"><span class="pre">limiter_polygon</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.limiter_polygon" title="Permalink to this definition">¶</a></dt>
 <dd><p>A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -456,10 +467,8 @@ bulk_velocity_distribution.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.b_field">
 <span class="sig-name descname"><span class="pre">b_field</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.b_field" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>A 2D function that returns the magnetic field vector at the specified</p>
-</div></blockquote>
-<p>point in the r-z plane, <span class="math notranslate nohighlight">\(B(r, z)\)</span>.</p>
+<dd><p>A 2D function that returns the magnetic field vector at the specified
+point in the r-z plane, <span class="math notranslate nohighlight">\(B(r, z)\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>VectorFunction2D</p>
@@ -503,10 +512,8 @@ bulk_velocity_distribution.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.inside_lcfs">
 <span class="sig-name descname"><span class="pre">inside_lcfs</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.inside_lcfs" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>A 2D function that identifies if a given (r, z) coordinate lies inside or outside</p>
-</div></blockquote>
-<p>the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
+<dd><p>A 2D function that identifies if a given (r, z) coordinate lies inside or outside
+the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
 lies inside the LCFS. A value of 0.0 is returned outside the LCFS.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -518,10 +525,8 @@ lies inside the LCFS. A value of 0.0 is returned outside the LCFS.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="cherab.phix.plasma.TSCEquilibrium.inside_limiter">
 <span class="sig-name descname"><span class="pre">inside_limiter</span></span><a class="headerlink" href="#cherab.phix.plasma.TSCEquilibrium.inside_limiter" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>A 2D function that identifies if a given (r, z) coordinate lies inside or</p>
-</div></blockquote>
-<p>outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
+<dd><p>A 2D function that identifies if a given (r, z) coordinate lies inside or
+outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
 lies inside the limit polygon. A value of 0.0 is returned outside the polygon.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -558,7 +563,7 @@ As emissions, H:math:<cite>alpha</cite>, H:math:<cite>beta</cite>, H:math:<cite>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="inversion.html" class="btn btn-neutral float-right" title="3. Inversion module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="observer.html" class="btn btn-neutral float-right" title="3. Observer module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="machine.html" class="btn btn-neutral float-left" title="1. Machine module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

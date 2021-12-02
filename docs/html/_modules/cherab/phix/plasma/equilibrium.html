@@ -87,8 +87,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/machine.html">1. Machine module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/plasma.html">2. Plasma module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">3. Inversion module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">4. Tools module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/observer.html">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">5. Tools module</a></li>
 </ul>
 
             
@@ -200,37 +201,37 @@
 <span class="sd">        The plasma current value</span>
 <span class="sd">    q0 : float</span>
 <span class="sd">        The q value at the magnetic axis.</span>
-<span class="sd">    lcfs_polygon</span>
+<span class="sd">    lcfs_polygon : array</span>
 <span class="sd">        A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.</span>
-<span class="sd">    limiter_polygon</span>
+<span class="sd">    limiter_polygon : array</span>
 <span class="sd">        A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.</span>
 <span class="sd">    time : float</span>
 <span class="sd">        The time stamp of the time-slice (in seconds).</span>
-<span class="sd">    psi: Function2D</span>
+<span class="sd">    psi : Function2D</span>
 <span class="sd">        The poloidal flux in the r-z plane, :math:`\\psi(r,z)`.</span>
-<span class="sd">    psi_normalised: Function2D</span>
+<span class="sd">    psi_normalised : Function2D</span>
 <span class="sd">        The normalised poloidal flux in the r-z plane, :math:`\\psi_n(r,z)`.</span>
 <span class="sd">    g : Function2D</span>
 <span class="sd">        The current flux profile function.</span>
-<span class="sd">    q: Function1D</span>
+<span class="sd">    q : Function1D</span>
 <span class="sd">        The safety factor :math:`q` at the specified normalised poloidal flux, :math:`q(\\psi_n)`.</span>
-<span class="sd">    b_field: VectorFunction2D</span>
+<span class="sd">    b_field : VectorFunction2D</span>
 <span class="sd">        A 2D function that returns the magnetic field vector at the specified</span>
-<span class="sd">      point in the r-z plane, :math:`B(r, z)`.</span>
-<span class="sd">    toroidal_vector: VectorFunction2D</span>
+<span class="sd">        point in the r-z plane, :math:`B(r, z)`.</span>
+<span class="sd">    toroidal_vector : VectorFunction2D</span>
 <span class="sd">        The toroidal flux coordinate basis vector, :math:`\\hat{\\phi}(r, z)`.</span>
-<span class="sd">    poloidal_vector: VectorFunction2D</span>
+<span class="sd">    poloidal_vector : VectorFunction2D</span>
 <span class="sd">        The poloidal flux coordinate basis vector, :math:`\\hat{ \\theta }(r, z)`.</span>
-<span class="sd">    surface_normal: VectorFunction2D</span>
+<span class="sd">    surface_normal : VectorFunction2D</span>
 <span class="sd">        The surface normal flux coordinate basis vector, :math:`\\hat{\\psi}(r, z)`.</span>
-<span class="sd">    inside_lcfs: Function2D</span>
+<span class="sd">    inside_lcfs : Function2D</span>
 <span class="sd">        A 2D function that identifies if a given (r, z) coordinate lies inside or outside</span>
-<span class="sd">      the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point</span>
-<span class="sd">      lies inside the LCFS. A value of 0.0 is returned outside the LCFS.</span>
-<span class="sd">    inside_limiter: Function2D</span>
+<span class="sd">        the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point</span>
+<span class="sd">        lies inside the LCFS. A value of 0.0 is returned outside the LCFS.</span>
+<span class="sd">    inside_limiter : Function2D</span>
 <span class="sd">        A 2D function that identifies if a given (r, z) coordinate lies inside or</span>
-<span class="sd">      outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point</span>
-<span class="sd">      lies inside the limit polygon. A value of 0.0 is returned outside the polygon.</span>
+<span class="sd">        outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point</span>
+<span class="sd">        lies inside the limit polygon. A value of 0.0 is returned outside the polygon.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;phix10&quot;</span><span class="p">):</span>
@@ -379,7 +380,6 @@
 
 <span class="k">class</span> <span class="nc">PoloidalFieldVector</span><span class="p">(</span><span class="n">VectorFunction2D</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;2D poloidal flux coordinate basis vector</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
@@ -398,7 +398,6 @@
 
 <span class="k">class</span> <span class="nc">FluxSurfaceNormal</span><span class="p">(</span><span class="n">VectorFunction2D</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;2D surface normal flux coordinate basis vector</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>

@@ -87,8 +87,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/machine.html">1. Machine module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/plasma.html">2. Plasma module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">3. Inversion module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">4. Tools module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/observer.html">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">5. Tools module</a></li>
 </ul>
 
             
@@ -154,49 +155,81 @@
   <h1>Source code for cherab.phix.inversion.L_curve</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">.inversion</span> <span class="kn">import</span> <span class="n">InversionMethod</span>
+<span class="kn">from</span> <span class="nn">.inversion</span> <span class="kn">import</span> <span class="n">SVDInversionBase</span>
 
 
-<div class="viewcode-block" id="Lcurve"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.Lcurve">[docs]</a><span class="k">class</span> <span class="nc">Lcurve</span><span class="p">(</span><span class="n">InversionMethod</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;L curve criterion inversion method inheriting InversionMethod class.</span>
+<div class="viewcode-block" id="Lcurve"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.Lcurve">[docs]</a><span class="k">class</span> <span class="nc">Lcurve</span><span class="p">(</span><span class="n">SVDInversionBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;L curve criterion inversion method inheriting SVDInversionBase class.</span>
 <span class="sd">    L curve is the trajectory of the point :math:`(\\log||Ax-b||, \\log||L(x-x_0)||)`, those of which</span>
 <span class="sd">    mean Residual norm and Regularization norm, respectively.</span>
 <span class="sd">    The &quot;corner&quot; of this curve is assosiated with optimized point of regularization parameter.</span>
 <span class="sd">    This theory is mentioned by P.C.Hansen.</span>
 
-<span class="sd">    Parameters in this class are identified to base class :py:class:`.InversionMethod`.</span>
-<span class="sd">    See base class docstrings.</span>
-
-<span class="sd">    Attributes</span>
+<span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    optimal : function</span>
-<span class="sd">        searching the optimal lambda</span>
-<span class="sd">    lambda_opt : float</span>
-<span class="sd">        optimal lambda</span>
-<span class="sd">    optimized_solution : function</span>
-<span class="sd">        returning inverted solution at the optimal lambda</span>
-<span class="sd">    plot_L_curv</span>
-<span class="sd">        plotting L curve in loglog-scale.</span>
-<span class="sd">    plot_curvature</span>
-<span class="sd">        plotting carvature of L curve</span>
+<span class="sd">    s : vector_like</span>
+<span class="sd">        singular values :math:`\\sigma_i` in :math:`s` vectors.</span>
+<span class="sd">    u : array_like</span>
+<span class="sd">        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`</span>
+<span class="sd">    vh : array_like</span>
+<span class="sd">        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`</span>
+<span class="sd">    data : vector_like</span>
+<span class="sd">        given data for inversion calculation</span>
+<span class="sd">    lambdas : vector-like, optional</span>
+<span class="sd">        list of regularization parameters to search for optimal one, by default</span>
+<span class="sd">        `10 ** np.linspace(-5, 5, 100)`</span>
+<span class="sd">    **kwargs : :py:class:`.SVDInversionBase` properties, optional</span>
+<span class="sd">        *kwargs* are used to specify properties like a inversion_base_vectors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inversion_base_vectors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">L_inv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
         <span class="c1"># initialize originaly valuables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_opt</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curvatures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span> <span class="o">=</span> <span class="n">lambdas</span> <span class="ow">or</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 
         <span class="c1"># inheritation</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">vh</span><span class="o">=</span><span class="n">vh</span><span class="p">,</span> <span class="n">inversion_base_vectors</span><span class="o">=</span><span class="n">inversion_base_vectors</span><span class="p">,</span> <span class="n">L_inv</span><span class="o">=</span><span class="n">L_inv</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span>
-        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lambdas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        list of regularization parameters used for the optimization process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span>
+
+    <span class="nd">@lambdas</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lambdas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;lambdas must be the 1D-array of regularization parameters&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray_chkfinite</span><span class="p">(</span><span class="n">array</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lambda_opt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        optimal regularization parameter which is decided after the optimization iteration</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_opt</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">curvatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        list of carvature values.</span>
+<span class="sd">        This is stored after the optimazation iteration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curvatures</span>
 
 <div class="viewcode-block" id="Lcurve.optimize"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.Lcurve.optimize">[docs]</a>    <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itemax</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>

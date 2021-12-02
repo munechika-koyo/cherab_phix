@@ -6,7 +6,7 @@
 Welcome to cherab-phix's documentation!
 =======================================
 
-This packege is developed to extend cherab's fetures for PHiX: a small tokamak device in
+This packege is developed to extend cherab's fetures for PHiX - a small tokamak device in
 Tokyo Institute of Technology.
 
 
@@ -18,7 +18,7 @@ Tokyo Institute of Technology.
 
    api_reference/machine
    api_reference/plasma
-   api_reference/observe
+   api_reference/observer
    api_reference/inversion
    api_reference/tools
 

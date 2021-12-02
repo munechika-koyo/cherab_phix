@@ -9,7 +9,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Observer module &mdash; cherab-phix Documentation</title>
+  <title>3. Observer module &mdash; cherab-phix Documentation</title>
   
 
   
@@ -26,6 +26,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -36,7 +37,9 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. Inversion module" href="inversion.html" />
+    <link rel="prev" title="2. Plasma module" href="plasma.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -85,11 +88,12 @@
             
             
               <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="machine.html">1. Machine module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasma.html">2. Plasma module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inversion.html">3. Inversion module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">4. Tools module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">5. Tools module</a></li>
 </ul>
 
             
@@ -135,7 +139,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Observer module</li>
+      <li><span class="section-number">3. </span>Observer module</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -155,7 +159,194 @@
            <div itemprop="articleBody">
             
   <section id="observer-module">
-<h1>Observer module<a class="headerlink" href="#observer-module" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3. </span>Observer module<a class="headerlink" href="#observer-module" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">cherab.phix.observer.</span></span><span class="sig-name descname"><span class="pre">ThinLensCCDArray</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">raysect.optical.observer.base.observer.Observer2D</span></code></p>
+<p>An ideal CCD-like imaging sensor that preferentially targets a thin lens circle.</p>
+<p>The targetted CCD is a regular array of square pixels. Each pixel samples red, green
+and blue channels (behaves like a Foveon imaging sensor). The CCD sensor
+width is specified with the width parameter. The CCD height is calculated
+from the width and the number of vertical and horizontal pixels. The
+default width and sensor ratio approximates a 35mm camera sensor.</p>
+<p>Each pixel will target the randomly sampled point inside the circle which is modeled as a thin lens.
+The lens radius is caluclated by the f-number and focal length.
+The number of samples is pixel_samples multipled by lens_samples, so total number of sampling rays
+is taken as a pixel_samples in Observer2D object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pixels</strong> (<em>tuple</em>) – A tuple of pixel dimensions for the camera (default=(512, 512)).</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – The CCD sensor x-width in metres (default=35mm).</p></li>
+<li><p><strong>focal_length</strong> (<em>float</em>) – The focal length in metres (default=10mm).</p></li>
+<li><p><strong>working_distance</strong> (<em>float</em>) – The working distance from lens to focus plane in metres (default=50.0cm).</p></li>
+<li><p><strong>f_number</strong> (<em>float</em>) – f-number (default=3.5).</p></li>
+<li><p><strong>lens_samples</strong> (<em>int</em>) – Number of samples to generate on the thin Lens (default=100).</p></li>
+<li><p><strong>per_pixel_samples</strong> (<em>int</em>) – Number of samples to generate per pixel (default=10).
+which is different from pixel_samples in Object2D object. When you use ThinLensCCDArray,
+pixel_samples = per_pixel_samples x lens_samples (default=100 x 10).</p></li>
+<li><p><strong>pipelines</strong> (<em>list</em>) – The list of pipelines that will process the spectrum measured
+at each pixel by the camera (default=RGBPipeline2D).</p></li>
+<li><p><strong>**kwargs</strong> (<em>Observer2D and _ObserverBase. properties</em><em>, </em><em>optional</em>) – <em>kwargs</em> are used to specify properties like a parent, transform, pipelines, etc.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray._generate_rays">
+<span class="sig-name descname"><span class="pre">_generate_rays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray._generate_rays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of Rays that sample over the sensitivity of the pixel.
+This method must return a list of tuples, with each tuple containing a Ray object and
+a corresponding weighting, typically the projected area/direction cosine.
+In this class, the weight will be:</p>
+<div class="math notranslate nohighlight">
+\[wight := \frac{R^2\cos^4\theta}{2d^2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the lens radius, <span class="math notranslate nohighlight">\(\theta\)</span> is the angle between a ray vector and
+the normal vector to image sensor, and <span class="math notranslate nohighlight">\(d\)</span> is the distance between the image sensor and the lens.
+<span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(d\)</span> are calculated as folows:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}R &amp;= \frac{f}{F}\\d &amp;= \left(\frac{1}{f} - \frac{1}{W}\right)^{-1}.\end{aligned}\end{align} \]</div>
+<p>Where <span class="math notranslate nohighlight">\(f\)</span> is the focal lemgth, <span class="math notranslate nohighlight">\(F\)</span> is the f-number, and <span class="math notranslate nohighlight">\(W\)</span> is the working distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – Pixel x index.</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – Pixel y index.</p></li>
+<li><p><strong>template</strong> (<em>Ray</em>) – The template ray from which all rays should be generated.</p></li>
+<li><p><strong>ray_count</strong> (<em>int</em>) – The number of rays to be generated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return list</dt>
+<dd class="field-even"><p>A list of tuples of (ray, weight)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.f_number">
+<span class="sig-name descname"><span class="pre">f_number</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.f_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>f-number which defines the lens radius with focal length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.focal_length">
+<span class="sig-name descname"><span class="pre">focal_length</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.focal_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Focal length in metres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.lens_radias">
+<span class="sig-name descname"><span class="pre">lens_radias</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.lens_radias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lens Radius in metres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.lens_samples">
+<span class="sig-name descname"><span class="pre">lens_samples</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.lens_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of samples on lens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.per_pixel_samples">
+<span class="sig-name descname"><span class="pre">per_pixel_samples</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.per_pixel_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of samples to take per pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.pixel_area">
+<span class="sig-name descname"><span class="pre">pixel_area</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.pixel_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>One pixel area in the CCD sensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.pixels">
+<span class="sig-name descname"><span class="pre">pixels</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.pixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuple describing the pixel dimensions for this observer (nx, ny), i.e. (512, 512).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>The CCD sensor x-width in metres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cherab.phix.observer.ThinLensCCDArray.working_distance">
+<span class="sig-name descname"><span class="pre">working_distance</span></span><a class="headerlink" href="#cherab.phix.observer.ThinLensCCDArray.working_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>distance between the lens plane and focusing plane in metres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cherab.phix.observer.import_phix_camera">
+<span class="sig-prename descclassname"><span class="pre">cherab.phix.observer.</span></span><span class="sig-name descname"><span class="pre">import_phix_camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation_matrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cherab/phix/observer/fast_camera/camera.html#import_phix_camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cherab.phix.observer.import_phix_camera" title="Permalink to this definition">¶</a></dt>
+<dd><p>importing phix lens camera configured by defalut camera parameters
+Default camera’s extrinsics is loaded from
+“../cherab/phix/observer/fast_camera/calibration_data/shot_17393.ccc”.
+This file is created by calcam package (See: <a class="reference external" href="https://github.com/euratom-software/calcam">https://github.com/euratom-software/calcam</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>Node</em>) – Raysect’s scene-graph parent node</p></li>
+<li><p><strong>rotation_matrx</strong> (<em>2D array-like</em><em>, </em><em>optional</em>) – camera’s rotation matrix, by default calcam cam_to_lab_rotation()</p></li>
+<li><p><strong>camera_pos</strong> (<em>1D array-like</em><em>, </em><em>optional</em>) – camera’s pupil position (in unit [m]), by defalut calcam pupilpos()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>instance of ThinLensCCDArray object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cherab.phix.observer.ThinLensCCDArray" title="cherab.phix.observer.ThinLensCCDArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinLensCCDArray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -163,6 +354,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inversion.html" class="btn btn-neutral float-right" title="4. Inversion module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plasma.html" class="btn btn-neutral float-left" title="2. Plasma module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

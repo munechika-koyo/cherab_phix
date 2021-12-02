@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cherab.phix.observer.fast_camera.camera &mdash; cherab-phix Documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> cherab-phix
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/machine.html">1. Machine module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/plasma.html">2. Plasma module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/observer.html">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/tools.html">5. Tools module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">cherab-phix</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>cherab.phix.observer.fast_camera.camera</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cherab.phix.observer.fast_camera.camera</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">raysect.optical</span> <span class="kn">import</span> <span class="n">translate</span><span class="p">,</span> <span class="n">AffineMatrix3D</span>
+<span class="kn">from</span> <span class="nn">cherab.phix.observer</span> <span class="kn">import</span> <span class="n">ThinLensCCDArray</span>
+<span class="kn">from</span> <span class="nn">calcam</span> <span class="kn">import</span> <span class="n">Calibration</span>
+
+
+<span class="c1"># -------------- Load Default calcam calibration data -----------------</span>
+<span class="n">CALCAM</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;calibration_data&quot;</span><span class="p">,</span> <span class="s2">&quot;shot_17393_ideal.ccc&quot;</span><span class="p">)</span>
+<span class="n">cam</span> <span class="o">=</span> <span class="n">Calibration</span><span class="p">(</span><span class="n">CALCAM</span><span class="p">)</span>
+<span class="n">ROT_MAT</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">get_cam_to_lab_rotation</span><span class="p">()</span>
+<span class="n">CAM_POS</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">get_pupilpos</span><span class="p">(</span><span class="n">coords</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">)</span>
+<span class="c1"># -------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="import_phix_camera"><a class="viewcode-back" href="../../../../../api_reference/observer.html#cherab.phix.observer.import_phix_camera">[docs]</a><span class="k">def</span> <span class="nf">import_phix_camera</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">rotation_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">camera_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;importing phix lens camera configured by defalut camera parameters</span>
+<span class="sd">    Default camera&#39;s extrinsics is loaded from</span>
+<span class="sd">    &quot;../cherab/phix/observer/fast_camera/calibration_data/shot_17393.ccc&quot;.</span>
+<span class="sd">    This file is created by calcam package (See: https://github.com/euratom-software/calcam)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    parent : Node</span>
+<span class="sd">        Raysect&#39;s scene-graph parent node</span>
+<span class="sd">    rotation_matrx : 2D array-like, optional</span>
+<span class="sd">        camera&#39;s rotation matrix, by default calcam cam_to_lab_rotation()</span>
+<span class="sd">    camera_pos : 1D array-like, optional</span>
+<span class="sd">        camera&#39;s pupil position (in unit [m]), by defalut calcam pupilpos()</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:class:`.ThinLensCCDArray`</span>
+<span class="sd">        instance of ThinLensCCDArray object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;importing PHiX camera...&quot;</span><span class="p">)</span>
+    <span class="c1"># initialise parameters</span>
+    <span class="k">if</span> <span class="n">rotation_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rotation_matrix</span> <span class="o">=</span> <span class="n">ROT_MAT</span>
+    <span class="k">if</span> <span class="n">camera_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">camera_pos</span> <span class="o">=</span> <span class="n">CAM_POS</span>
+
+    <span class="n">orientation</span> <span class="o">=</span> <span class="n">rotation_matrix</span>
+    <span class="n">camera_trans</span> <span class="o">=</span> <span class="n">translate</span><span class="p">(</span><span class="o">*</span><span class="n">camera_pos</span><span class="p">)</span>
+    <span class="n">camera_rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">block</span><span class="p">([[</span><span class="n">orientation</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])]])</span>
+    <span class="n">camera_rot</span> <span class="o">=</span> <span class="n">AffineMatrix3D</span><span class="p">(</span><span class="n">camera_rot</span><span class="p">)</span>
+    <span class="c1"># generate ThinLensCCDArray object</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="n">ThinLensCCDArray</span><span class="p">(</span>
+        <span class="n">pixels</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>
+        <span class="n">width</span><span class="o">=</span><span class="mf">25.6e-3</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">/</span> <span class="mi">1280</span><span class="p">,</span>
+        <span class="n">focal_length</span><span class="o">=</span><span class="mf">10.0e-3</span><span class="p">,</span>
+        <span class="n">working_distance</span><span class="o">=</span><span class="mf">50.0e-2</span><span class="p">,</span>
+        <span class="n">f_number</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">22</span> <span class="o">-</span> <span class="mf">3.5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">+</span> <span class="mf">3.5</span><span class="p">,</span>
+        <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
+        <span class="n">pipelines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">camera_trans</span> <span class="o">*</span> <span class="n">camera_rot</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;PHiX fast-visible camera&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">camera</span></div>
+
+
+<span class="c1"># obstacle</span>
+<span class="c1"># class LensCamera(TargettedCCDArray):</span>
+<span class="c1">#     &quot;&quot;&quot;Lens Camera using thin lens model inherited TargettedCCDArray</span>
+<span class="c1">#     This class uses a BiConvex lens and put it on the origin in local axis.</span>
+<span class="c1">#     The sensor is located behind the Lens on the z-axis. The distance from lens</span>
+<span class="c1">#     is calculated by Lens equation using the focal length and Working distance.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     pixels : tuple, optional</span>
+<span class="c1">#         A tuple of pixel dimensions for the camera, by default (256, 256)</span>
+<span class="c1">#     width : float, optional</span>
+<span class="c1">#         The CCD sensor x-width in metres, by default 35mm</span>
+<span class="c1">#     focal_length : float, optional</span>
+<span class="c1">#         focal length in metres, by default 10mm</span>
+<span class="c1">#     working_distance : float, optional</span>
+<span class="c1">#         working distance from lens to focus plane in metres, by default 50.0cm</span>
+<span class="c1">#     F_value : float, optional</span>
+<span class="c1">#         F value, by default 3.5</span>
+<span class="c1">#     pipelines : pipelines, optional</span>
+<span class="c1">#         The list of pipelines that will process the spectrum measured</span>
+<span class="c1">#         at each pixel by the camera, by default RGBPipeline2D()</span>
+<span class="c1">#     kwargs :</span>
+<span class="c1">#         **kwargs and properties from Observer2D and _ObserverBase.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     def __init__(</span>
+<span class="c1">#         self,</span>
+<span class="c1">#         pixels=(256, 256),</span>
+<span class="c1">#         width=0.035,</span>
+<span class="c1">#         focal_length=10e-3,</span>
+<span class="c1">#         working_distance=50.0e-2,</span>
+<span class="c1">#         F_value=3.5,</span>
+<span class="c1">#         parent=None,</span>
+<span class="c1">#         transform=None,</span>
+<span class="c1">#         name=None,</span>
+<span class="c1">#         pipelines=None,</span>
+<span class="c1">#     ):</span>
+<span class="c1">#         # camera base Node</span>
+<span class="c1">#         camera = Node(parent=parent, transform=transform)</span>
+
+<span class="c1">#         # initial values to prevent undefined behaviour</span>
+<span class="c1">#         self._focal_length = focal_length</span>
+<span class="c1">#         self._F_value = F_value</span>
+<span class="c1">#         self._working_distance = working_distance</span>
+
+<span class="c1">#         # Lens (material: N-BK7)</span>
+<span class="c1">#         material = schott(&quot;N-BK7&quot;)</span>
+<span class="c1">#         material.transmission_only = True</span>
+<span class="c1">#         diamiter = self._focal_length / self._F_value</span>
+<span class="c1">#         # calculate curvature by using thin lens model</span>
+<span class="c1">#         curvature = 2 * (material.index.sample(375, 780, 10).mean() - 1) * self._focal_length</span>
+<span class="c1">#         center_thickness = 2 * (curvature - np.sqrt(curvature ** 2 - (diamiter / 2) ** 2))</span>
+<span class="c1">#         # lens = PlanoConvex(</span>
+<span class="c1">#         lens = BiConvex(</span>
+<span class="c1">#             diamiter,</span>
+<span class="c1">#             center_thickness,</span>
+<span class="c1">#             curvature,  # The radius of curvature of the spherical front surface.</span>
+<span class="c1">#             curvature,  # The radius of curvature of the spherical front surface.</span>
+<span class="c1">#             parent=camera,</span>
+<span class="c1">#             transform=translate(0, 0, -center_thickness / 2),</span>
+<span class="c1">#             material=material,</span>
+<span class="c1">#         )</span>
+<span class="c1">#         # aperture</span>
+<span class="c1">#         # aperture_radius = 0.5 * self._focal_length / self._F_value</span>
+<span class="c1">#         # aperture_thin = 0.0009</span>
+<span class="c1">#         # aperture = Cylinder(</span>
+<span class="c1">#         #     aperture_radius,</span>
+<span class="c1">#         #     aperture_thin,</span>
+<span class="c1">#         #     parent=camera,</span>
+<span class="c1">#         #     transform=None,</span>
+<span class="c1">#         #     material=NullMaterial(),</span>
+<span class="c1">#         #     name=&quot;aperture&quot;,</span>
+<span class="c1">#         # )</span>
+<span class="c1">#         # lens equation</span>
+<span class="c1">#         lens_to_image = 1 / ((1 / self._focal_length) - (1 / self._working_distance))</span>
+<span class="c1">#         super().__init__(</span>
+<span class="c1">#             [lens],</span>
+<span class="c1">#             pixels=pixels,</span>
+<span class="c1">#             width=width,</span>
+<span class="c1">#             parent=camera,</span>
+<span class="c1">#             targetted_path_prob=1.0,</span>
+<span class="c1">#             transform=translate(0, 0, -1 * lens_to_image) * rotate_z(180),</span>
+<span class="c1">#             name=name,</span>
+<span class="c1">#             pipelines=pipelines,</span>
+<span class="c1">#         )</span>
+
+<span class="c1">#         # # save setting parameters</span>
+<span class="c1">#         # self.focal_length = focal_length</span>
+<span class="c1">#         # self.F_value = F_value</span>
+<span class="c1">#         # self.working_distance = working_distance</span>
+
+<span class="c1">#     @property</span>
+<span class="c1">#     def focal_length(self):</span>
+<span class="c1">#         return self._focal_length</span>
+
+<span class="c1">#     @focal_length.setter</span>
+<span class="c1">#     def focal_length(self, value):</span>
+<span class="c1">#         focal_lenth = value</span>
+<span class="c1">#         if focal_lenth &lt;= 0:</span>
+<span class="c1">#             raise ValueError(&quot;Focal length must be greater than 0.&quot;)</span>
+<span class="c1">#         self._focal_length = focal_lenth</span>
+
+<span class="c1">#     @property</span>
+<span class="c1">#     def F_value(self):</span>
+<span class="c1">#         return self._F_value</span>
+
+<span class="c1">#     @F_value.setter</span>
+<span class="c1">#     def F_value(self, value):</span>
+<span class="c1">#         F_value = value</span>
+<span class="c1">#         if F_value &lt;= 0:</span>
+<span class="c1">#             raise ValueError(&quot;F value must be greater than 0.&quot;)</span>
+<span class="c1">#         self._F_value = F_value</span>
+
+<span class="c1">#     @property</span>
+<span class="c1">#     def working_distance(self):</span>
+<span class="c1">#         return self._working_distance</span>
+
+<span class="c1">#     @working_distance.setter</span>
+<span class="c1">#     def working_distance(self, value):</span>
+<span class="c1">#         working_distance = value</span>
+<span class="c1">#         if working_distance &lt;= 0:</span>
+<span class="c1">#             raise ValueError(&quot;Working distance must be greater than 0.&quot;)</span>
+<span class="c1">#         self._working_distance = working_distance</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Koyo Munechika
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

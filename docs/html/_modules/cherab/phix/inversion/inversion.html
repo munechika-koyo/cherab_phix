@@ -87,8 +87,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/machine.html">1. Machine module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/plasma.html">2. Plasma module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">3. Inversion module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">4. Tools module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/observer.html">3. Observer module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/inversion.html">4. Inversion module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/tools.html">5. Tools module</a></li>
 </ul>
 
             
@@ -157,8 +158,8 @@
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 
 
-<div class="viewcode-block" id="InversionMethod"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod">[docs]</a><span class="k">class</span> <span class="nc">InversionMethod</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).</span>
+<div class="viewcode-block" id="SVDInversionBase"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase">[docs]</a><span class="k">class</span> <span class="nc">SVDInversionBase</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Base class for inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).</span>
 <span class="sd">    This provides users useful tools for regularization computation using SVD components.</span>
 <span class="sd">    The estimated solution :math:`x_\\lambda` is defined by the following linear equation:</span>
 
@@ -204,42 +205,19 @@
 <span class="sd">        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`</span>
 <span class="sd">    vh : array_like</span>
 <span class="sd">        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`</span>
-<span class="sd">    inversion_base_vectors : array-like</span>
-<span class="sd">        The components of inversions base represented as `L_inv @ vh.T`.</span>
-<span class="sd">        If this valuable is None, it is automatically computed when computing the inverted solution.</span>
-<span class="sd">    L_inv : array-like</span>
-<span class="sd">        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`</span>
 <span class="sd">    data : vector_like</span>
 <span class="sd">        given data for inversion calculation</span>
+<span class="sd">    inversion_base_vectors : array-like, optional</span>
+<span class="sd">        The components of inversions base represented as `L_inv @ vh.T`.</span>
+<span class="sd">        This property is offered to speed up the calculation of inversions.</span>
+<span class="sd">        If None, it is automatically computed when calculating the inverted solution.</span>
+<span class="sd">    L_inv : array-like, optional</span>
+<span class="sd">        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`</span>
 <span class="sd">    beta : float, optional</span>
 <span class="sd">        regularization parameter, by default 1.0e-2</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    L_inv : array-like</span>
-<span class="sd">        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`</span>
-<span class="sd">        by, default `np.identity(self._vh.shape[1])`</span>
-<span class="sd">    data : vector_like</span>
-<span class="sd">        given data for inversion calculation</span>
-<span class="sd">    inversion_base_vectors : array-like</span>
-<span class="sd">        The components of inversions base represented as `L_inv @ vh.T`.</span>
-<span class="sd">    beta : float</span>
-<span class="sd">        regularization parameter, by default 1.0e-2</span>
-<span class="sd">    lambdas : 1D array-like</span>
-<span class="sd">        regularization paramters list, by default `10 ** np.linspace(-5, 5, 100)`</span>
-
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
-<span class="sd">    w : window function</span>
-<span class="sd">    rho : squared residual norm :math:`||Ax_\\lambda - b||^2`</span>
-<span class="sd">    eta : squared regularization norm :math:`||Lx_\\lambda||^2`</span>
-<span class="sd">    eta_dif : the differencial of eta</span>
-<span class="sd">    residual_norm</span>
-<span class="sd">    regularization_norm</span>
-<span class="sd">    inveted_solution : calculate the inverted solution</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inversion_base_vectors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">L_inv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">vh</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">inversion_base_vectors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">L_inv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0e-2</span><span class="p">):</span>
         <span class="c1"># set SVD values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_u</span> <span class="o">=</span> <span class="n">u</span>
@@ -258,28 +236,55 @@
         <span class="c1"># initial data values and dot(u, b)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ub</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
 
         <span class="c1"># set SVD regularization parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span> <span class="ow">or</span> <span class="mf">1.0e-2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        singular values :math:`\\sigma_i` in :math:`s` vectors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vector-like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">u</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array-like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_u</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array-like</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vh</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">L_inv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,</span>
+<span class="sd">        by default `np.identity(self._vh.shape[1])`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_L_inv</span>
 
     <span class="nd">@L_inv</span><span class="o">.</span><span class="n">setter</span>
@@ -292,22 +297,38 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">inversion_base_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The components of inversions base represented as `L_inv @ vh.T`.</span>
+<span class="sd">        This property is offered to speed up the calculation of inversions.</span>
+<span class="sd">        If None, it is automatically computed when calculating the inverted solution.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array-like or None if not set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inversion_base_vectors</span>
 
     <span class="nd">@inversion_base_vectors</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">inversion_base_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="p">):</span>
-        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray_chkfinite</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the number of columns of Image Base matrix must be same as the one of singular values&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inversion_base_vectors</span> <span class="o">=</span> <span class="n">mat</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        given data for inversion calculation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray (N, )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
     <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray_chkfinite</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;data size must be the same as the number of rows of U matrix&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
@@ -315,6 +336,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">beta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        regularization parameter</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span>
 
     <span class="nd">@beta</span><span class="o">.</span><span class="n">setter</span>
@@ -323,21 +351,11 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;regularization parameter beta must be one float number.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lambdas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span>
-
-    <span class="nd">@lambdas</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">lambdas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;lambdas must be the 1D-array of regularization parameters&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray_chkfinite</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
-
     <span class="c1"># -------------------------------------------------------------------------</span>
     <span class="c1"># Define methods calculating some norms, window function, etc...</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="InversionMethod.w"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.w">[docs]</a>    <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.w"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.w">[docs]</a>    <span class="k">def</span> <span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;calculate window function using regularization parameter as a valuable</span>
 <span class="sd">        and using singular values.</span>
 
@@ -354,7 +372,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">=</span> <span class="n">beta</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="InversionMethod.rho"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.rho"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.rho">[docs]</a>    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.</span>
 
@@ -371,7 +389,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">=</span> <span class="n">beta</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span>
         <span class="k">return</span> <span class="n">norm</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">())</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ub</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span></div>
 
-<div class="viewcode-block" id="InversionMethod.eta"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.eta">[docs]</a>    <span class="k">def</span> <span class="nf">eta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.eta"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.eta">[docs]</a>    <span class="k">def</span> <span class="nf">eta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`</span>
 
@@ -388,7 +406,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span> <span class="o">=</span> <span class="n">beta</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span>
         <span class="k">return</span> <span class="n">norm</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ub</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span></div>
 
-<div class="viewcode-block" id="InversionMethod.eta_diff"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.eta_diff">[docs]</a>    <span class="k">def</span> <span class="nf">eta_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.eta_diff"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.eta_diff">[docs]</a>    <span class="k">def</span> <span class="nf">eta_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;calculate differential of `eta` by regularization parameter</span>
 
 <span class="sd">        Parameters</span>
@@ -405,7 +423,7 @@
         <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span><span class="p">)</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ub</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span></div>
 
-<div class="viewcode-block" id="InversionMethod.residual_norm"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.residual_norm">[docs]</a>    <span class="k">def</span> <span class="nf">residual_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.residual_norm"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.residual_norm">[docs]</a>    <span class="k">def</span> <span class="nf">residual_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the residual norm :math:`\\sqrt{\\rho} = ||Ax - b||`</span>
 
 <span class="sd">        Parameters</span>
@@ -420,7 +438,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="InversionMethod.regularization_norm"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.regularization_norm">[docs]</a>    <span class="k">def</span> <span class="nf">regularization_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.regularization_norm"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.regularization_norm">[docs]</a>    <span class="k">def</span> <span class="nf">regularization_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the residual norm :math:`\\sqrt{\\eta} = ||L (x - x_0)||`</span>
 
 <span class="sd">        Parameters</span>
@@ -439,7 +457,7 @@
     <span class="c1"># calculating the solution using tikhonov - phillips regularization using SVD</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="InversionMethod.inverted_solution"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.InversionMethod.inverted_solution">[docs]</a>    <span class="k">def</span> <span class="nf">inverted_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SVDInversionBase.inverted_solution"><a class="viewcode-back" href="../../../../api_reference/inversion.html#cherab.phix.inversion.SVDInversionBase.inverted_solution">[docs]</a>    <span class="k">def</span> <span class="nf">inverted_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;calculate the inverted solution using given regularization parameter.</span>
 
 <span class="sd">        Parameters</span>

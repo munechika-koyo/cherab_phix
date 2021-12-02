@@ -1,16 +1,15 @@
 Inversion module
 ================
 
-.. autoclass:: cherab.phix.inversion.InversionMethod
+.. autoclass:: cherab.phix.inversion.SVDInversionBase
     :members:
 
 .. autoclass:: cherab.phix.inversion.Lcurve
     :members:
-    :inherited-members:
+    :show-inheritance:
 
 .. autofunction:: cherab.phix.inversion.curvature
-    :members:
 
 .. autoclass:: cherab.phix.inversion.GCV
     :members:
-    :inherited-members:
+    :show-inheritance:
