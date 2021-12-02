@@ -46,37 +46,37 @@ class TSCEquilibrium(EFITEquilibrium):
         The plasma current value
     q0 : float
         The q value at the magnetic axis.
-    lcfs_polygon
+    lcfs_polygon : array
         A 2xN array of [[x0, …], [y0, …]] vertices specifying the LCFS boundary.
-    limiter_polygon
+    limiter_polygon : array
         A 2xN array of [[x0, …], [y0, …]] vertices specifying the limiter.
     time : float
         The time stamp of the time-slice (in seconds).
-    psi: Function2D
+    psi : Function2D
         The poloidal flux in the r-z plane, :math:`\\psi(r,z)`.
-    psi_normalised: Function2D
+    psi_normalised : Function2D
         The normalised poloidal flux in the r-z plane, :math:`\\psi_n(r,z)`.
     g : Function2D
         The current flux profile function.
-    q: Function1D
+    q : Function1D
         The safety factor :math:`q` at the specified normalised poloidal flux, :math:`q(\\psi_n)`.
-    b_field: VectorFunction2D
+    b_field : VectorFunction2D
         A 2D function that returns the magnetic field vector at the specified
-      point in the r-z plane, :math:`B(r, z)`.
-    toroidal_vector: VectorFunction2D
+        point in the r-z plane, :math:`B(r, z)`.
+    toroidal_vector : VectorFunction2D
         The toroidal flux coordinate basis vector, :math:`\\hat{\\phi}(r, z)`.
-    poloidal_vector: VectorFunction2D
+    poloidal_vector : VectorFunction2D
         The poloidal flux coordinate basis vector, :math:`\\hat{ \\theta }(r, z)`.
-    surface_normal: VectorFunction2D
+    surface_normal : VectorFunction2D
         The surface normal flux coordinate basis vector, :math:`\\hat{\\psi}(r, z)`.
-    inside_lcfs: Function2D
+    inside_lcfs : Function2D
         A 2D function that identifies if a given (r, z) coordinate lies inside or outside
-      the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
-      lies inside the LCFS. A value of 0.0 is returned outside the LCFS.
-    inside_limiter: Function2D
+        the plasma Last Closed Flux Surface (LCFS). This mask function returns a value of 1 if the requested point
+        lies inside the LCFS. A value of 0.0 is returned outside the LCFS.
+    inside_limiter : Function2D
         A 2D function that identifies if a given (r, z) coordinate lies inside or
-      outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
-      lies inside the limit polygon. A value of 0.0 is returned outside the polygon.
+        outside the first wall limiter polygon. This mask function returns a value of 1 if the requested point
+        lies inside the limit polygon. A value of 0.0 is returned outside the polygon.
     """
 
     def __init__(self, folder="phix10"):
@@ -225,7 +225,6 @@ class MagneticField(VectorFunction2D):
 
 class PoloidalFieldVector(VectorFunction2D):
     """2D poloidal flux coordinate basis vector
-
     """
 
     def __init__(self, field):
@@ -244,7 +243,6 @@ class PoloidalFieldVector(VectorFunction2D):
 
 class FluxSurfaceNormal(VectorFunction2D):
     """2D surface normal flux coordinate basis vector
-
     """
 
     def __init__(self, field):
