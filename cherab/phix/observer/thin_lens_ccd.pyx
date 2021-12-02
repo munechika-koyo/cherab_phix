@@ -39,8 +39,6 @@ from raysect.optical.observer.base cimport Observer2D
 cimport cython
 
 
-
-
 cdef class ThinLensCCDArray(Observer2D):
     """
     An ideal CCD-like imaging sensor that preferentially targets a thin lens circle.
@@ -51,36 +49,46 @@ cdef class ThinLensCCDArray(Observer2D):
     from the width and the number of vertical and horizontal pixels. The
     default width and sensor ratio approximates a 35mm camera sensor.
 
-    Each pixel will target the randomly sampled point inside the circle which is modeld as thin lens.
-    Lens radius is caluclated by F value and focal length parameters.
+    Each pixel will target the randomly sampled point inside the circle which is modeled as a thin lens.
+    The lens radius is caluclated by the f-number and focal length.
     The number of samples is pixel_samples multipled by lens_samples, so total number of sampling rays
     is taken as a pixel_samples in Observer2D object.
 
-
-    :param tuple pixels: A tuple of pixel dimensions for the camera (default=(512, 512)).
-    :param float width: The CCD sensor x-width in metres (default=35mm).
-    :param float focal_length: The focal length in metres (default=10mm).
-    :param float working_distance: The working distance from lens to focus plane in metres (default=50.0cm).
-    :param float F_value: F value (default=3.5).
-    :param int lens_samples: Number of samples to generate on thin Lens (default=100).
-    :param int per_pixel_samples: Number of samples to generate per pixel (default=10).
-      which is different from pixel_samples in Object2D object. When you use ThinLensCCDArray,
-      pixel_samples = per_pixel_samples $$\\times$$ lens_samples (default=100 x 10).
-    :param list pipelines: The list of pipelines that will process the spectrum measured
-      at each pixel by the camera (default=RGBPipeline2D()).
-    :param kwargs: **kwargs and properties from Observer2D and _ObserverBase.
+    Parameters
+    ----------
+    pixels : tuple
+        A tuple of pixel dimensions for the camera (default=(512, 512)).
+    width : float
+        The CCD sensor x-width in metres (default=35mm).
+    focal_length : float
+        The focal length in metres (default=10mm).
+    working_distance : float
+        The working distance from lens to focus plane in metres (default=50.0cm).
+    f_number : float
+        f-number (default=3.5).
+    lens_samples : int
+        Number of samples to generate on the thin Lens (default=100).
+    per_pixel_samples : int
+        Number of samples to generate per pixel (default=10).
+        which is different from pixel_samples in Object2D object. When you use ThinLensCCDArray,
+        pixel_samples = per_pixel_samples x lens_samples (default=100 x 10).
+    pipelines : list
+        The list of pipelines that will process the spectrum measured
+        at each pixel by the camera (default=RGBPipeline2D).
+    **kwargs : Observer2D and _ObserverBase. properties, optional
+        *kwargs* are used to specify properties like a parent, transform, pipelines, etc.
     """
 
     cdef:
         int _lens_samples, _per_pixel_samples
         double _width, _pixel_area, _image_delta, _image_start_x, _image_start_y
-        double _focal_length, _working_distance, _F_value, _lens_radius, _lens_area
+        double _focal_length, _working_distance, _f_number, _lens_radius, _lens_area
         double _image_distance
         RectangleSampler3D _pixel_sampler
         DiskSampler3D _lens_sampler
 
     def __init__(self, pixels=(720, 480), width=0.035, focal_length=10.e-3,
-                 working_distance=50.e-2, F_value=3.5, lens_samples=100, per_pixel_samples=10,
+                 working_distance=50.e-2, f_number=3.5, lens_samples=100, per_pixel_samples=10,
                  parent=None, transform=None, name=None, pipelines=None):
 
         # initial values to prevent undefined behaviour when setting via self.width
@@ -88,7 +96,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._pixels = (720, 480)
         self._focal_length = focal_length
         self._working_distance = working_distance
-        self._F_value = F_value
+        self._f_number = f_number
         self._lens_samples = lens_samples
         self._per_pixel_samples = per_pixel_samples
 
@@ -105,6 +113,11 @@ cdef class ThinLensCCDArray(Observer2D):
 
     @property
     def pixels(self):
+        """
+        Tuple describing the pixel dimensions for this observer (nx, ny), i.e. (512, 512).
+
+        :rtype: tuple
+        """
         return self._pixels
 
     @pixels.setter
@@ -141,12 +154,17 @@ cdef class ThinLensCCDArray(Observer2D):
         """
         One pixel area in the CCD sensor
 
-        rtype: float
+        :rtype: float
         """
         return self._pixel_area
 
     @property
     def focal_length(self):
+        """
+        Focal length in metres.
+
+        :rtype: float
+        """
         return self._focal_length
 
     @focal_length.setter
@@ -158,19 +176,29 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_lens_geometry()
 
     @property
-    def F_value(self):
-        return self._F_value
+    def f_number(self):
+        """
+        f-number which defines the lens radius with focal length.
 
-    @F_value.setter
-    def F_value(self, value):
-        F_value = value
-        if F_value <= 0:
+        :rtype: float
+        """
+        return self._f_number
+
+    @f_number.setter
+    def f_number(self, value):
+        f_number = value
+        if f_number <= 0:
             raise ValueError("F value must be greater than 0.")
-        self._F_value = F_value
+        self._f_number = f_number
         self._update_lens_geometry()
 
     @property
     def working_distance(self):
+        """
+        distance between the lens plane and focusing plane in metres.
+
+        :rtype: float
+        """
         return self._working_distance
 
     @working_distance.setter
@@ -184,9 +212,9 @@ cdef class ThinLensCCDArray(Observer2D):
     @property
     def lens_radias(self):
         """
-        Lens Radius [m]
+        Lens Radius in metres.
 
-        rtype: float
+        :rtype: float
         """
         return self._lens_radius
 
@@ -234,7 +262,7 @@ cdef class ThinLensCCDArray(Observer2D):
 
     cdef object _update_lens_geometry(self):
 
-        self._lens_radius = 0.5 * self._focal_length / self._F_value
+        self._lens_radius = 0.5 * self._focal_length / self._f_number
         self._image_distance = 1 / (1 / self._focal_length - 1 / self._working_distance)
         self._lens_sampler = DiskSampler3D(self._lens_radius)
         self._lens_area = M_PI * self._lens_radius**2
@@ -248,7 +276,33 @@ cdef class ThinLensCCDArray(Observer2D):
     @cython.wraparound(False)
     @cython.cdivision(True)
     cpdef list _generate_rays(self, int ix, int iy, Ray template, int ray_samples):
+        """
+        Generate a list of Rays that sample over the sensitivity of the pixel.
+        This method must return a list of tuples, with each tuple containing a Ray object and
+        a corresponding weighting, typically the projected area/direction cosine.
+        In this class, the weight will be:
 
+        .. math::
+            wight := \\frac{R^2\\cos^4\\theta}{2d^2},
+
+        where :math:`R` is the lens radius, :math:`\\theta` is the angle between a ray vector and
+        the normal vector to image sensor, and :math:`d` is the distance between the image sensor and the lens.
+        :math:`R` and :math:`d` are calculated as folows:
+
+        .. math::
+
+                R &= \\frac{f}{F}
+
+                d &= \left(\\frac{1}{f} - \\frac{1}{W}\\right)^{-1}.
+
+        Where :math:`f` is the focal lemgth, :math:`F` is the f-number, and :math:`W` is the working distance.
+
+        :param int x: Pixel x index.
+        :param int y: Pixel y index.
+        :param Ray template: The template ray from which all rays should be generated.
+        :param int ray_count: The number of rays to be generated.
+        :return list: A list of tuples of (ray, weight)
+        """
         cdef:
             double pixel_x, pixel_y
             list pixel_origins, lens_origins, rays

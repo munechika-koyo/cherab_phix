@@ -6,10 +6,10 @@ from calcam import Calibration
 
 
 # -------------- Load Default calcam calibration data -----------------
-CALCAM = os.path.join(os.path.dirname(__file__), "calibration_data", "shot_17393.ccc")
+CALCAM = os.path.join(os.path.dirname(__file__), "calibration_data", "shot_17393_ideal.ccc")
 cam = Calibration(CALCAM)
 ROT_MAT = cam.get_cam_to_lab_rotation()
-CAM_POS = cam.get_pupilpos()
+CAM_POS = cam.get_pupilpos(coords="Original")
 # -------------------------------------------------------------------
 
 
@@ -30,8 +30,8 @@ def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
 
     Returns
     --------
-    object
-        cherab.phix's ThinLensCCDArray object
+    :py:class:`.ThinLensCCDArray`
+        instance of ThinLensCCDArray object
     """
     print("importing PHiX camera...")
     # initialise parameters
@@ -48,9 +48,9 @@ def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
     camera = ThinLensCCDArray(
         pixels=(256, 512),
         width=25.6e-3 * 256 / 1280,
-        focal_length=1.0e-2,
+        focal_length=10.0e-3,
         working_distance=50.0e-2,
-        F_value=0 * (22 - 3.5) / 10 + 3.5,
+        f_number=0 * (22 - 3.5) / 10 + 3.5,
         parent=parent,
         pipelines=None,
         transform=camera_trans * camera_rot,
