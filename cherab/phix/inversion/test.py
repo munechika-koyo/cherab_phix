@@ -36,8 +36,8 @@ if __name__ == "__main__":
     b = b_0 + b_noise
 
     # ------------- inversion process ----------------
-    # inv = Lcurve(sigma, u, vh, data=b)
-    inv = GCV(sigma, u, vh, data=b)
+    # inv = Lcurve(sigma, u, vh, b)
+    inv = GCV(sigma, u, vh, b)
     inv.lambdas = 10 ** np.linspace(-20, 2, 100)
     # inv.lambdas = 10 ** np.linspace(-1, 2, 100)
     inv.optimize(4)

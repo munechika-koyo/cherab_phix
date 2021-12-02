@@ -3,8 +3,8 @@ import numpy as np
 from numpy.linalg import norm
 
 
-class InversionMethod:
-    """Inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).
+class SVDInversionBase:
+    """Base class for inversion calculation based on singular value decomposition (eco algorithum i.e. not full-matrices).
     This provides users useful tools for regularization computation using SVD components.
     The estimated solution :math:`x_\\lambda` is defined by the following linear equation:
 
@@ -50,42 +50,19 @@ class InversionMethod:
         SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
     vh : array_like
         SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
-    inversion_base_vectors : array-like
-        The components of inversions base represented as `L_inv @ vh.T`.
-        If this valuable is None, it is automatically computed when computing the inverted solution.
-    L_inv : array-like
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
     data : vector_like
         given data for inversion calculation
+    inversion_base_vectors : array-like, optional
+        The components of inversions base represented as `L_inv @ vh.T`.
+        This property is offered to speed up the calculation of inversions.
+        If None, it is automatically computed when calculating the inverted solution.
+    L_inv : array-like, optional
+        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
     beta : float, optional
         regularization parameter, by default 1.0e-2
-
-    Attributes
-    ----------
-    L_inv : array-like
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
-        by, default `np.identity(self._vh.shape[1])`
-    data : vector_like
-        given data for inversion calculation
-    inversion_base_vectors : array-like
-        The components of inversions base represented as `L_inv @ vh.T`.
-    beta : float
-        regularization parameter, by default 1.0e-2
-    lambdas : 1D array-like
-        regularization paramters list, by default `10 ** np.linspace(-5, 5, 100)`
-
-    Methods
-    -------
-    w : window function
-    rho : squared residual norm :math:`||Ax_\\lambda - b||^2`
-    eta : squared regularization norm :math:`||Lx_\\lambda||^2`
-    eta_dif : the differencial of eta
-    residual_norm
-    regularization_norm
-    inveted_solution : calculate the inverted solution
     """
 
-    def __init__(self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None):
+    def __init__(self, s, u, vh, data, inversion_base_vectors=None, L_inv=None, beta=1.0e-2):
         # set SVD values
         self._s = s
         self._u = u
@@ -104,28 +81,55 @@ class InversionMethod:
         # initial data values and dot(u, b)
         self._data = None
         self._ub = None
-        if data is not None:
-            self.data = data
+        self.data = data
 
         # set SVD regularization parameters
         self._lambda = None
-        self.beta = beta or 1.0e-2
-        self._lambdas = 10 ** np.linspace(-5, 5, 100)
+        self.beta = beta
 
     @property
     def s(self):
+        """
+        singular values :math:`\\sigma_i` in :math:`s` vectors.
+
+        Returns
+        -------
+        vector-like
+        """
         return self._s
 
     @property
     def u(self):
+        """
+        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
+
+        Returns
+        -------
+        array-like
+        """
         return self._u
 
     @property
     def vh(self):
+        """
+        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
+
+        Returns
+        -------
+        array-like
+        """
         return self._vh
 
     @property
     def L_inv(self):
+        """
+        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
+        by default `np.identity(self._vh.shape[1])`
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         return self._L_inv
 
     @L_inv.setter
@@ -138,22 +142,38 @@ class InversionMethod:
 
     @property
     def inversion_base_vectors(self):
+        """
+        The components of inversions base represented as `L_inv @ vh.T`.
+        This property is offered to speed up the calculation of inversions.
+        If None, it is automatically computed when calculating the inverted solution.
+
+        Returns
+        -------
+        array-like or None if not set
+        """
         return self._inversion_base_vectors
 
     @inversion_base_vectors.setter
     def inversion_base_vectors(self, mat):
-        mat = np.asarray(mat)
+        mat = np.asarray_chkfinite(mat)
         if mat.shape[1] != self._s.size:
             raise ValueError("the number of columns of Image Base matrix must be same as the one of singular values")
         self._inversion_base_vectors = mat
 
     @property
     def data(self):
+        """
+        given data for inversion calculation
+
+        Returns
+        -------
+        numpy.ndarray (N, )
+        """
         return self._data
 
     @data.setter
     def data(self, value):
-        data = np.array(value, dtype=np.float).ravel()
+        data = np.asarray_chkfinite(value, dtype=np.float).ravel()
         if data.size != self._u.shape[0]:
             raise ValueError("data size must be the same as the number of rows of U matrix")
         self._data = data
@@ -161,6 +181,13 @@ class InversionMethod:
 
     @property
     def beta(self):
+        """
+        regularization parameter
+
+        Returns
+        -------
+        float
+        """
         return self._lambda
 
     @beta.setter
@@ -168,16 +195,6 @@ class InversionMethod:
         if not isinstance(value, float):
             raise ValueError("regularization parameter beta must be one float number.")
         self._lambda = value
-
-    @property
-    def lambdas(self):
-        return self._lambdas
-
-    @lambdas.setter
-    def lambdas(self, array):
-        if not isinstance(array, np.ndarray) and not isinstance(array, list):
-            raise ValueError("lambdas must be the 1D-array of regularization parameters")
-        self._lambdas = np.asarray_chkfinite(array)
 
     # -------------------------------------------------------------------------
     # Define methods calculating some norms, window function, etc...

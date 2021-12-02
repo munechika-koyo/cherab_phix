@@ -1,10 +1,10 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from .inversion import InversionMethod
+from .inversion import SVDInversionBase
 
 
-class GCV(InversionMethod):
-    """Generalized Cross-Validation (GCV) criterion inversion method inheriting :py:class:`.InversionMethod` class.
+class GCV(SVDInversionBase):
+    """Generalized Cross-Validation (GCV) criterion inversion method inheriting :py:class:`.SVDInversionBase` class.
     GCV criterion function represents as follows:
 
     .. math::
@@ -13,35 +13,70 @@ class GCV(InversionMethod):
 
     The optimal regularization paramter is estimated at the minimal of GCV.
 
-    Parameters in this class are identified to base class :py:class:`.InversionMethod`.
-    See base class docstrings.
-
-    Attributes
+    Parameters
     ----------
-    optimal : function
-        searching optimal lambda
-    lambda_opt : float
-        optimal lambda
-    optimized_solution : function
-        returning inverted solultion at the optimal lambda
-    plot_gcv
+    s : vector_like
+        singular values :math:`\\sigma_i` in :math:`s` vectors.
+    u : array_like
+        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
+    vh : array_like
+        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
+    data : vector_like
+        given data for inversion calculation
+    lambdas : vector-like, optional
+        list of regularization parameters to search for optimal one, by default
+        `10 ** np.linspace(-5, 5, 100)`
+    **kwargs : :py:class:`.SVDInversionBase` properties, optional
+        *kwargs* are used to specify properties like a inversion_base_vectors
     """
 
-    def __init__(
-        self, s=None, u=None, vh=None, inversion_base_vectors=None, L_inv=None, data=None, beta=None
-    ):
+    def __init__(self, *args, lambdas=None, **kwargs):
+
+        # initialize originaly valuables
         self._lambda_opt = None
         self._gcvs = None
-        super().__init__(
-            s=s, u=u, vh=vh, inversion_base_vectors=None, L_inv=L_inv, data=data, beta=beta
-        )
+        self._lambdas = lambdas or 10 ** np.linspace(-5, 5, 100)
+
+        # inheritation
+        super().__init__(*args, **kwargs)
+
+    @property
+    def lambdas(self):
+        """
+        list of regularization parameters used for the optimization process
+
+        Returns
+        -------
+        numpy.ndarray
+        """
+        return self._lambdas
+
+    @lambdas.setter
+    def lambdas(self, array):
+        if not isinstance(array, np.ndarray) and not isinstance(array, list):
+            raise ValueError("lambdas must be the 1D-array of regularization parameters")
+        self._lambdas = np.asarray_chkfinite(array).sort()
 
     @property
     def lambda_opt(self):
+        """
+        optimal regularization parameter which is decided after the optimization iteration
+
+        Returns
+        -------
+        float
+        """
         return self._lambda_opt
 
     @property
     def gcvs(self):
+        """
+        list of values of GCV, elements of which are calculated after the optimization iteration
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         return self._gcvs
 
     def optimize(self, itemax=3):

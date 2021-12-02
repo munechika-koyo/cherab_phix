@@ -1,5 +1,5 @@
-from .inversion import InversionMethod
+from .inversion import SVDInversionBase
 from .L_curve import Lcurve, curvature
 from .gcv import GCV
 
-__all__ = ["InversionMethod", "curvature", "Lcurve", "GCV"]
+__all__ = ["SVDInversionBase", "curvature", "Lcurve", "GCV"]
