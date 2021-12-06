@@ -35,7 +35,10 @@ class GCV(SVDInversionBase):
         # initialize originaly valuables
         self._lambda_opt = None
         self._gcvs = None
-        self._lambdas = lambdas or 10 ** np.linspace(-5, 5, 100)
+        self._lambdas = 10 ** np.linspace(-5, 5, 100)
+
+        if lambdas:
+            self.lambdas = lambdas
 
         # inheritation
         super().__init__(*args, **kwargs)
@@ -43,39 +46,30 @@ class GCV(SVDInversionBase):
     @property
     def lambdas(self):
         """
-        list of regularization parameters used for the optimization process
-
-        Returns
-        -------
-        numpy.ndarray
+        :obj:`numpy.ndarray`: list of regularization parameters used for the optimization process
         """
         return self._lambdas
 
     @lambdas.setter
     def lambdas(self, array):
         if not isinstance(array, np.ndarray) and not isinstance(array, list):
-            raise ValueError("lambdas must be the 1D-array of regularization parameters")
-        self._lambdas = np.asarray_chkfinite(array).sort()
+            raise ValueError("lambdas must be the 1-D array of regularization parameters")
+        array = np.asarray_chkfinite(array)
+        if array.ndim != 1:
+            raise ValueError("lambdas must be 1-D array")
+        self._lambdas = np.sort(array)
 
     @property
     def lambda_opt(self):
         """
-        optimal regularization parameter which is decided after the optimization iteration
-
-        Returns
-        -------
-        float
+        float: optimal regularization parameter which is decided after the optimization iteration
         """
         return self._lambda_opt
 
     @property
     def gcvs(self):
         """
-        list of values of GCV, elements of which are calculated after the optimization iteration
-
-        Returns
-        -------
-        numpy.ndarray
+        :obj:`numpy.ndarray`: list of values of GCV, elements of which are calculated after the optimization iteration
         """
         return self._gcvs
 

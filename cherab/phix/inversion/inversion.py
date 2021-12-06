@@ -90,45 +90,29 @@ class SVDInversionBase:
     @property
     def s(self):
         """
-        singular values :math:`\\sigma_i` in :math:`s` vectors.
-
-        Returns
-        -------
-        vector-like
+        vector-like: singular values :math:`\\sigma_i` in :math:`s` vectors.
         """
         return self._s
 
     @property
     def u(self):
         """
-        SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
-
-        Returns
-        -------
-        array-like
+        array-like: SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
         """
         return self._u
 
     @property
     def vh(self):
         """
-        SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
-
-        Returns
-        -------
-        array-like
+        array-like: SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
         """
         return self._vh
 
     @property
     def L_inv(self):
         """
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
+        :obj:`numpy.ndarray`: inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
         by default `np.identity(self._vh.shape[1])`
-
-        Returns
-        -------
-        numpy.ndarray
         """
         return self._L_inv
 
@@ -143,13 +127,9 @@ class SVDInversionBase:
     @property
     def inversion_base_vectors(self):
         """
-        The components of inversions base represented as `L_inv @ vh.T`.
+        array-like or None if not set: The components of inversions base represented as `L_inv @ vh.T`.
         This property is offered to speed up the calculation of inversions.
         If None, it is automatically computed when calculating the inverted solution.
-
-        Returns
-        -------
-        array-like or None if not set
         """
         return self._inversion_base_vectors
 
@@ -163,11 +143,7 @@ class SVDInversionBase:
     @property
     def data(self):
         """
-        given data for inversion calculation
-
-        Returns
-        -------
-        numpy.ndarray (N, )
+        :obj:`numpy.ndarray`: given data for inversion calculation
         """
         return self._data
 
@@ -182,11 +158,7 @@ class SVDInversionBase:
     @property
     def beta(self):
         """
-        regularization parameter
-
-        Returns
-        -------
-        float
+        float: regularization parameter
         """
         return self._lambda
 

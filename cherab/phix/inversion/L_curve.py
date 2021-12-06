@@ -32,7 +32,10 @@ class Lcurve(SVDInversionBase):
         # initialize originaly valuables
         self._lambda_opt = None
         self._curvatures = None
-        self._lambdas = lambdas or 10 ** np.linspace(-5, 5, 100)
+        self._lambdas = 10 ** np.linspace(-5, 5, 100)
+
+        if lambdas:
+            self.lambdas = lambdas
 
         # inheritation
         super().__init__(*args, **kwargs)
@@ -40,40 +43,31 @@ class Lcurve(SVDInversionBase):
     @property
     def lambdas(self):
         """
-        list of regularization parameters used for the optimization process
-
-        Returns
-        -------
-        numpy.ndarray
+        :obj:`numpy.ndarray`: list of regularization parameters used for the optimization process
         """
         return self._lambdas
 
     @lambdas.setter
     def lambdas(self, array):
         if not isinstance(array, np.ndarray) and not isinstance(array, list):
-            raise ValueError("lambdas must be the 1D-array of regularization parameters")
-        self._lambdas = np.asarray_chkfinite(array).sort()
+            raise ValueError("lambdas must be the 1-D array of regularization parameters")
+        array = np.asarray_chkfinite(array)
+        if array.ndim != 1:
+            raise ValueError("lambdas must be 1-D array")
+        self._lambdas = np.sort(array)
 
     @property
     def lambda_opt(self):
         """
-        optimal regularization parameter which is decided after the optimization iteration
-
-        Returns
-        -------
-        float
+        float: optimal regularization parameter which is decided after the optimization iteration
         """
         return self._lambda_opt
 
     @property
     def curvatures(self):
         """
-        list of carvature values.
+        :obj:`numpy.ndarray`: list of carvature values.
         This is stored after the optimazation iteration.
-
-        Returns
-        -------
-        numpy.ndarray
         """
         return self._curvatures
 
