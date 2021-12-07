@@ -3,9 +3,13 @@ import numpy as np
 
 from raysect.core import Point2D
 from raysect.optical import Vector3D
-from cherab.core.math import Interpolate1DCubic, Interpolate2DCubic, ClampOutput2D
-from cherab.core.math import ConstantVector2D, VectorFunction2D
-from raysect.core.math.function.vector3d import Function2D as PythonVectorFunction2D
+from raysect.core.math.function.float.function1d import Interpolator1DArray
+from raysect.core.math.function.float.function2d import Interpolator2DArray
+from raysect.core.math.function.vector3d.function2d import Function2D as VectorFunction2D
+from raysect.core.math.function.vector3d.function2d import Constant2D as ConstantVector2D
+from raysect.core.math.function.vector3d.function2d.autowrap import PythonFunction2D as PythonVectorFunction2D
+
+from cherab.core.math import ClampOutput2D
 from cherab.tools.equilibrium.efit import EFITEquilibrium
 from cherab.phix.machine.wall_outline import INNER_LIMITER
 
@@ -84,33 +88,37 @@ class TSCEquilibrium(EFITEquilibrium):
         self.folder = folder
         self.path = os.path.join(os.path.dirname(__file__), "data", folder)
 
-        # load TSC data:
+        # load TSC data
         self._load_tsc_params()
 
         # interpolate poloidal flux grid data
-        self.psi = Interpolate2DCubic(self.r_data, self.z_data, self.psi_data)
-        # self.psi_axis = self.psi(self.magnetic_axis)
-        # self.psi_lcfs = self._calc_psi_lcfs()
+        self.psi = Interpolator2DArray(self.r_data, self.z_data, self.psi_data, "cubic", "none", 1.0, 1.0)
+
+        # normalize psi data
         self.psi_normalised = ClampOutput2D(
-            Interpolate2DCubic(
+            Interpolator2DArray(
                 self.r_data,
                 self.z_data,
                 (self.psi_data - self.psi_axis) / (self.psi_lcfs - self.psi_axis),
+                "cubic",
+                "nearest",
+                1.0,
+                1.0
             ),
             min=0,
         )
         # interpolate current flux grid data (g function)
-        self.g = Interpolate2DCubic(self.r_data, self.z_data, self.g_data)
+        self.g = Interpolator2DArray(self.r_data, self.z_data, self.g_data, "cubic", "none", 1.0, 1.0)
 
         # store equilibrium attributes
         self.r_range = self.r_data.min(), self.r_data.max()
         self.z_range = self.z_data.min(), self.z_data.max()
-        self.q = Interpolate1DCubic(
+        self.q = Interpolator1DArray(
             self._q_profile[0, :],
             self._q_profile[1, :],
-            extrapolate=True,
-            extrapolation_range=1.0,
-            extrapolation_type="quadratic",
+            "cubic",
+            "quadratic",
+            1.0,
         )
 
         # populate polygons and inside/outside functions
@@ -259,3 +267,8 @@ class FluxSurfaceNormal(VectorFunction2D):
 
         # cross product of poloidal and toroidal unit vectors
         return Vector3D(-b.z, 0, b.x).normalise()
+
+
+# For debugging
+if __name__ == "__main__":
+    eq = TSCEquilibrium(folder="phix10")

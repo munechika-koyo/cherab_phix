@@ -11,13 +11,13 @@ from cherab.phix.machine.wall_outline import OUTER_LIMITER
 
 
 def plot_ray(ray, world=None):
-    f"""plotting the spectrum of one ray-tracing
+    """plotting the spectrum of one ray-tracing
 
     Parameters
     ----------
-    ray : Ray
+    ray : :obj:`~raysect.core.ray.Ray`
         raysect Ray object
-    world : Node, optional
+    world : :obj:`~raysect.core.scenegraph.node.Node`, optional
         raysect Node object, by default None
     """
     s = ray.trace(world)
@@ -50,14 +50,14 @@ def show_phix_profiles(
     profiles : list or 2D-array
          2D-array-like (nr, nz) profile inner PHiX limiter
          if you want to show several profiles, you must put one list containing 2D array-like data.
-    fig : object, optional
+    fig : matplotlib.figure.Figure, optional
         matplotlib figure object
     clabel : str, optional
         colobar label
     cmap : str, optional
         color map, by default "inferno"
-    rtm : cherab.raytransfer object, optional
-        cherab's raytransfer objects, by default phix's one using TSCEquilibrium()
+    rtm : :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`, optional
+        cherab's raytransfer objects, by default returns using default`.TSCEquilibrium` and `.import_phix_rtm`
     vmax : float, optional
         to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
     vmin : float, optional
@@ -74,7 +74,7 @@ def show_phix_profiles(
     Returns
     -------
     (fig, grids) : tuple
-        one tuple containing matplotlib objects (figure, ImageGrid)
+        one tuple containing matplotlib objects (:obj:`~matplotlib.figure.Figure`, :obj:`~mpl_toolkits.axes_grid1.axes_grid.ImageGrid`)
     """
     # transform the type of argument if it is not list type.
     if not isinstance(profiles, list):
@@ -191,14 +191,14 @@ def show_phix_profile(
 
     Parameters
     ----------
-    axes : object
+    axes : `~matplotlib.axes.Axes`
         matplotlib Axes object
     profiles : list or 2D-array
          2D-array-like (nr, nz) profile inner PHiX limiter
     cmap : str, optional
         color map, by default "inferno"
-    rtm : cherab.raytransfer object, optional
-        cherab's raytransfer objects, by default phix's one using TSCEquilibrium()
+    rtm : :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`, optional
+        cherab's raytransfer objects, by default returns using default`.TSCEquilibrium` and `.import_phix_rtm`
     vmax : float, optional
         to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
     vmin : float, optional
@@ -212,7 +212,8 @@ def show_phix_profile(
 
     Returns
     ------
-    contour: matplotlib contour object
+    :obj:`~matplotlib.contour.QuadContourSet`
+        matplotlib contour object
     """
     # set axes option
     axes.set_aspect("equal")

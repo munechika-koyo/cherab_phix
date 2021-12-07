@@ -70,12 +70,12 @@ cdef class ThinLensCCDArray(Observer2D):
         Number of samples to generate on the thin Lens (default=100).
     per_pixel_samples : int
         Number of samples to generate per pixel (default=10).
-        which is different from pixel_samples in Object2D object. When you use ThinLensCCDArray,
-        pixel_samples = per_pixel_samples x lens_samples (default=100 x 10).
+        which is different from `pixel_samples` in :py:class:`~raysect.optical.observer.base.Observer2D` object.
+        When you use ThinLensCCDArray, `pixel_samples` = `per_pixel_samples` x `lens_samples` (default=100 x 10).
     pipelines : list
         The list of pipelines that will process the spectrum measured
-        at each pixel by the camera (default=RGBPipeline2D).
-    **kwargs : Observer2D and _ObserverBase. properties, optional
+        at each pixel by the camera (default= :py:class:`~raysect.optical.observer.pipeline.rgb.RGBPipeline2D`).
+    **kwargs : :py:class:`~raysect.optical.observer.base.Observer2D` and _ObserverBase. properties, optional
         *kwargs* are used to specify properties like a parent, transform, pipelines, etc.
     """
 
@@ -299,7 +299,7 @@ cdef class ThinLensCCDArray(Observer2D):
 
         :param int x: Pixel x index.
         :param int y: Pixel y index.
-        :param Ray template: The template ray from which all rays should be generated.
+        :param ~raysect.optical.Ray template: The template ray from which all rays should be generated.
         :param int ray_count: The number of rays to be generated.
         :return list: A list of tuples of (ray, weight)
         """

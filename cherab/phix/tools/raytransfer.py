@@ -11,17 +11,17 @@ def import_phix_rtm(parent, equilibrium=None, grid_size=2.0e-3):
 
     Parameters
     ----------
-    parent : Node
+    parent : :obj:`~raysect.core.scenegraph.node.Node`
         Raysect's scene-graph parent node
-    equilibrium : object
+    equilibrium : :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`
         EFITEquilibrium object, by default None
     grid_size : float, optional
         1 voxel size :math:`(dr=dz)`, by default 2.0e-3 [m]
 
     Returns
     -------
-    object
-        cherab's Ray Transfer Matrix object
+    :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`
+        cherab's Ray Transfer Cylinder object
     """
 
     # check arguments

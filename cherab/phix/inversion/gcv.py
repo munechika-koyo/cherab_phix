@@ -148,7 +148,7 @@ class GCV(SVDInversionBase):
 
         Returns
         -------
-        numpy.ndarry
+        numpy.ndarray
             optimised inverted solution vector
         """
         if self.lambda_opt is None:
@@ -163,15 +163,15 @@ class GCV(SVDInversionBase):
 
         Parameters
         ----------
-        fig : figure object, optional
-            matplotlib figure object, by default None
-        axes : Axes object, optional
-            matplotlib Axes object, by default None
+        fig : :obj:`matplotlib.figure.Figure`, optional
+            matplotlib figure object, by default None.
+        axes : :obj:`matplotlib.axes.Axes`, optional
+            matplotlib Axes object, by default None.
 
         Returns
-        -------
-        tuple
-            (fig, axes), each of which is matplotlib objects
+        ------
+        tuple of :obj:`~matplotlib.figure.Figure` and :obj:`~matplotlib.axes.Axes`
+            (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # compute the curvature if self.curvatures doesn't exist.
         if self._gcvs is None:

@@ -63,12 +63,13 @@ def import_phix_mesh(
     reflection=True,
 ):
     """Import PHiX Mesh files (.rsm) from directory data/RSMfiles
-    Each Meshes allow the user to use an user-defined material.
+    Each Meshes allow the user to use an user-defined material which inherites
+    :obj:`~raysect.optical.material.material.Material`.
 
     Parameters
     ----------
-    world : Raysect object
-        scene-graph node object, here World() should be put.
+    world : :obj:`~raysect.core.scenegraph.world.World`
+        The world scenegraph belonging to these materials.
     override_material : Material, optional
         user-defined Material is applied to all of meshes, by default None
     vacuum_vessel : Material, optional
@@ -93,12 +94,13 @@ def import_phix_mesh(
         user-defined Material applied to Vaccum Vessel Gasket, by default None
     reflection : bool, optional
         whether or not to consider reflection light, by default True
-        If reflection == False, all of meshes' material is replaced to AbsorbingSurface()
+        If reflection == False, all of meshes' material is replaced to
+        :py:class:`~raysect.optical.material.absorber.AbsorbingSurface`
 
     Returns
     -------
     list
-        list containing mesh objects
+        list containing :obj:`~raysect.primitive.mesh.mesh.Mesh` objects
     """
 
     if reflection is False:

@@ -18,20 +18,16 @@ class PHiXSpecies:
 
     Parameters
     ------------
-    equilibrium : object, required
+    equilibrium : :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`, required
         EFIT equilibrium object, default None
 
     Attributes
     -----------
-    electron_distribution : Function3D
+    electron_distribution : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`
         electron distribution function
-    composition : list
+    composition : list of :obj:`~cherab.core.Species`
         composition of plasma species, each information of whixh is
-            element,
-            charge,
-            density_distribution,
-            temperature_distribution,
-            bulk_velocity_distribution.
+        element, charge, density_distribution, temperature_distribution, bulk_velocity_distribution.
     """
 
     def __init__(self, equilibrium=None):
@@ -120,16 +116,16 @@ class PHiXSpecies:
             element name registored in cherabs elements.pyx, by default None
         charge : int, required
             element's charge state, by default 0
-        density : Function3D, optional
+        density : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`, optional
             density distribution, by default Constant3D(1.0e19)
-        temperature : Function3D, optional
+        temperature : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`, optional
             temperature distribution, by default Constant3D(1.0e2)
-        bulk_velocity : VectorFunction3D, optional
+        bulk_velocity : :obj:`~raysect.core.math.function.vector3d.function3d.base.Function3D`, optional
             bulk velocity, by default ConstantVector3D(0)
         """
 
         if element is None:
-            message = f"Parameter 'element' is required to be input."
+            message = "Parameter 'element' is required to be input."
             raise ValueError(message)
 
         try:
@@ -157,7 +153,7 @@ class PHiXSpecies:
         Parameters
         ----------
         res : float, optional
-            Spactial resolution for sampling, by default 0.001
+            Spactial resolution for sampling, by default 0.001 [m]
         """
         # grid
         r_min, r_max = self.eq.r_range
@@ -176,19 +172,26 @@ class PHiXSpecies:
             (z_min, z_max, nz),
         )
 
+        # create inner limiter mask array
+        mask = np.zeros_like(dens, dtype=bool)
+        for ir, r_tmp in enumerate(r):
+            for iz, z_tmp in enumerate(z):
+                mask[ir, 0, iz] = not(self.eq.inside_limiter(r_tmp, z_tmp))
+
         # plot
-        for sample, title in zip(
-            [dens, temp], ["electron density[1/m$^3$]", "electron temperature[eV]"]
+        for sample, title, clabel in zip(
+            [dens, temp], ["electron density[1/m$^3$]", "electron temperature[eV]"],
+            ["density [1/m$^3$]", "temperature [eV]"]
         ):
             plt.figure()
             plt.axis("equal")
-            plt.pcolormesh(r, z, np.squeeze(sample).T, shading="gouraud")
+            plt.pcolormesh(r, z, np.squeeze(np.ma.masked_array(sample, mask)).T, shading="gouraud")
             plt.autoscale(tight=True)
-            plt.colorbar()
+            plt.colorbar(label=clabel)
             plt.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1])
             plt.title(title)
             plt.xlabel("R (meters)")
-            plt.xlabel("Z (meters)")
+            plt.ylabel("Z (meters)")
 
         # species sampling
         for species in self.composition:
@@ -203,22 +206,25 @@ class PHiXSpecies:
             )
 
             # plot
-            for sample, title in zip(
+            for sample, title, clabel in zip(
                 [dens, temp],
                 [
                     f"{species.element.name}+{species.charge} density [1/m$^3$]",
                     f"{species.element.name}+{species.charge} temperature [eV]",
                 ],
+                ["density [1/m$^3$]", "temperature [eV]"]
             ):
                 plt.figure()
                 plt.axis("equal")
-                plt.pcolormesh(r, z, np.squeeze(sample).T, shading="gouraud")
+                plt.pcolormesh(r, z, np.squeeze(np.ma.masked_array(sample, mask)).T, shading="gouraud")
                 plt.autoscale(tight=True)
-                plt.colorbar()
+                plt.colorbar(label=clabel)
                 plt.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1])
                 plt.title(title)
                 plt.xlabel("R (meters)")
-                plt.xlabel("Z (meters)")
+                plt.ylabel("Z (meters)")
+
+        plt.show()
 
     def plot_1d_profile(self):
         """plot r vs electron density or temperature 1D profile
@@ -244,3 +250,14 @@ class PHiXSpecies:
             plt.xlabel("R [m]")
             plt.ylabel(ylabel)
             plt.title(title)
+
+        plt.show()
+
+
+# For debugging
+if __name__ == "__main__":
+    from cherab.phix.plasma import TSCEquilibrium
+
+    eq = TSCEquilibrium()
+    species = PHiXSpecies(eq)
+    species.plot_distribution()

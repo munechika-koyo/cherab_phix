@@ -4,6 +4,7 @@ from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
 
 from cherab.openadas import OpenADAS
 from cherab.core import Plasma, Line, elements
+from cherab.core.math import VectorAxisymmetricMapper
 from cherab.core.model import ExcitationLine, RecombinationLine, Bremsstrahlung
 from cherab.phix.plasma import TSCEquilibrium, PHiXSpecies
 from cherab.phix.machine.wall_outline import VESSEL_WALL
@@ -11,16 +12,23 @@ from cherab.phix.machine.wall_outline import VESSEL_WALL
 
 def import_plasma(parent, folder="phix10", species=None):
     """Helper function of generating PHiX plasma
-    As emissions, H:math:`\\alpha`, H:math:`\\beta`, H:math:`\\gamma`, H:math:`\\delta` are applied.
+    As emissions, H :math:`\\alpha`, H :math:`\\beta`, H :math:`\\gamma`, H :math:`\\delta` are applied.
 
     Parameters
     ----------
-    parent : Node
+    parent : :obj:`~raysect.core.scenegraph.node.Node`
         Raysect's scene-graph parent node
     folder : str
         folder name in which TSC data is stored
     species : object , optional
-        user-defined species object
+        user-defined species object having composition which is a list of :obj:`~cherab.core.Species` objects
+        and electron distribution function attributes,
+        by default :py:class:`.PHiXSpecies`
+
+    Returns
+    -------
+    tuple
+        (:obj:`~cherab.core.Plasma`, :obj:`.TSCEquilibrium`)
     """
     print(f"loading plasma (data from: {folder})...")
     # create TSCEquilibrium instance
@@ -35,7 +43,7 @@ def import_plasma(parent, folder="phix10", species=None):
     # setting plasma properties
     plasma.atomic_data = adas
     plasma.integrator = NumericalIntegrator(step=0.001)
-    plasma.b_field = eq.b_field
+    plasma.b_field = VectorAxisymmetricMapper(eq.b_field)
 
     # create plasma geometry as subtraction of two cylinders
     inner_radius = VESSEL_WALL[:, 0].min()
@@ -75,4 +83,14 @@ def import_plasma(parent, folder="phix10", species=None):
         # RecombinationLine(ciii_777),
     ]
 
-    return plasma, eq
+    return (plasma, eq)
+
+
+# For debugging
+if __name__ == "__main__":
+    from raysect.core import World
+
+    world = World()
+    plasma, eq = import_plasma(world)
+    print([i for i in plasma.models])
+    pass

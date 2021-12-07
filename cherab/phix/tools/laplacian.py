@@ -6,17 +6,40 @@ def laplacian_matrix(voxel_map, dir=4, kernel=None):
 
     Parameters
     ----------
-    voxel_map : (N, M) numpy.ndarray
-        voxel map matrix (negative value must be input into masked voxels)
+    voxel_map : numpy.ndarray
+        (N, M) voxel map matrix (negative value must be input into masked voxels)
     dir : int,  optional
         the number of laplacian kernel's neighbor , by default 4
         if you want to use another kernel, input it into kernel key word argument.
-    kernel : (4, 4) numpy.ndarry, optional
-        user-defined kernel, which is supersede
+    kernel : numpy.ndarray, optional
+        (4, 4) user-defined kernel, which is supersede
 
     Return
     --------
-    laplacian matrix : (N, N) numpy.ndarray (if N > M)
+    numpy.ndarray
+        (N, N) laplacian matrix (if N > M)
+
+    Example
+    -------
+    .. prompt:: python >>> auto
+
+        >>> from raysect.core import World
+        >>> from cherab.phix.plasma import TSCEquilibrium
+        >>> from cherab.phix.tools import laplacian_matrix, import_phix_rtm
+        >>>
+        >>> world = World()
+        >>> eq = TSCEquilibrium()
+        >>> rtm = import_phix_rtm(world, equilibrium=eq)
+        >>>
+        >>> laplacian = laplacian_matrix(rtm.voxel_map, dir=8)
+        >>> laplacian
+        array([[-8.,  1.,  0., ...,  0.,  0.,  0.],
+               [ 1., -8.,  1., ...,  0.,  0.,  0.],
+               [ 0.,  1., -8., ...,  0.,  0.,  0.],
+               ...,
+               [ 0.,  0.,  0., ..., -8.,  1.,  0.],
+               [ 0.,  0.,  0., ...,  1., -8.,  1.],
+               [ 0.,  0.,  0., ...,  0.,  1., -8.]])
     """
 
     # define laplacian kernel

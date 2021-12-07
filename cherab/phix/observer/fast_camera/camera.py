@@ -21,7 +21,7 @@ def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
 
     Parameters
     ----------
-    parent : Node
+    parent : :obj:`~raysect.core.scenegraph.node.Node`
         Raysect's scene-graph parent node
     rotation_matrx : 2D array-like, optional
         camera's rotation matrix, by default calcam cam_to_lab_rotation()

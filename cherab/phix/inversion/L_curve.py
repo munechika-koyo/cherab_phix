@@ -164,7 +164,7 @@ class Lcurve(SVDInversionBase):
 
         Returns
         -------
-        numpy.ndarry
+        numpy.ndarray
             optimised inverted solution vector
         """
         # excute optimization
@@ -179,9 +179,9 @@ class Lcurve(SVDInversionBase):
 
         Parameters
         ----------
-        fig : figure object, optional
+        fig : matplotlib.figure.Figure, optional
             matplotlib figure object, by default None.
-        axes : Axes object, optional
+        axes : matplotlib.axes.Axes, optional
             matplotlib Axes object, by default None.
         scatter_plot : str or int, optional
             whether or not to plot some L curve points,
@@ -193,8 +193,8 @@ class Lcurve(SVDInversionBase):
 
         Returns
         ------
-        tuple
-            (fig, axes), each of which is matplotlib objects
+        tuple of :obj:`~matplotlib.figure.Figure` and :obj:`~matplotlib.axes.Axes`
+            (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # compute the norms
         residual_norms = np.array([self.residual_norm(i) for i in self.lambdas])
@@ -231,15 +231,15 @@ class Lcurve(SVDInversionBase):
 
         Parameters
         ----------
-        fig : figure object, optional
-            matplotlib figure object, by default None
-        axes : Axes object, optional
-            matplotlib Axes object, by default None
+        fig : :obj:`matplotlib.figure.Figure`, optional
+            matplotlib figure object, by default None.
+        axes : :obj:`matplotlib.axes.Axes`, optional
+            matplotlib Axes object, by default None.
 
         Returns
         ------
-        tuple
-            (fig, axes), each of which is matplotlib objects
+        tuple of :obj:`~matplotlib.figure.Figure` and :obj:`~matplotlib.axes.Axes`
+            (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # compute the curvature
         self._curvatures = np.array(
@@ -272,19 +272,19 @@ def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
     """calculate curvature for L-curve method
     L-curve method is used to solve the ill-posed inversion equation.
     L-curve is the trajectory of the point :math:`(\\log||Ax - b||, \\log||L(x - x_0)||)`
-    varying the generalization parameter `beta`.
+    varying the regularization parameter `beta`.
     This function returns the value of curvature at one point corresponding to one beta.
 
     Parameters
     ----------
     rho : float, required
-        `rho` is the residual of least squared :math:`\\rho = ||Ax - b||^2`
+        residual of least squared :math:`\\rho = ||Ax - b||^2`
     eta : float, required
-        `eta` is the squared norm of generalization term :math:`\\eta = ||L(x - x_0)||^2`
+        squared norm of regularization term :math:`\\eta = ||L(x - x_0)||^2`
     eta_dif : float, required
-        `eta_dif` is the differencial of `eta` :math:`\\frac{d \\eta}{d \\lambda}`
+        differencial of `eta` :math:`\\frac{d \\eta}{d \\lambda}`
     beta : float, optional
-        generalization parameter, by default 1.0e-2
+        regularization parameter, by default 1.0e-2
     """
     return (
         -2.0
