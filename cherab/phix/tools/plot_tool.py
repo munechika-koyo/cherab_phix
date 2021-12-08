@@ -2,7 +2,8 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm, Normalize
-from matplotlib.ticker import LogFormatterSciNotation, LogLocator, NullFormatter, ScalarFormatter, LinearLocator
+from matplotlib.ticker import AutoLocator, AutoMinorLocator, LogLocator
+from matplotlib.ticker import ScalarFormatter, LogFormatterSciNotation
 from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
 from cherab.phix.plasma import TSCEquilibrium
@@ -39,7 +40,7 @@ def show_phix_profiles(
     vmin=None,
     axes_pad=0.02,
     cbar_mode="single",
-    scientific_notation=False,
+    scientific_notation=True,
     plot_mode="scalar",
 ):
     """show in-phix-limiter 2D profiles such as emission profile.
@@ -67,7 +68,7 @@ def show_phix_profiles(
     cbar_mode : str, optional
         ImgeGrid's para to set colorbars in "single" axes or "each" axes, by default "single"
     scientific_notation : bool, optional
-        whether or not to set colorbar fomat with scientific notation, by default Flase
+        whether or not to set colorbar format with scientific notation, by default True
     plot_mode : str, optional
         plot 2D mesh as "scalor" or "log", by default "scalar"
 
@@ -134,44 +135,40 @@ def show_phix_profiles(
 
     grids[0].set_ylabel("$Z$[m]")
 
-    # colobar
-    # TODO: need to find out why the first colorbar does not show with scientific notation
-    # when show more than 2 gird images.
+    # create colorbar objects and store them into a list
+    cbars = []
+    if cbar_mode == "each":
+        for i, grid in enumerate(grids):
+            cbar = plt.colorbar(grid.images[0], grids.cbar_axes[i])
+            cbars.append(cbar)
+    else:
+        cbar = plt.colorbar(grids[-1].images[0], grids.cbar_axes[0])
+        cbars.append(cbar)
+
+    # define colobar formatter
     if plot_mode == "log":
         fmt = LogFormatterSciNotation()
-        major_locator = LogLocator(base=10, numticks=None)
-        # minor_locator = LogLocator(base=10)
-        minor_locator = LogLocator(base=10, subs=tuple(np.arange(0.1, 1.0, 0.1)), numticks=12)
     else:
         fmt = ScalarFormatter(useMathText=True)
-        major_locator = LinearLocator()
-        minor_locator = LinearLocator()
 
-    if scientific_notation is True:
+    if scientific_notation:
         fmt.set_powerlimits((0, 0))
 
-    if cbar_mode == "each":
-        cbar = None  # initialization
-        for i, grid in enumerate(grids):
-            cbar = grids.cbar_axes[i].colorbar(grid.images[0])
-            cbar.cbar_axis.set_major_locator(major_locator)
-            cbar.cbar_axis.set_minor_locator(minor_locator)
-            cbar.cbar_axis.set_major_formatter(fmt)
-            cbar.cbar_axis.set_minor_formatter(NullFormatter())
-            cbar.ax.xaxis.set_visible(False)
-            cbar.ax.yaxis.set_offset_position("left")
-        cbar.set_label_text(clabel)
-    else:
-        cbar = grids.cbar_axes[0].colorbar(grids[-1].images[0])
-        cbar.cbar_axis.set_major_locator(major_locator)
-        cbar.cbar_axis.set_minor_locator(minor_locator)
-        cbar.cbar_axis.set_major_formatter(fmt)
-        cbar.cbar_axis.set_minor_formatter(NullFormatter())
-        cbar.ax.xaxis.set_visible(False)
+    # set colorbar's locator and formatter
+    for cbar in cbars:
         cbar.ax.yaxis.set_offset_position("left")
-        cbar.ax.xaxis.set_visible(False)
-        cbar.ax.yaxis.set_offset_position("left")
-        cbar.set_label_text(clabel)
+
+        if plot_mode == "log":
+            cbar.ax.yaxis.set_major_locator(LogLocator(base=10, numticks=None))
+            cbar.ax.yaxis.set_minor_locator(LogLocator(base=10, subs=tuple(np.arange(0.1, 1.0, 0.1)), numticks=12))
+            cbar.ax.yaxis.set_major_formatter(fmt)
+        else:
+            cbar.ax.yaxis.set_major_locator(AutoLocator())
+            cbar.ax.yaxis.set_minor_locator(AutoMinorLocator())
+            cbar.ax.yaxis.set_major_formatter(fmt)
+
+    # set colorbar label at the last cax
+    cbar.set_label(clabel)
 
     return (fig, grids)
 
@@ -185,7 +182,6 @@ def show_phix_profile(
     vmin=None,
     toggle_contour=True,
     levels=None,
-    scientific_notation=False,
 ):
     """show phix one in-limiter profile using pcolormesh and contour if you want.
 
@@ -207,8 +203,6 @@ def show_phix_profile(
         toggle whether or not to show contour plot as well as pcolormesh, by default True
     levels : 1D array-like, optional
         contour's level array, by default number of levels is 10 in range of 0 to max value
-    scientific_notation : bool, optional
-        whether or not to set colorbar fomat with scientific notation, by default Flase
 
     Returns
     ------
