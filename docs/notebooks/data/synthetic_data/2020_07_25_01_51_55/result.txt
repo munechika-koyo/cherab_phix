@@ -1,0 +1,10 @@
+--------------------------------------------------------------------------------
+camera name              : PHiX fast-visible camera (calibration: /gs/hs1/tga-fusion/18M58696/python/cherab_phix/output/shot_17393/calibration)
+camera pixels            : (256, 512)
+camera per pixel samples : 5
+camera lens samples      : 10
+camera pixel samples     : 50
+camera spectral bins     : 50
+camera wavelength range  : 655.6, 656.8
+primitives material      : <class 'cherab.phix.machine.material.roughmetal.RoughSUS316L'>
+--------------------------------------------------------------------------------

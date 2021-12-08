@@ -1,0 +1,12 @@
+# these are dependencies required to use the package
+cython
+numpy >= 1.18.1
+matplotlib >= 3.3.0
+packaging
+scipy >= 1.2
+setuptools >= 41.2
+calcam
+
+# GitHub packages
+git+https://github.com/raysect/source.git@development#egg=raysect-0.7.1
+git+https://github.com/munechika-koyo/core.git@koyo_dev#egg=cherab-1.2.1

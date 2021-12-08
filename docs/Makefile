@@ -5,8 +5,8 @@
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = .
+SOURCEDIR     = .
+BUILDDIR      = build
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -21,3 +21,15 @@ help:
 
 html:
 	$(SPHINXBUILD) -b html $(SPHINXOPTS) $(SOURCEDIR) $(BUILDDIR)/html
+
+clean:
+	rm -rf $(BUILDDIR)
+	rm -rf api cache gen_modules __pycache
+
+clean-api:
+	rm -rf api
+
+html-nonb: Makefile
+	@echo $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -D nbsphinx_execute='never' $(O)
+	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -D nbsphinx_execute='never' $(O)
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html. Jupyter notebooks were skipped."

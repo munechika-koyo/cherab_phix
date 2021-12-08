@@ -1,0 +1,12 @@
+# these are dependencies required to build package documentation
+docutils
+ipykernel
+ipywidgets
+nbsphinx
+pillow
+pygments
+sphinx
+sphinx-changelog
+sphinx-gallery
+sphinx_rtd_theme >= 1.0.0
+sphinx-prompt
