@@ -1,4 +1,5 @@
 # these are dependencies required to build the package distribution for installation
 setuptools >= 41.2
+wheel
 cython
 numpy >= 1.18.1
