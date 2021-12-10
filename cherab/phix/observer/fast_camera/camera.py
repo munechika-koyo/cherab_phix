@@ -16,7 +16,7 @@ CAM_POS = cam.get_pupilpos(coords="Original")
 def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
     """importing phix lens camera configured by defalut camera parameters
     Default camera's extrinsics is loaded from
-    "../cherab/phix/observer/fast_camera/calibration_data/shot_17393.ccc".
+    "../cherab/phix/observer/fast_camera/calibration_data/shot_17393_ideal.ccc".
     This file is created by calcam package (See: https://github.com/euratom-software/calcam)
 
     Parameters
