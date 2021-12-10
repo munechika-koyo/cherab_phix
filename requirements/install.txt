@@ -1,8 +1,7 @@
 # these are dependencies required to use the package
+numpy
 matplotlib >= 3.3.0
 scipy >= 1.2
-
-# GitHub packages
-git+https://github.com/raysect/source.git@development  # raysect
-git+https://github.com/munechika-koyo/core.git@koyo_dev  # cherab
-git+https://github.com/euratom-software/calcam.git@master  # calcam
+raysect
+# cherab
+# calcam

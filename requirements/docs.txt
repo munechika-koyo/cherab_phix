@@ -1,5 +1,5 @@
 # these are dependencies required to build package documentation
-docutils
+docutils < 0.18, >= 0.14
 ipykernel
 ipywidgets
 nbsphinx
