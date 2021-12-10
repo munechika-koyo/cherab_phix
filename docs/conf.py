@@ -117,3 +117,5 @@ intersphinx_timeout = 10
 nbsphinx_thumbnails = {
     # "examples/inversion/L_curve": "_static/notebook_images/L_curve.png",
 }
+
+nbsphinx_allow_errors = True
