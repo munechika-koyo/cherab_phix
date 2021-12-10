@@ -4,8 +4,8 @@ import os
 from matplotlib import pyplot as plt
 from numpy import loadtxt, zeros, linspace
 from numpy cimport ndarray, float64_t
-from cherab.core.math.interpolators cimport Interpolate1DCubic
 from raysect.core.math.cython cimport clamp
+from raysect.core.math.function.float.function1d.interpolate cimport Interpolator1DArray
 from raysect.optical.spectrum cimport Spectrum
 from raysect.optical.colour cimport srgb_transfer_function
 cimport cython
@@ -21,9 +21,9 @@ G_samples = loadtxt(os.path.join(DIR, "G.txt"), delimiter=",")
 B_samples = loadtxt(os.path.join(DIR, "B.txt"), delimiter=",")
 
 # interpolation using cubic spline
-filter_r = Interpolate1DCubic(R_samples[:, 0], R_samples[:, 1], extrapolate=True, extrapolation_type="nearest")
-filter_g = Interpolate1DCubic(G_samples[:, 0], G_samples[:, 1], extrapolate=True, extrapolation_type="nearest")
-filter_b = Interpolate1DCubic(B_samples[:, 0], B_samples[:, 1], extrapolate=True, extrapolation_type="nearest")
+filter_r = Interpolator1DArray(R_samples[:, 0], R_samples[:, 1], "cubic", "nearest", 50.0)
+filter_g = Interpolator1DArray(G_samples[:, 0], G_samples[:, 1], "cubic", "nearest", 50.0)
+filter_b = Interpolator1DArray(B_samples[:, 0], B_samples[:, 1], "cubic", "nearest", 50.0)
 
 
 @cython.boundscheck(False)
