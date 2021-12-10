@@ -9,5 +9,5 @@ pip install git+https://github.com/munechika-koyo/core.git@koyo_dev#egg=cherab
 # python core/setup.py install build_ext -i
 
 # install calcam
-# git clone -b release https://github.com/euratom-software/calcam.git
+pip install git+https://github.com/euratom-software/calcam.git#egg=calcam
 # python calcam/setup.py install
