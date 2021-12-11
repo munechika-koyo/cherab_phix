@@ -33,7 +33,6 @@ copyright = f"2019-{datetime.now().year}, {author}"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
-    "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
@@ -43,6 +42,7 @@ extensions = [
     "nbsphinx",
 ]
 
+autodoc_member_order = "groupwise"
 todo_include_todos = True
 napoleon_use_ivar = True
 default_role = "obj"
