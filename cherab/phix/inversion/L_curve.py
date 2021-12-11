@@ -285,6 +285,11 @@ def curvature(rho=None, eta=None, eta_dif=None, beta=1.0e-2):
         differencial of `eta` :math:`\\frac{d \\eta}{d \\lambda}`
     beta : float, optional
         regularization parameter, by default 1.0e-2
+
+    Returns
+    -------
+    float
+        the value of calculated curvature
     """
     return (
         -2.0
