@@ -22,7 +22,7 @@ class Lcurve(SVDInversionBase):
         given data for inversion calculation
     lambdas : vector-like, optional
         list of regularization parameters to search for optimal one, by default
-        `10 ** np.linspace(-5, 5, 100)`
+        ``10 ** np.linspace(-5, 5, 100)``
     **kwargs : :py:class:`.SVDInversionBase` properties, optional
         *kwargs* are used to specify properties like a inversion_base_vectors
     """

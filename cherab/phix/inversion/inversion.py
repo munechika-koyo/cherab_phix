@@ -112,7 +112,7 @@ class SVDInversionBase:
     def L_inv(self):
         """
         :obj:`numpy.ndarray`: inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
-        by default `np.identity(self._vh.shape[1])`
+        by default ``np.identity(self._vh.shape[1])``
         """
         return self._L_inv
 
@@ -127,7 +127,7 @@ class SVDInversionBase:
     @property
     def inversion_base_vectors(self):
         """
-        array-like or None if not set: The components of inversions base represented as `L_inv @ vh.T`.
+        array-like or None if not set: The components of inversions base represented as ``L_inv @ vh.T``.
         This property is offered to speed up the calculation of inversions.
         If None, it is automatically computed when calculating the inverted solution.
         """
@@ -213,7 +213,7 @@ class SVDInversionBase:
         Parameters
         ----------
         beta : float, optional
-            regularization parameter, by default self._lambda
+            regularization parameter, by default ``self._lambda``
 
         Returns
         -------
@@ -229,7 +229,7 @@ class SVDInversionBase:
         Parameters
         ----------
         beta : float, optional
-            regularization parameter, by default self._lambda
+            regularization parameter, by default ``self._lambda``
 
         Returns
         -------
@@ -246,7 +246,7 @@ class SVDInversionBase:
         Parameters
         ----------
         beta : float, optional
-            reguralization parameter, by default self._lambda
+            reguralization parameter, by default ``self._lambda``
 
         Returns
         -------
@@ -261,7 +261,7 @@ class SVDInversionBase:
         Parameters
         ----------
         beta : float, optional
-            reguralization parameter, by default self._lambda
+            reguralization parameter, by default ``self._lambda``
 
         Returns
         -------
