@@ -72,13 +72,13 @@ class Lcurve(SVDInversionBase):
         return self._curvatures
 
     def optimize(self, itemax=5):
-        """excute the optimization of L-curve regularization
+        """Excute the optimization of L-curve regularization.
         In particular, this method is used to search the optimal regularization parameter
         computing curvature. The optimal regularization parameter corresponds to the maximum
         curvature. This procedure is iterated by up to the itemax times. Every time iterately calculating,
         the range of regularization parameters is narrowed to FWHM around the maximum point.
         The optimal regularization parameter is stored to self._lambda_opt which can be seen :py:attr:`.lambda_opt` property.
-        And, lambadas and curvatures is updated and stored to properties.
+        And, :py:attr:`.lambadas` and :py:attr:`.curvatures` is updated and stored to each property.
 
         Parameters
         ----------
