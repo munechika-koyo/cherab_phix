@@ -103,7 +103,7 @@ class GCV(SVDInversionBase):
         self._lambda_opt = lambdas_temp[index_min]
 
         # continue to seek the optimal lambda more than 1 time up to itemax
-        if itemax > 1 and isinstance(itemax, int):
+        if isinstance(itemax, int) and itemax > 1:
             for _ in range(itemax - 1):
                 # TODO: implement FWHM calculation
                 # define left and right edge of lambda
@@ -166,7 +166,7 @@ class GCV(SVDInversionBase):
             optimized solution vector
         """
         # excute optimization
-        if not itemax:
+        if itemax:
             self.optimize(itemax)
             self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
