@@ -179,7 +179,7 @@ class Lcurve(SVDInversionBase):
             self.optimize(itemax)
             self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
-        elif not self._optimized_solution:
+        elif self._optimized_solution is None:
             self.optimize()
             self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
