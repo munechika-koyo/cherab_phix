@@ -53,11 +53,11 @@ class SVDInversionBase:
     data : vector_like
         given data for inversion calculation
     inversion_base_vectors : array-like, optional
-        The components of inversions base represented as `L_inv @ vh.T`.
+        The components of inversions base represented as ``L_inv @ vh.T``.
         This property is offered to speed up the calculation of inversions.
         If None, it is automatically computed when calculating the inverted solution.
-    L_inv : array-like, optional
-        inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
+    L_inv : array_like, optional
+        inversion matrix in the regularization term. :obj:`L_inv` is :math:`L^{-1}` in :math:`||L(x - x_0)||^2`
     beta : float, optional
         regularization parameter, by default 1.0e-2
     """
@@ -90,29 +90,29 @@ class SVDInversionBase:
     @property
     def s(self):
         """
-        vector-like: singular values :math:`\\sigma_i` in :math:`s` vectors.
+        vector_like: singular values :math:`\\sigma_i` in :math:`s` vectors.
         """
         return self._s
 
     @property
     def u(self):
         """
-        array-like: SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
+        array_like: SVD left singular vectors forms as one matrix like :math:`u = (u_1, u_2, ...)`
         """
         return self._u
 
     @property
     def vh(self):
         """
-        array-like: SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
+        array_like: SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
         """
         return self._vh
 
     @property
     def L_inv(self):
         """
-        :obj:`numpy.ndarray`: inversion matrix in the regularization term. `L_inv` == :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
-        by default ``np.identity(self._vh.shape[1])``
+        :obj:`numpy.ndarray`: inversion matrix in the regularization term. :obj:`L_inv` is :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
+        by default ``numpy.identity(self._vh.shape[1])``
         """
         return self._L_inv
 
@@ -127,7 +127,7 @@ class SVDInversionBase:
     @property
     def inversion_base_vectors(self):
         """
-        array-like or None if not set: The components of inversions base represented as ``L_inv @ vh.T``.
+        array_like or None if not set: The components of inversions base represented as ``L_inv @ vh.T``.
         This property is offered to speed up the calculation of inversions.
         If None, it is automatically computed when calculating the inverted solution.
         """
