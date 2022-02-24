@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
-camera name              : PHiX fast-visible camera (calibration: /gs/hs1/tga-fusion/18M58696/python/cherab_phix/output/shot_17393/calibration)
+camera name              : PHiX fast-visible camera
 camera pixels            : (256, 512)
 camera per pixel samples : 5
 camera lens samples      : 10

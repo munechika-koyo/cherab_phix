@@ -20,9 +20,9 @@ class Lcurve(SVDInversionBase):
         SVD right singular vectors forms as one matrix like :math:`vh = (v_1, v_2, ...)^T`
     data : vector_like
         given data for inversion calculation
-    lambdas : vector-like, optional
+    lambdas : vector_like, optional
         list of regularization parameters to search for optimal one, by default
-        `10 ** np.linspace(-5, 5, 100)`
+        ``10 ** numpy.linspace(-5, 5, 100)``
     **kwargs : :py:class:`.SVDInversionBase` properties, optional
         *kwargs* are used to specify properties like a inversion_base_vectors
     """
@@ -31,10 +31,11 @@ class Lcurve(SVDInversionBase):
 
         # initialize originaly valuables
         self._lambda_opt = None
+        self._optimized_solution = None
         self._curvatures = None
         self._lambdas = 10 ** np.linspace(-5, 5, 100)
 
-        if lambdas:
+        if lambdas is not None:
             self.lambdas = lambdas
 
         # inheritation
@@ -72,124 +73,135 @@ class Lcurve(SVDInversionBase):
         return self._curvatures
 
     def optimize(self, itemax=5):
-        """excute the optimization of L-curve regularization
-        In particular, this method is used to search the optimal regularization parameter
-        computing curvature. The optimal regularization parameter corresponds to the maximum
-        curvature. This procedure is iterated by up to the itemax times. Every time iterately calculating,
-        the range of regularization parameters is narrowed to FWHM around the maximum point.
-        The optimal regularization parameter is stored to self._lambda_opt which can be seen :py:attr:`.lambda_opt` property.
-        And, lambadas and curvatures is updated and stored to properties.
+        """Excute the optimization of L-curve regularization.
+        In particular, this method is used to seek the optimal regularization parameter computing curvature.
+        The optimal regularization parameter corresponds to the index of maximum curvature.
+        This procedure is iterated by up to the itemax times. Every time iterately calculating,
+        the range of regularization parameters is narrowed to FWHM around the maximum curvature point.
+        The optimal regularization parameter is cached to ``self._lambda_opt``
+        which can be seen :py:attr:`.lambda_opt` property.
+        And, both :py:attr:`.lambdas` and :py:attr:`.curvatures` are updated and stored to each property.
 
         Parameters
         ----------
         itemax : int, optional
             iteration times, by default 5
         """
-        # preparete local values and caches
-        lambdas_cache = self._lambdas.copy()
-        lambdas = lambdas_cache.tolist()
-        curvs_cache = np.zeros_like(lambdas)
+        # define local valiables
+        lambdas_temp = self._lambdas.copy()
+        lambdas = lambdas_temp.tolist()
+        curvs_temp = np.zeros_like(lambdas)
 
         # calculate one time
-        curvs_cache = np.array([curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_cache])
-        curvs = curvs_cache.tolist()
-        # search maximum curvature index
-        index_max = np.argmax(curvs_cache)
+        curvs_temp = np.array([curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_temp])
+        curvs = curvs_temp.tolist()
+        # cache index of maximum curvature
+        index_max = np.argmax(curvs_temp)
         # set property of optimal lambda
-        self._lambda_opt = lambdas_cache[index_max]
+        self._lambda_opt = lambdas_temp[index_max]
 
-        # continue to calculate the optimal lambda more than 1 time up to itemax
-        if itemax > 1 and isinstance(itemax, int):
-            for i in range(itemax - 1):
-                # update the range of ragularization parameters
+        # continue to seek the optimal lambda more than 1 time up to itemax
+        if isinstance(itemax, int) and itemax > 1:
+            for _ in range(itemax - 1):
 
                 # check if curvature has positive values
-                if curvs_cache.max() > 0:
-                    # if curvs.max() > 0, the range of that is narrowd within FWHM
-                    half = curvs_cache.max() * 0.5
-                    if half < curvs_cache.min():
-                        half = (curvs_cache.max() + curvs_cache.min()) * 0.5
-                    signs = np.sign(curvs_cache - half)
+                if curvs_temp.max() > 0:
+                    # the range of lambdas is narrowd within FWHM
+                    half = curvs_temp.max() * 0.5
+                    if half < curvs_temp.min():
+                        half = (curvs_temp.max() + curvs_temp.min()) * 0.5
+                    signs = np.sign(curvs_temp - half)
                     zero_crossings = signs[0:-2] != signs[1:-1]
                     # search nearest neighbor point of peak point
                     zero_crossings_i = np.where(zero_crossings)[0]
-                    zero_crossings_near = np.abs(np.where(zero_crossings)[0] - index_max).argmin()
+                    zero_crossings_near = np.abs(zero_crossings_i - index_max).argmin()
                     zero_crossings_i = zero_crossings_i[zero_crossings_near]
 
-                    # calculate FWFH in logscale
-                    fwfh_log = np.abs(np.log10(lambdas_cache[zero_crossings_i]) - np.log10(self._lambda_opt))
+                    # calculate FWHM in logscale
+                    fwhm_log = np.abs(np.log10(lambdas_temp[zero_crossings_i]) - np.log10(self._lambda_opt))
                     # if zero_crossings_i is leftside of peak
                     if zero_crossings_i < index_max:
-                        lambda_left_log = np.log10(lambdas_cache[zero_crossings_i])
-                        lambda_right_log = np.log10(self._lambda_opt) + fwfh_log
+                        lambda_left_log = np.log10(lambdas_temp[zero_crossings_i])
+                        lambda_right_log = np.log10(self._lambda_opt) + fwhm_log
                     else:
-                        lambda_left_log = np.log10(self._lambda_opt) - fwfh_log
-                        lambda_right_log = np.log10(lambdas_cache[zero_crossings_i])
+                        lambda_left_log = np.log10(self._lambda_opt) - fwhm_log
+                        lambda_right_log = np.log10(lambdas_temp[zero_crossings_i])
 
                 else:
                     # if curvature does not have any positive values, the range of lambdas is expanded to both sides.
-                    dlambda_log = np.log10(lambdas_cache[1]) - np.log10(lambdas_cache[0])
-                    lambda_left_log = np.log10(lambdas_cache[0]) - 100 * dlambda_log
-                    lambda_right_log = np.log10(lambdas_cache[-1]) + 100 * dlambda_log
+                    dlambda_log = np.log10(lambdas_temp[1]) - np.log10(lambdas_temp[0])
+                    lambda_left_log = np.log10(lambdas_temp[0]) - 100 * dlambda_log
+                    lambda_right_log = np.log10(lambdas_temp[-1]) + 100 * dlambda_log
 
-                # update lambda's range
-                lambdas_cache = 10 ** np.linspace(lambda_left_log, lambda_right_log, 100)
+                # update the range of lambdas
+                lambdas_temp = 10 ** np.linspace(lambda_left_log, lambda_right_log, 100)
                 # compute curvature
-                curvs_cache = np.array(
-                    [curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_cache]
+                curvs_temp = np.array(
+                    [curvature(self.rho(j), self.eta(j), self.eta_diff(j), beta=j) for j in lambdas_temp]
                 )
-                # search maximum curvature index
-                index_max = np.argmax(curvs_cache)
+                # cache index of maximum curvature
+                index_max = np.argmax(curvs_temp)
                 # set property of optimal lambda
-                self._lambda_opt = lambdas_cache[index_max]
-                # store caches
-                lambdas.extend(lambdas_cache.tolist())
-                curvs.extend(curvs_cache.tolist())
+                self._lambda_opt = lambdas_temp[index_max]
+                # cache temporary lambdas and cavature values
+                lambdas.extend(lambdas_temp.tolist())
+                curvs.extend(curvs_temp.tolist())
 
-        # update lambdas and curvatures properties
+        # store lambdas and curvatures as properties
         lambdas = np.array(lambdas)
         curvs = np.array(curvs)
         index_sort = lambdas.argsort()
-        self.lambdas = lambdas[index_sort]
+        self._lambdas = lambdas[index_sort]
         self._curvatures = curvs[index_sort]
+
+        # cache optmized solution
+        self._optimized_solution = self.inverted_solution(beta=self._lambda_opt)
+
         print(f"completed the optimization (iteration times : {itemax})")
 
-    def optimized_solution(self, itemax=5):
-        """calculation inverted solution using L-curve criterion optimization
+    def optimized_solution(self, itemax=None):
+        """calculate inverted solution using L-curve criterion optimization
 
         Parameters
         ----------
         itemax : int, optional
-            iteration times of optimization method, by default 5
+            iteration times of optimization method, by default None.
+            if ``self._optimized_solution`` is None or an integer is given,
+            :obj:`.optimize` is called and optimal lambda is stored in :obj:`.lambda_opt`.
 
         Returns
         -------
-        numpy.ndarray
-            optimised inverted solution vector
+        :obj:`numpy.ndarray`
+            optimized solution vector
         """
         # excute optimization
-        self.optimize(itemax)
+        if itemax:
+            self.optimize(itemax)
+            self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
-        # return optimized solution and parameter
-        return self.inverted_solution(beta=self.lambda_opt)
+        elif self._optimized_solution is None:
+            self.optimize()
+            self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
-    def plot_L_curve(self, fig=None, axes=None, scatter_plot="off", scatter_annotate=True):
+        return self._optimized_solution
+
+    def plot_L_curve(self, fig=None, axes=None, scatter_plot=None, scatter_annotate=True):
         """plotting the L curve in log-log scale
         The range of regularization parameters uses self.lambdas
 
         Parameters
         ----------
-        fig : matplotlib.figure.Figure, optional
+        fig : :obj:`~matplotlib.figure.Figure`, optional
             matplotlib figure object, by default None.
-        axes : matplotlib.axes.Axes, optional
+        axes : :obj:`~matplotlib.axes.Axes`, optional
             matplotlib Axes object, by default None.
-        scatter_plot : str or int, optional
-            whether or not to plot some L curve points,
-            by default "off". if yes and you want to manually define the number of points,
-            put in the numbers. For example, scatter_plot=10.
+        scatter_plot : int, optional
+            whether or not to plot some L curve points, by default None.
+            If you want to manually define the number of points,
+            put in the numbers. e.g.) ``scatter_plot=10``.
         scatter_annotate : bool, optional
             whether or not to annotate the scatter_points, by default True.
-            This key argument is valid if only `scatter_plot` is not "off".
+            This key argument is valid if only ``scatter_plot`` is not None.
 
         Returns
         ------
@@ -206,7 +218,7 @@ class Lcurve(SVDInversionBase):
         ax.loglog(residual_norms, regularization_norms, color="C0")
 
         # plot some points of L curve and annotate with regularization parameters label
-        if isinstance(scatter_plot, int):
+        if isinstance(scatter_plot, int) and scatter_plot > 0:
             lambdas = 10 ** np.linspace(np.log10(self.lambdas.min()), np.log10(self.lambdas.max()), scatter_plot)
             for _lambda in lambdas:
                 point = (self.residual_norm(_lambda), self.regularization_norm(_lambda))
@@ -231,9 +243,9 @@ class Lcurve(SVDInversionBase):
 
         Parameters
         ----------
-        fig : :obj:`matplotlib.figure.Figure`, optional
+        fig : :obj:`~matplotlib.figure.Figure`, optional
             matplotlib figure object, by default None.
-        axes : :obj:`matplotlib.axes.Axes`, optional
+        axes : :obj:`~matplotlib.axes.Axes`, optional
             matplotlib Axes object, by default None.
 
         Returns
