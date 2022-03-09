@@ -6,7 +6,7 @@ from matplotlib.ticker import AutoLocator, AutoMinorLocator, LogLocator
 from matplotlib.ticker import ScalarFormatter, LogFormatterSciNotation
 from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
-from cherab.phix.plasma import TSCEquilibrium
+from cherab.phix.plasma import import_equilibrium
 from cherab.phix.tools.raytransfer import import_phix_rtm
 from cherab.phix.machine.wall_outline import OUTER_LIMITER
 
@@ -58,7 +58,7 @@ def show_phix_profiles(
     cmap : str, optional
         color map, by default "inferno"
     rtm : :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`, optional
-        cherab's raytransfer objects, by default returns using default`.TSCEquilibrium` and `.import_phix_rtm`
+        cherab's raytransfer objects, by default returns using default`.import_equilibrium` and `.import_phix_rtm`
     vmax : float, optional
         to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
     vmin : float, optional
@@ -84,7 +84,7 @@ def show_phix_profiles(
     # import phix raytransfer object
     if rtm is None:
         world = World()
-        eq = TSCEquilibrium()
+        eq = import_equilibrium()
         rtm = import_phix_rtm(world, equilibrium=eq)
 
     # set ImageGrid
@@ -194,7 +194,7 @@ def show_phix_profile(
     cmap : str, optional
         color map, by default "inferno"
     rtm : :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`, optional
-        cherab's raytransfer objects, by default returns using default`.TSCEquilibrium` and `.import_phix_rtm`
+        cherab's raytransfer objects, by default returns using default`.import_equilibrium` and `.import_phix_rtm`
     vmax : float, optional
         to set the upper color limitation, by default maximum value of all profiles, if cbar_mode=="single"
     vmin : float, optional
@@ -215,7 +215,7 @@ def show_phix_profile(
     # import phix raytransfer object
     if rtm is None:
         world = World()
-        eq = TSCEquilibrium(folder="phix10")
+        eq = import_equilibrium()
         rtm = import_phix_rtm(world, equilibrium=eq)
 
     # RZ grid

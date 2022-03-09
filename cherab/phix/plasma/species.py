@@ -130,8 +130,8 @@ class PHiXSpecies:
 
         try:
             # extract specified element object
-            element = eval(f"elements.{element}")
-        except Exception:
+            element = getattr(elements, element)
+        except AttributeError:
             message = (
                 f"element name '{element}' is not implemented."
                 f"You can implement manually using Element class"
@@ -256,8 +256,8 @@ class PHiXSpecies:
 
 # For debugging
 if __name__ == "__main__":
-    from cherab.phix.plasma import TSCEquilibrium
+    from cherab.phix.plasma import import_equilibrium
 
-    eq = TSCEquilibrium()
+    eq = import_equilibrium()
     species = PHiXSpecies(eq)
     species.plot_distribution()

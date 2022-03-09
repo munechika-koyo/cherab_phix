@@ -6,7 +6,7 @@ This module is defined to handle a couple of plasma quantities duaring the phix 
 
 Equilibrium
 ------------
-.. autoclass:: cherab.phix.plasma.TSCEquilibrium
+.. autoclass:: cherab.phix.plasma.import_equilibrium
     :members:
     :show-inheritance:
 

@@ -16,6 +16,13 @@ def import_equilibrium(model_variant="phix10"):
         Name of the equilibrium model variant to load, by default "phix10".
         each data is stored as a .json file in data directory.
 
+    Returns
+    -------
+    :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`
+        :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium` instance
+
+    Example
+    -------
     .. prompt:: python >>> auto
 
         >>> from cherab.phix.plasma import impot_equilibrium
@@ -31,11 +38,11 @@ def import_equilibrium(model_variant="phix10"):
     psi_axis = eq_data["psi_axis"]
     psi_lcfs = eq_data["psi_lcfs"]
     ac = eq_data["axis_coord"]
-    axis_coord = Point2D(ac[0], ac[1])
+    axis_coord = Point2D(*ac)
     xp = eq_data["x_points"]
-    x_points = [Point2D(xp[0][0], xp[0][1])]
+    x_points = [Point2D(*xp)]
     sp = eq_data["strike_points"]
-    strike_points = [Point2D(sp[0][0], sp[0][1]), Point2D(sp[1][0], sp[1][1])]
+    strike_points = [Point2D(*sp[0]), Point2D(*sp[1])]
     f_profile = eq_data["f_profile"]
     q_profile = eq_data["q_profile"]
     b_vacuum_radius = eq_data["b_vacuum_radius"]
@@ -55,4 +62,5 @@ def import_equilibrium(model_variant="phix10"):
 
 # For debugging
 if __name__ == "__main__":
-    eq = import_equilibrium(model_variant="phix10")
+    eq = import_equilibrium(model_variant="phix12")
+    pass

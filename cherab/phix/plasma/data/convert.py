@@ -3,7 +3,10 @@ import json
 import numpy as np
 
 
-def convert_raw_data_to_json(path="phix10"):
+BASE_PATH = os.path.dirname(__file__)
+
+
+def convert_raw_data_to_json(path=os.path.join(BASE_PATH, "phix10")):
     """
     Generate json file data from raw data calculated TSC.
     output json file is stored in data directory as the same file name as the folder name.
@@ -11,7 +14,7 @@ def convert_raw_data_to_json(path="phix10"):
     Parameters
     ----------
     path : str, optional
-        path name where data is stored, by default "phix10"
+        directory path name where data is stored, by default "phix10"
     """
     # define storing equiribrium data
     eq_data = {}
@@ -35,8 +38,8 @@ def convert_raw_data_to_json(path="phix10"):
 
     # r, z, psi
     flux_data = np.loadtxt(path_flux, dtype=np.float64)
-    eq_data["r"] = flux_data[:: mesh_N[0] - 1, 0]
-    eq_data["z"] = flux_data[: mesh_N[1], 1]
+    eq_data["r"] = flux_data[:: mesh_N[0] - 1, 0].tolist()
+    eq_data["z"] = flux_data[: mesh_N[1], 1].tolist()
     psi_data = flux_data[:, 2].reshape((mesh_N[1], -1), order="F")
     eq_data["psi"] = psi_data.transpose().tolist()
 
@@ -64,20 +67,17 @@ def convert_raw_data_to_json(path="phix10"):
 
     # q profile from q.dat file
     q_data = np.loadtxt(os.path.join(path, "q.dat"), dtype=np.float64)
-    q_profile_psin = (q_data[:, 0] - psi_axis) / (psi_lcfs - psi_axis)
-    eq_data["q_profile"] = np.stack((q_profile_psin, q_data[:, 1])).tolist()
+    psi_normalized = (q_data[:, 0] - psi_axis) / (psi_lcfs - psi_axis)
+    eq_data["q_profile"] = np.stack((psi_normalized, q_data[:, 1])).tolist()
 
     # f function data fron g.dat file
-    data = np.loadtxt(os.path.join(path, "g.dat"), dtype=np.float64)
-    g_data = data[:, 2].reshape((mesh_N[1], -1), order="F")
-    g_data = g_data.transpose()
-    eq_data["f_profile"] = np.stack((q_profile_psin, q_data[:, 1])).tolist()
+    # TODO: not implement yet, tentative values are applied here
+    eq_data["f_profile"] = np.stack((psi_normalized, [1] * len(psi_normalized))).tolist()
 
     # b_vacuum_radius & b_vacuum_magnitude
-    # This values is used in EFIT but TSC does not calculate, so
-    # artifical value is applied ouside lcfs.
+    # TODO: not implement yet
     eq_data["b_vacuum_radius"] = 1.0
-    eq_data["b_vacuum_magnitude"] = b_vacuum_magnitude  # TODO: implement how the b_vacuum is defined
+    eq_data["b_vacuum_magnitude"] = 1.0
 
     # lcfs polygon from lcfs.dat file
     eq_data["lcfs_polygon"] = np.loadtxt(
@@ -89,5 +89,12 @@ def convert_raw_data_to_json(path="phix10"):
 
     # ----------------------------------------------------------------------- #
     # ouput as json file
-    with open(os.path.join(os.path.dirname(__file__), os.path.splitext(os.path.basename(path))[0])) as f:
-        json.dumps(eq_data, f, indent=4)
+    with open(os.path.join(os.path.dirname(__file__), os.path.splitext(os.path.basename(path))[0] + ".json"), "w") as f:
+        json.dump(eq_data, f, indent=4)
+
+    print("conversion completed.")
+
+
+if __name__ == "__main__":
+    # debug
+    convert_raw_data_to_json()
