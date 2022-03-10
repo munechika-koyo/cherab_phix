@@ -6,11 +6,11 @@ from cherab.openadas import OpenADAS
 from cherab.core import Plasma, Line, elements
 from cherab.core.math import VectorAxisymmetricMapper
 from cherab.core.model import ExcitationLine, RecombinationLine, Bremsstrahlung
-from cherab.phix.plasma import TSCEquilibrium, PHiXSpecies
+from cherab.phix.plasma import import_equilibrium, PHiXSpecies
 from cherab.phix.machine.wall_outline import VESSEL_WALL
 
 
-def import_plasma(parent, folder="phix10", species=None):
+def import_plasma(parent, equilibrium="phix10", species=None):
     """Helper function of generating PHiX plasma
     As emissions, H :math:`\\alpha`, H :math:`\\beta`, H :math:`\\gamma`, H :math:`\\delta` are applied.
 
@@ -18,8 +18,8 @@ def import_plasma(parent, folder="phix10", species=None):
     ----------
     parent : :obj:`~raysect.core.scenegraph.node.Node`
         Raysect's scene-graph parent node
-    folder : str
-        folder name in which TSC data is stored
+    equilibrium : str
+        equilibrium json file name in which TSC data is stored
     species : object , optional
         user-defined species object having composition which is a list of :obj:`~cherab.core.Species` objects
         and electron distribution function attributes,
@@ -28,11 +28,11 @@ def import_plasma(parent, folder="phix10", species=None):
     Returns
     -------
     tuple
-        (:obj:`~cherab.core.Plasma`, :obj:`.TSCEquilibrium`)
+        (:obj:`~cherab.core.Plasma`, :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`)
     """
-    print(f"loading plasma (data from: {folder})...")
-    # create TSCEquilibrium instance
-    eq = TSCEquilibrium(folder=folder)
+    print(f"loading plasma (data from: {equilibrium})...")
+    # create equilibrium instance
+    eq = import_equilibrium(model_variant=equilibrium)
 
     # create atomic data source
     adas = OpenADAS(permit_extrapolation=True)
