@@ -1,4 +1,4 @@
-include README.md CHANGELOG.txt LICENSE.txt CONTRIBUTING.txt AUTHORS.txt MANIFEST.in setup.py .gitignore
+include README.md CHANGELOG.md LICENSE.md AUTHORS.md MANIFEST.in setup.py .gitignore .gitattributes
 include cherab/phix/VERSION
 global-exclude *.c
 recursive-include cherab *.py *.pyx *.pxd *.csv *.json *.npy *.rsm *.dat *.ccm *.ccc *.txt
