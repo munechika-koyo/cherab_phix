@@ -7,7 +7,7 @@ source requirements/github_pkgs.sh
 # for doc
 pip install -r requirements/docs.txt
 
-echo Install cherab_phix...
+# install cherab_phix
 
 source dev/install.sh
 
