@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, Extension
 from Cython.Build import cythonize
 import sys
 import numpy
@@ -53,17 +53,4 @@ extensions = cythonize(
     compiler_directives=cython_directives,
 )
 
-# parse the package version number
-with open(path.join(path.dirname(__file__), "cherab/phix/VERSION")) as version_file:
-    version = version_file.read().strip()
-
-setup(
-    name="cherab-phix",
-    version=version,
-    namespace_packages=["cherab"],
-    description="Cherab spectroscopy framework: PHiX machine configuration",
-    install_requires=["cherab", "numpy", "cython>=0.28"],
-    packages=find_packages(),
-    include_package_data=True,
-    ext_modules=extensions,
-)
+setup(ext_modules=extensions)

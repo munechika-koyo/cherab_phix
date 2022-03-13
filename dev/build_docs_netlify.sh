@@ -2,17 +2,13 @@
 
 echo Install dependencies...
 
-pip install -r requirements/build.txt
-pip install -r requirements/install.txt
-
-# install from github repos
+# install dependencies from github
 source requirements/github_pkgs.sh
-
+# for doc
 pip install -r requirements/docs.txt
 
-echo Install cherab_phix...
+# install cherab_phix
 
-source dev/build.sh
 source dev/install.sh
 
 echo Building docs...
