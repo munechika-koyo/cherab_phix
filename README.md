@@ -6,19 +6,19 @@ For more information, see the [documentation pages](https://cherab-phix.netlify.
 
 Quick installation
 -------------------
-Synchronize cherab_phix:
+Synchronize cherab_phix source:
 
 ```Shell
 git clone https://github.com/munechika-koyo/cherab_phix.git
 ```
 
-And compile it:
+Move into `cherab_phix` directory, then excute the following command:
 ```Shell
-python setup.py install build_ext --inplace
+python -m pip install .
 ```
 
-If you would like to develop this package, it is preferred to use "develop" mode:
+If you would like to develop this package, it is preferred to use the development mode with the option "-e":
 
 ```Shell
-python setup.py develop build_ext --inplace
+python -m pip install -e .
 ```
