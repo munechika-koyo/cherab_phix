@@ -1,54 +1,89 @@
-import os
-import numpy as np
-import datetime
+"""
+Ray-tracing simulation of fast camera
+=====================================
+Here, we simulate fast camera measurement focusing on :math:`\\text{H}_\\alpha` emission.
+"""
+from datetime import datetime
+from pathlib import Path
+from textwrap import dedent
 
+import numpy as np
+from matplotlib import pyplot as plt
 from raysect.optical import World
-from raysect.optical.observer import RGBPipeline2D, PowerPipeline2D
-from raysect.optical.observer import RGBAdaptiveSampler2D
-from cherab.phix.plasma import import_plasma
+from raysect.optical.observer import PowerPipeline2D, SpectralPowerPipeline2D
+
 from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer import import_phix_camera
+from cherab.phix.plasma import import_plasma
 
+ROOT = Path(__file__).parent.parent
 
-# ------------ obtain cherab_phix path ----------------------
-DIR = os.path.abspath(__file__).split(sep="demos")[0]
-# -----------------------------------------------------------
+# %%
+# Create scene-graph
+# ------------------
 
-# generate scene world
+# scene world
 world = World()
+
 # import plasma
 plasma, eq = import_plasma(world)
+
 # import phix mesh
 mesh = import_phix_mesh(world, reflection=True)
+
 # import phix camera
 camera = import_phix_camera(world)
 
-# set pipelines and sampler
-rgb = RGBPipeline2D(display_unsaturated_fraction=1.0, name="sRGB", display_progress=False)
+# %%
+# Define Observer pipeline
+# ------------------------
 power = PowerPipeline2D(display_progress=False, name="power")
-camera.pipelines = [rgb, power]
-# camera.pipelines = [power]
-# sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=10, cutoff=0.05)
+spectral = SpectralPowerPipeline2D(display_progress=False, name="Spectrul_Power")
+camera.pipelines = [power, spectral]
 
-# camera.frame_sampler = sampler
-# pixels = (256, 512)  # [px]
-pixels = (128, 256)  # [px]
-camera.pixels = pixels
+# %%
+# Set camera parameters
+# ---------------------
 camera.min_wavelength = 650
 camera.max_wavelength = 660
 camera.spectral_rays = 1
-camera.spectral_bins = 1
+camera.spectral_bins = 50
 camera.per_pixel_samples = 10
-camera.lens_samples = 20
+camera.lens_samples = 10
 
-
-# calculate ray-tracing
+# %%
+# Excute Ray-tracing
+# ------------------
+plt.ion()
 camera.observe()
 
-# save
-time_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-save_dir = os.path.join(DIR, "output", "synthetic_data")
-filename = os.path.join(save_dir, f"phix_camera({time_now})")
-rgb.save(filename + "wo_ref.png")
-np.save(filename + "wo_ref", power.frame.mean)
-print(f"successfully saved {filename.split(os.path.sep)[-1]}")
+# %%
+# Save results
+# ------------
+time_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+save_dir = ROOT / "output" / "synthetic_images" / f"{time_now}"
+save_dir.mkdir(parents=True)
+
+# save config info as text
+result = dedent(
+    f"""
+    ----------------------------------------------------------------------------------------
+    camera name              : {camera.name}
+    camera pixels            : {camera.pixels}
+    camera per pixel samples : {camera.per_pixel_samples}
+    camera lens samples      : {camera.lens_samples}
+    camera pixel samples     : {camera.pixel_samples}
+    camera spectral bins     : {camera.spectral_bins}
+    camera wavelength range  : {camera.min_wavelength}, {camera.max_wavelength}
+    ----------------------------------------------------------------------------------------
+    PHiX PFCs                : {mesh}
+    ----------------------------------------------------------------------------------------
+    """
+)[1:-1]
+(save_dir / "results.txt").write_text(result)
+print(result)
+power.save(str(save_dir / "power.png"))
+np.save(save_dir / "power.npy", power.frame.mean)
+np.save(save_dir / "spectrum.npy", spectral.frame.mean)
+np.save(save_dir / "wavelength.npy", spectral.wavelengths)
+print(f"successfully saved in {save_dir}.")

@@ -1,168 +1,300 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
-import os
-from raysect.optical import rotate_x, rotate_z
-from raysect.optical.material import AbsorbingSurface, RoughConductor, Material
+"""Module to offer helper function to load plasma facing component meshes."""
+from __future__ import annotations
+
+from collections import defaultdict
+from pathlib import Path
+
+import numpy as np
+from numpy.typing import NDArray
+from plotly import graph_objects as go
+from plotly.graph_objects import Figure
+from raysect.optical import World, rotate_z
+from raysect.optical.material import AbsorbingSurface, Material
 from raysect.primitive.mesh import Mesh
+from scipy.spatial.transform import Rotation
+from stl.base import BaseMesh
+from stl.mesh import Mesh as STLMesh
 
-from cherab.phix.machine.material import RoughSUS316L
-from cherab.phix.machine.material import PCTFE
+from cherab.phix.machine.material import PCTFE, RoughSUS316L
+from cherab.phix.tools.spinner import Spinner
+
+__all__ = ["import_phix_mesh", "show_PFCs_3D"]
 
 
-CADMESH_PATH = os.path.join(os.path.dirname(__file__), "geometry", "data", "RSMfiles")
+RSM_DIR = Path(__file__).parent.resolve() / "geometry" / "data" / "RSMfiles"
+STL_DIR = Path(__file__).parent.resolve() / "geometry" / "data" / "STLfiles"
+
 # TODO: omtimization of roughness
 SUS_ROUGHNESS = 0.0125
 
-# Component
-# [name, path, matelial, copy times, angle offset]
-# stenless group
-VESSEL = [("Vacuum Vessel", os.path.join(CADMESH_PATH, "vessel_wall_finite.rsm"), RoughSUS316L(SUS_ROUGHNESS), 2, 0)]
-VACCUM_Flange = [("Vacuum Flange", os.path.join(CADMESH_PATH, "vaccum_flange.rsm"), RoughSUS316L(SUS_ROUGHNESS), 1, 0)]
-MG_port = [("Magnetron Port", os.path.join(CADMESH_PATH, "MG_port.rsm"), RoughSUS316L(SUS_ROUGHNESS), 1, 0)]
-LIMITER_BOX = [("Limiter Box", os.path.join(CADMESH_PATH, "limiter_box.rsm"), RoughSUS316L(0.25), 1, 0)]
-LIMITER_225 = [("Limiter 225", os.path.join(CADMESH_PATH, "limiter_225.rsm"), RoughSUS316L(0.25), 1, 0)]
-FL = [("Flux Loop", os.path.join(CADMESH_PATH, "FL_half.rsm"), RoughSUS316L(0.25), 2, -45)]
-FBC_up = [("Feed Back Coil", os.path.join(CADMESH_PATH, "FBC_half_up.rsm"), RoughSUS316L(0.25), 2, 0)]
-FBC_down = [("Feed Back Coil", os.path.join(CADMESH_PATH, "FBC_half_down.rsm"), RoughSUS316L(0.25), 2, 0)]
-RAIL_up = [("Rail", os.path.join(CADMESH_PATH, "rail_half_up.rsm"), RoughSUS316L(0.25), 2, 0)]
-RAIL_down = [("Rail", os.path.join(CADMESH_PATH, "rail_half_down.rsm"), RoughSUS316L(0.25), 2, 0)]
-# teflon group
-RAIL_con = [("Rail connection", os.path.join(CADMESH_PATH, "rail_connection_half.rsm"), PCTFE(), 2, 0)]
-VESSEL_GASKET = [("Vacuum Vessel Gasket", os.path.join(CADMESH_PATH, "vessel_gasket_half.rsm"), PCTFE(), 2, 0)]
+COMPONENTS = {
+    # name: (filename, material object)
+    "Vaccum Vessel": ("vessel_wall_fine", RoughSUS316L(SUS_ROUGHNESS)),
+    "Vacuum Flange": ("vaccum_flange", RoughSUS316L(SUS_ROUGHNESS)),
+    "Magnetron Port": ("MG_port", RoughSUS316L(SUS_ROUGHNESS)),
+    "Limiter Box": ("limiter_box", RoughSUS316L(0.25)),
+    "Limiter 225": ("limiter_225", RoughSUS316L(0.25)),
+    "Flux Loop": ("FL_half", RoughSUS316L(0.25)),
+    "Feed Back Coil (upper)": ("FBC_half_up", RoughSUS316L(0.25)),
+    "Feed Back Coil (lower)": ("FBC_half_down", RoughSUS316L(0.25)),
+    "Rail (upper)": ("rail_half_up", RoughSUS316L(0.25)),
+    "Rail (lower)": ("rail_half_down", RoughSUS316L(0.25)),
+    "Rail Connection": ("rail_connection_half", PCTFE()),
+    "Vacuum Vessel Gasket": ("vessel_gasket_half", PCTFE()),
+}
 
-# Complete PHiX mesh for Plasma Facing Compornents
-PHiX_MESH = (
-    VESSEL
-    + VACCUM_Flange
-    + MG_port
-    + LIMITER_BOX
-    + LIMITER_225
-    + FL
-    + FBC_up
-    + FBC_down
-    + RAIL_up
-    + RAIL_down
-    + RAIL_con
-    + VESSEL_GASKET
-)
+NCOPY = defaultdict(lambda: 1)
+NCOPY["Vaccum Vessel"] = 2
+NCOPY["Flux Loop"] = 2
+NCOPY["Feed Back Coil (upper)"] = 2
+NCOPY["Feed Back Coil (lower)"] = 2
+NCOPY["Rail (upper)"] = 2
+NCOPY["Rail (lower)"] = 2
+NCOPY["Rail Connection"] = 2
+
+ANG_OFFSET = defaultdict(lambda: 0)
+ANG_OFFSET["Flux Loop"] = -45
 
 
 def import_phix_mesh(
-    world,
-    override_material=None,
-    vacuum_vessel=None,
-    vaccum_flange=None,
-    magnetron_port=None,
-    limiter_box=None,
-    limiter_225=None,
-    flux_loop=None,
-    feed_back_coil=None,
-    rail=None,
-    rail_connection=None,
-    vessel_gasket=None,
-    reflection=True,
-):
-    """Import PHiX Mesh files (.rsm) from directory data/RSMfiles
+    world: World,
+    override_materials: dict[str, Material] | None = None,
+    reflection: bool = True,
+) -> dict[str, list[Mesh]]:
+    """Import PHiX Plasma facing component meshes.
+
     Each Meshes allow the user to use an user-defined material which inherites
     :obj:`~raysect.optical.material.material.Material`.
 
     Parameters
     ----------
-    world : :obj:`~raysect.core.scenegraph.world.World`
+    world
         The world scenegraph belonging to these materials.
-    override_material : Material, optional
-        user-defined Material is applied to all of meshes, by default None
-    vacuum_vessel : Material, optional
-        user-defined Material applied to Vacuum Vessel, by default None
-    vaccum_flange : Material, optional
-        user-defined Material applied to Vacuum Vessel Flange, by default None
-    magnetron_port : Material, optional
-        user-defined Material applied to Magnetron Port, by default None
-    limiter_box : Material, optional
-        user-defined Material applied to Limiter Box, by default None
-    limiter_225 : Material, optional
-        user-defined Material applied to Limiter at 22.5 degree, by default None
-    flux_loop : Material, optional
-        user-defined Material applied to Flux Loop, by default None
-    feed_back_coil : Material, optional
-        user-defined Material applied to Feed Back Coil, by default None
-    rail : Material, optional
-        user-defined Material applied to Rail, by default None
-    rail_connection : Material, optional
-        user-defined Material applied to Rail Connection, by default None
-    vessel_gasket : Material, optional
-        user-defined Material applied to Vaccum Vessel Gasket, by default None
-    reflection : bool, optional
-        whether or not to consider reflection light, by default True
-        If reflection == False, all of meshes' material is replaced to
-        :py:class:`~raysect.optical.material.absorber.AbsorbingSurface`
+    override_materials
+        user-defined material. Set up like ``{"Vaccum Vessel": RoughSUS316L(0.05), ...}``.
+    reflection
+        whether or not to consider reflection light, by default True.
+        If ``False``, all of meshes' material are replaced to
+        :obj:`~raysect.optical.material.absorber.AbsorbingSurface`
 
     Returns
     -------
-    list
-        list containing :obj:`~raysect.primitive.mesh.mesh.Mesh` objects
+    dict[str, list[:obj:`~raysect.primitive.mesh.mesh.Mesh`]]
+        containing mesh name and :obj:`~raysect.primitive.mesh.mesh.Mesh` objects
+
+    Example
+    -------
+    .. prompt:: python
+
+        from raysect.optical import World
+        from cherab.phix.machine import import_phix_mesh
+
+        world = World()
+        meshes = import_phix_mesh(world, reflection=True)
     """
 
-    if reflection is False:
-        override_material = AbsorbingSurface()
+    if not reflection:
+        override_materials = defaultdict(lambda: AbsorbingSurface())
 
-    mesh = []
+    mesh = {}
 
-    for mesh_item in PHiX_MESH:
-        mesh_name, mesh_path, default_material, ncopy, angle_offset = mesh_item
-        if override_material is not None and isinstance(override_material, Material):
-            material = override_material
-        elif vacuum_vessel is not None and mesh_name == "Vacuum Vessel" and isinstance(vacuum_vessel, Material):
-            material = vacuum_vessel
-        elif vaccum_flange is not None and mesh_name == "Vacuum Flange" and isinstance(vaccum_flange, Material):
-            material = vaccum_flange
-        elif magnetron_port is not None and mesh_name == "Magnetron Port" and isinstance(magnetron_port, Material):
-            material = magnetron_port
-        elif limiter_box is not None and mesh_name == "Limiter Box" and isinstance(limiter_box, Material):
-            material = limiter_box
-        elif limiter_225 is not None and mesh_name == "Limiter 225" and isinstance(limiter_225, Material):
-            material = limiter_225
-        elif flux_loop is not None and mesh_name == "Flux Loop" and isinstance(flux_loop, Material):
-            material = flux_loop
-        elif feed_back_coil is not None and mesh_name == "Feed Back Coil" and isinstance(feed_back_coil, Material):
-            material = feed_back_coil
-        elif rail is not None and mesh_name == "Rail" and isinstance(rail, Material):
-            material = rail
-        elif rail_connection is not None and mesh_name == "Rail connection" and isinstance(rail_connection, Material):
-            material = rail_connection
-        elif vessel_gasket is not None and mesh_name == "Vacuum Vessel Gasket" and isinstance(vessel_gasket, Material):
-            material = vessel_gasket
-        else:
-            material = default_material
+    with Spinner(text="Loading PFCs...") as spinner:
+        for mesh_name, (filename, material) in COMPONENTS.items():
+            try:
+                if override_materials is not None:
+                    material = override_materials[mesh_name]
 
-        # directory, filename = os.path.split(mesh_path)
-        # mesh_name, ext = filename.split(".")
+                # master element
+                mesh[mesh_name] = [
+                    Mesh.from_file(
+                        RSM_DIR / f"{filename}.rsm",
+                        parent=world,
+                        transform=rotate_z(ANG_OFFSET[mesh_name]),
+                        material=material,
+                        name=mesh_name,
+                    )
+                ]
 
-        roughness = getattr(material, "roughness", None)
+                # copies of the master element
+                angle = 360.0 / NCOPY[mesh_name]
+                for i in range(1, NCOPY[mesh_name]):
+                    mesh[mesh_name].append(
+                        mesh[mesh_name][0].instance(
+                            parent=world,
+                            transform=rotate_z(angle * i + ANG_OFFSET[mesh_name]),
+                            material=material,
+                            name=mesh_name,
+                        )
+                    )
 
-        print(f'importing {mesh_name}, {str(material).split(" ")[0].split(".")[-1]}, roughness: {roughness}')
+                material_str = str(material).split()[0].split(".")[-1]
+                if roughness := getattr(material, "roughness", None):
+                    material_str = f"{material_str} (roughness: {roughness:.4f})"
+                else:
+                    material_str = f"{material_str}"
+                spinner.write(f"✅ {mesh_name}: {material_str}")
 
-        temp_mesh = Mesh.from_file(
-            mesh_path, parent=world, transform=rotate_z(angle_offset), material=material, name=mesh_name
-        )
-        mesh.append(temp_mesh)
-        angle = 360.0 / ncopy
-
-        for i in range(1, ncopy):  # copies of the master element
-            instance = temp_mesh.instance(
-                parent=world, transform=rotate_z(angle * i + angle_offset), material=material, name=mesh_name
-            )
-            mesh.append(instance)
+            except Exception as e:
+                spinner.write(f"💥 {e}")
 
     return mesh
 
 
+def show_PFCs_3D(fig: Figure | None = None, fig_size: tuple[int, int] = (700, 500)) -> Figure:
+    """Show PHiX Plasma Facing Components in 3-D space.
+
+    Plot 3D meshes of PFCs with plotly.
+
+    Parameters
+    ----------
+    fig
+        plotly Figure object, by default :obj:`~plotly.graph_objects.Figure`.
+    fig_size
+        figure size, be default (700, 500) px.
+
+    Returns
+    -------
+        plotly Figure object
+
+    Example
+    -------
+    .. prompt:: python
+
+        fig = show_PFCs_3D(fig_size=(700, 500))
+        fig.show()
+
+    The above codes automatically lauch a browser to show the figure when it is executed in
+    the python interpreter like the following picture:
+
+    .. image:: ../_static/images/show_PFCs_3D_example.png
+    """
+    fig = go.Figure()
+
+    for mesh_name, (filename, _) in COMPONENTS.items():
+        # use not fine mesh in vessel
+        if mesh_name == "Vaccum Vessel":
+            filename = "vessel_wall"
+
+        stl_mesh = STLMesh.from_file(STL_DIR / f"{filename}.STL")
+        vertices, I, J, K = _stl2mesh3d(stl_mesh)
+        # Offset rotatation
+        # rot = Rotation.from_euler("z", ANG_OFFSET[mesh_name], degrees=True)
+        # vertices = rot.apply(vertices)
+        x, y, z = vertices.T
+
+        mesh3D = go.Mesh3d(
+            x=x,
+            y=y,
+            z=z,
+            i=I,
+            j=J,
+            k=K,
+            flatshading=True,
+            colorscale=[[0, "#e5dee5"], [1, "#e5dee5"]],
+            intensity=z,
+            name=f"{mesh_name}",
+            text=f"{mesh_name}",
+            showscale=False,
+            showlegend=True,
+            lighting=dict(
+                ambient=0.18,
+                diffuse=1,
+                fresnel=0.1,
+                specular=1,
+                roughness=0.1,
+                facenormalsepsilon=0,
+            ),
+            lightposition=dict(x=3000, y=3000, z=10000),
+            hovertemplate=f"<b>{mesh_name}</b><br>" + "x: %{x}<br>y: %{y}<br>z: %{z}<br>"
+            "<extra></extra>",
+        )
+        fig.add_trace(mesh3D)
+
+        # copies of the master element
+        angle = 360.0 / NCOPY[mesh_name]
+        rot = Rotation.from_euler("z", angle, degrees=True)
+        for i in range(1, NCOPY[mesh_name]):
+            vertices = rot.apply(vertices)
+            x, y, z = vertices.T
+            mesh3D = go.Mesh3d(
+                x=x,
+                y=y,
+                z=z,
+                i=I,
+                j=J,
+                k=K,
+                flatshading=True,
+                colorscale=[[0, "#e5dee5"], [1, "#e5dee5"]],
+                intensity=z,
+                name=f"{mesh_name} {i + 1}",
+                text=f"{mesh_name} {i + 1}",
+                showscale=False,
+                showlegend=True,
+                lighting=dict(
+                    ambient=0.18,
+                    diffuse=1,
+                    fresnel=0.1,
+                    specular=1,
+                    roughness=0.1,
+                    facenormalsepsilon=0,
+                ),
+                lightposition=dict(x=3000, y=3000, z=10000),
+                hovertemplate=f"<b>{mesh_name} {i + 1}</b><br>"
+                + "x: %{x}<br>"
+                + "y: %{y}<br>"
+                + "z: %{z}<br>"
+                "<extra></extra>",
+            )
+            fig.add_trace(mesh3D)
+
+    fig.update_layout(
+        paper_bgcolor="rgb(1,1,1)",
+        title_text="PHiX device",
+        title_x=0.5,
+        font_color="white",
+        hoverlabel_grouptitlefont_color="black",
+        width=fig_size[0],
+        height=fig_size[1],
+        scene_aspectmode="data",
+        margin=dict(r=10, l=10, b=10, t=35),
+        scene_xaxis_visible=False,
+        scene_yaxis_visible=False,
+        scene_zaxis_visible=False,
+    )
+
+    return fig
+
+
+def _stl2mesh3d(stl_mesh: BaseMesh) -> tuple[NDArray, NDArray, NDArray, NDArray]:
+    """Extracts the unique vertices and the lists I, J, K to define a Plotly
+    mesh3d.
+
+    Parameters
+    ----------
+    stl_mesh
+        loaded by numpy-stl module from a stl file
+
+    Returns
+    -------
+    tuple[NDArray, NDArray, NDArray, NDArray]
+        2D-array of vertices
+        A vector of vertex indices, representing the "first" vertex of triangle
+        A vector of vertex indices, representing the "second" vertex of triangle
+        A vector of vertex indices, representing the "third" vertex of triangle
+    """
+    p, q, r = stl_mesh.vectors.shape  # (p, 3, 3)
+    # the array stl_mesh.vectors.reshape(p * q, r) can contain multiple copies of the same vertex;
+    # extract unique vertices from all mesh triangles
+    vertices, ixr = np.unique(stl_mesh.vectors.reshape(p * q, r), return_inverse=True, axis=0)
+    I = np.take(ixr, [3 * k for k in range(p)])
+    J = np.take(ixr, [3 * k + 1 for k in range(p)])
+    K = np.take(ixr, [3 * k + 2 for k in range(p)])
+    return (vertices, I, J, K)
+
+
 # debug
 if __name__ == "__main__":
-
-    from raysect.optical import World
-
     world = World()
-    mesh = import_phix_mesh(world)
-
-    print("test")
+    mesh = import_phix_mesh(world, reflection=True)
+    # fig = show_PFCs_3D()
+    # fig.show()

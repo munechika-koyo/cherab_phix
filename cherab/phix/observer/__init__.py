@@ -1,4 +1,4 @@
-from .thin_lens_ccd import ThinLensCCDArray
+"""Subpackage for Observers."""
 from .fast_camera.camera import import_phix_camera
 
-__all__ = ["ThinLensCCDArray", "import_phix_camera"]
+__all__ = ["import_phix_camera"]

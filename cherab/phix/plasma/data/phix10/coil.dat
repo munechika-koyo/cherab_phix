@@ -1,17 +1,17 @@
 # -------------------------------------------------------------------------
 #     2019 12/12  17:50
 # -------------------------------------------------------------------------
-# frame length of x-direction[m]: 0.500    
-# frame length of z-direction(/2, if isym=0)[m]: 0.200    
-# minimum of x[m]: 0.200    
+# frame length of x-direction[m]: 0.500
+# frame length of z-direction(/2, if isym=0)[m]: 0.200
+# minimum of x[m]: 0.200
 # isym=1 if updown symmtric, 0 otherwise:  0
 # plasma current "Ip"[MA]: 0.360E-02
 # position of mgnetic axis [m]: ( 0.334      0.00    )
-# ellipticity "kappa":  1.12    
+# ellipticity "kappa":  1.12
 # triangularity "delta":-0.533E-01
-# safety factor on magnetic axis "q0":  1.10    
-# internal inductance "li":  1.13    
-# poloidal beta "beta_p":  0.00    
+# safety factor on magnetic axis "q0":  1.10
+# internal inductance "li":  1.13
+# poloidal beta "beta_p":  0.00
 # -------------------------------------------------------------------------
 c   0.2620000E+00  0.3225000E+00  0.4081633E-02  0.4081633E-02
 c   0.7200000E+00  0.3800000E+00  0.4081633E-02  0.4081633E-02

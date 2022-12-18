@@ -1,16 +1,26 @@
-# cython: language_level=3
-
+"""Module to offer colour functionalities
+"""
 import os
+
 from matplotlib import pyplot as plt
-from numpy import loadtxt, zeros, linspace
-from numpy cimport ndarray, float64_t
+from numpy import linspace, loadtxt, zeros
+
+cimport cython
+from numpy cimport float64_t, ndarray
 from raysect.core.math.cython cimport clamp
 from raysect.core.math.function.float.function1d.interpolate cimport Interpolator1DArray
-from raysect.optical.spectrum cimport Spectrum
 from raysect.optical.colour cimport srgb_transfer_function
-cimport cython
+from raysect.optical.spectrum cimport Spectrum
 
 ctypedef float64_t DTYPE_t
+
+__all__ = [
+    "resample_phantom_rgb",
+    "spectrum_to_phantom_rgb",
+    "phantom_rgb_to_srgb",
+    "plot_samples",
+    "plot_RGB_filter",
+]
 
 # Path to directry saving fas-camera's RGB color filter curves
 DIR = os.path.join(os.path.dirname(__file__), "sensitivity")
@@ -28,7 +38,7 @@ filter_b = Interpolator1DArray(B_samples[:, 0], B_samples[:, 1], "cubic", "neare
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef double[:,::1] resample_phantom_rgb(double min_wavelength, double max_wavelength, int bins):
+cpdef double[:, ::1] resample_phantom_rgb(double min_wavelength, double max_wavelength, int bins):
     """
     Pre-calculates samples of Phantom Camera's RGB sensitivity curves [A/W] over desired spectral range.
 
@@ -67,7 +77,7 @@ cpdef double[:,::1] resample_phantom_rgb(double min_wavelength, double max_wavel
         rgb_mv[i, 0] = filter_r(wavelength)
         rgb_mv[i, 1] = filter_g(wavelength)
         rgb_mv[i, 2] = filter_b(wavelength)
-    
+
     return rgb_mv
 
 
@@ -75,7 +85,12 @@ cpdef double[:,::1] resample_phantom_rgb(double min_wavelength, double max_wavel
 @cython.boundscheck(False)
 @cython.initializedcheck(False)
 @cython.cdivision(True)
-cpdef (double, double, double) spectrum_to_phantom_rgb(Spectrum spectrum, double[:,::1] resampled_rgb=None, double exposure_time=1.0, double pixel_area=1.0):
+cpdef (double, double, double) spectrum_to_phantom_rgb(
+    Spectrum spectrum,
+    double[:, ::1] resampled_rgb=None,
+    double exposure_time=1.0,
+    double pixel_area=1.0
+):
     """
     Calculates a tuple of R, G, B values from an input spectrum
     based on Phantom Hight-speed camera.
@@ -83,13 +98,15 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(Spectrum spectrum, double
     is represented as follows:
 
     .. math::
-        W [W/nm] = 6.15\\times 10^{-9} \\cdot \\frac{A_\\text{1px}}{S(\\lambda)\\cdot t}\\cdot DN,
+
+        W [\\text{W/nm}] = 6.15\\times 10^{-9} \\cdot \\frac{A_\\text{1px}}{S(\\lambda)\\cdot t}\\cdot DN,
 
     where,
-    - $A_${1px} : 1 pixel area (in m$^2$)
-    - $S(\\lambda)$ : spectral response at a specific wavelength (in A/W)
-    - $t$ : exposure time (in second)
-    - DN : sensor response (in digital number, 12bits, from 0-4095)
+
+    - :math:`A_{1\\text{px}}` : 1 pixel area (in m$^2$)
+    - :math:`S(\\lambda)` : spectral response at a specific wavelength (in A/W)
+    - :math:`t` : exposure time (in second)
+    - :math:`DN` : sensor response (in digital number, 12bits, from 0-4095)
 
     Parameters
     ----------
@@ -105,7 +122,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(Spectrum spectrum, double
 
     Returns
     -------
-    tuple
+    tuple[float, float, float]
         R, G, B degital value in 12bit including over 4095 value
     """
     cdef:
@@ -131,6 +148,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(Spectrum spectrum, double
 
     return r, g, b
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 @cython.initializedcheck(False)
@@ -141,7 +159,7 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
 
     phntom r, g, b in range [0, 4095]
     sr, sg, sb in range [0, 1]
-    
+
     Parameters
     ----------
     r: float
@@ -150,10 +168,10 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
         phantom G
     b: float
         phantom B
-    
+
     Returns
     -------
-    tuple
+    tuple[float, float, float]
     """
     cdef:
         double sr, sg, sb
@@ -162,7 +180,7 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
     sr = r / 4095
     sg = g / 4095
     sb = b / 4095
-    
+
     # apply sRGB transfer function (gamma correction)
     sr = srgb_transfer_function(sr)
     sg = srgb_transfer_function(sg)

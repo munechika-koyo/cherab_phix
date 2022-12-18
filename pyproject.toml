@@ -3,8 +3,105 @@ requires = [
     "setuptools >= 40.9.0",
     "wheel",
     "numpy",
-    "cython",
-    "raysect >= 0.7.1",
-    "cherab >= 1.3.0"
+    "cython == 3.0.0a11",
+    "raysect == 0.7.1",
+    "cherab == 1.3.0",
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "cherab-phix"
+description = "Cherab spectroscopy framework: PHiX machine configuration"
+readme = "README.md"
+authors = [
+    { name = "Koyo Munechika", email = "munechika.koyo@torus.nr.titech.ac.jp" },
+]
+maintainers = [
+    { name = "Koyo Munechika", email = "munechika.koyo@torus.nr.titech.ac.jp" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Cython",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+requires-python = "< 3.11"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib < 3.6",
+    "plotly",
+    "raysect == 0.7.1",
+    "cherab == 1.3.0",
+    "calcam",
+]
+dynamic = ["version"]
+license = { file = "LICENSE.md" }
+
+[project.optional-dependencies]
+docs = [
+    "docutils >= 0.19, < 0.20",
+    "ipykernel",
+    "ipywidgets",
+    "nbsphinx",
+    "pillow",
+    "pygments >= 2.11.0",
+    "sphinx >= 5, < 6",
+    "sphinx-prompt",
+    "sphinx-copybutton",
+    "pydata-sphinx-theme < 0.11",
+    "numpy-stl",
+    "sphinx-design",
+    "pandoc",
+    "sphinx_codeautolink",
+]
+dev = [
+    "flake8",
+    "black",
+    "isort",
+    "mypy",
+    "rich-click",
+    "cython-lint",
+    "pre-commit",
+    "cython==3.0.0a11",
+]
+
+[project.urls]
+Homepage = "https://cherab-phix.netlify.app/"
+documentation = "https://cherab-phix.netlify.app/"
+repository = "https://github.com/munechika-koyo/cherab_phix"
+
+[tool.black]
+line-length = 100
+
+[tool.cython-lint]
+max-line-length = 140
+
+[tool.flake8]
+max-line-length = 100
+select = "C,E,F,W,B,B950"
+ignore = "E203,E501,W503"
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+follow-imports = "silent"
+ignore-missing-imports = true
+show-column-numbers = true
+no-pretty = true
+
+[tool.setuptools]
+zip-safe = false
+packages = ["cherab.phix"]
+
+[tool.setuptools.dynamic]
+version = { attr = "cherab.phix.__version__" }

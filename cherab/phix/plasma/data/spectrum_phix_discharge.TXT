@@ -4,7 +4,7 @@ Averaging Nr. [scans]: 1
 Smoothing Nr. [pixels]: 0
 Data measured with spectrometer [name]: 1401079U1
 Wave   ;Sample   ;Dark     ;Reference;Scope
-[nm]   ;[counts] ;[counts] ;[counts] 
+[nm]   ;[counts] ;[counts] ;[counts]
 
  178.08;   59.000;   59.000;    0.000
  178.43;   57.000;   57.000;    0.000
@@ -2810,4 +2810,3 @@ Wave   ;Sample   ;Dark     ;Reference;Scope
 1099.48;  -13.000;  -13.000;    0.000
 1099.79;  -72.000;  -72.000;    0.000
 1100.10;  -88.000;  -88.000;    0.000
-

@@ -141,3 +141,4 @@ dmypy.json
 # Other directories
 output/
 cherab/phix/observer/fast_camera/calibration_data/checkerboard10mm/
+docs/_api/

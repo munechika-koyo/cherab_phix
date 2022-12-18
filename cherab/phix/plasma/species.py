@@ -1,24 +1,27 @@
-from scipy.constants import electron_mass, atomic_mass, Boltzmann, convert_temperature
+"""Module to offer the class taking species for PHiX."""
+from __future__ import annotations
 
-from matplotlib import pyplot as plt
 import numpy as np
-
-# Cherab and raysect imports
-from cherab.core import Species, Maxwellian, elements
-from cherab.core.math import Constant3D, ConstantVector3D
-from cherab.core.math import Interpolate1DLinear
-from cherab.core.math import sample3d
+from cherab.core import Maxwellian, Species, elements
+from cherab.core.math import Constant3D, ConstantVector3D, Interpolate1DLinear, sample3d
+from cherab.tools.equilibrium import EFITEquilibrium
+from matplotlib import pyplot as plt
+from raysect.core.math.function.float.function3d import Function3D
+from raysect.core.math.function.vector3d.function3d import Function3D as VectorFunction3D
 from raysect.optical import Vector3D
+from scipy.constants import Boltzmann, atomic_mass, convert_temperature, electron_mass
 
 from cherab.phix.machine.wall_outline import INNER_LIMITER
 
+__all__ = ["PHiXSpecies"]
+
 
 class PHiXSpecies:
-    """Class representing PHiX plasma species
+    """Class representing PHiX plasma species.
 
     Parameters
     ------------
-    equilibrium : :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`, required
+    equilibrium
         EFIT equilibrium object, default None
 
     Attributes
@@ -30,7 +33,7 @@ class PHiXSpecies:
         element, charge, density_distribution, temperature_distribution, bulk_velocity_distribution.
     """
 
-    def __init__(self, equilibrium=None):
+    def __init__(self, equilibrium: EFITEquilibrium | None = None):
         if equilibrium is None:
             raise ValueError("equilibrium argument must be input.")
 
@@ -42,10 +45,10 @@ class PHiXSpecies:
 
         # mapping electron temperture and density on flux surface
         self.temp1d = Interpolate1DLinear(
-            psi, (self.te_range[1] - self.te_range[0]) * psi ** 2 + self.te_range[0]
+            psi, (self.te_range[1] - self.te_range[0]) * psi**2 + self.te_range[0]
         )
         self.dens1d = Interpolate1DLinear(
-            psi, (self.ne_range[1] - self.ne_range[0]) * psi ** 2 + self.ne_range[0]
+            psi, (self.ne_range[1] - self.ne_range[0]) * psi**2 + self.ne_range[0]
         )
         temperature = self.eq.map3d(self.temp1d, value_outside_lcfs=self.te_range[1])
         e_density = self.eq.map3d(self.dens1d)
@@ -102,25 +105,26 @@ class PHiXSpecies:
 
     def set_species(
         self,
-        element=None,
-        charge=0,
-        density=Constant3D(1.0e19),
-        temperature=Constant3D(1.0e2),
-        bulk_velocity=ConstantVector3D(Vector3D(0, 0, 0)),
+        element: str | None = None,
+        charge: int = 0,
+        density: Function3D = Constant3D(1.0e19),
+        temperature: Function3D = Constant3D(1.0e2),
+        bulk_velocity: VectorFunction3D = ConstantVector3D(Vector3D(0, 0, 0)),
     ):
-        """add species to composition which is assumed to be Maxwellian distribution.
+        """add species to composition which is assumed to be Maxwellian
+        distribution.
 
         Parameters
         ------------
-        element : str, required
+        element
             element name registored in cherabs elements.pyx, by default None
-        charge : int, required
+        charge
             element's charge state, by default 0
-        density : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`, optional
+        density
             density distribution, by default Constant3D(1.0e19)
-        temperature : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`, optional
+        temperature
             temperature distribution, by default Constant3D(1.0e2)
-        bulk_velocity : :obj:`~raysect.core.math.function.vector3d.function3d.base.Function3D`, optional
+        bulk_velocity
             bulk velocity, by default ConstantVector3D(0)
         """
 
@@ -147,12 +151,12 @@ class PHiXSpecies:
         # append plasma.composition
         self.composition.append(Species(element, charge, distribution))
 
-    def plot_distribution(self, res=0.001):
-        """plot species temperature & density profile
+    def plot_distribution(self, res: float = 0.001):
+        """plot species temperature & density profile.
 
         Parameters
         ----------
-        res : float, optional
+        res
             Spactial resolution for sampling, by default 0.001 [m]
         """
         # grid
@@ -176,12 +180,13 @@ class PHiXSpecies:
         mask = np.zeros_like(dens, dtype=bool)
         for ir, r_tmp in enumerate(r):
             for iz, z_tmp in enumerate(z):
-                mask[ir, 0, iz] = not(self.eq.inside_limiter(r_tmp, z_tmp))
+                mask[ir, 0, iz] = not self.eq.inside_limiter(r_tmp, z_tmp)
 
         # plot
         for sample, title, clabel in zip(
-            [dens, temp], ["electron density[1/m$^3$]", "electron temperature[eV]"],
-            ["density [1/m$^3$]", "temperature [eV]"]
+            [dens, temp],
+            ["electron density[1/m$^3$]", "electron temperature[eV]"],
+            ["density [1/m$^3$]", "temperature [eV]"],
         ):
             plt.figure()
             plt.axis("equal")
@@ -212,11 +217,13 @@ class PHiXSpecies:
                     f"{species.element.name}+{species.charge} density [1/m$^3$]",
                     f"{species.element.name}+{species.charge} temperature [eV]",
                 ],
-                ["density [1/m$^3$]", "temperature [eV]"]
+                ["density [1/m$^3$]", "temperature [eV]"],
             ):
                 plt.figure()
                 plt.axis("equal")
-                plt.pcolormesh(r, z, np.squeeze(np.ma.masked_array(sample, mask)).T, shading="gouraud")
+                plt.pcolormesh(
+                    r, z, np.squeeze(np.ma.masked_array(sample, mask)).T, shading="gouraud"
+                )
                 plt.autoscale(tight=True)
                 plt.colorbar(label=clabel)
                 plt.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1])
@@ -227,8 +234,7 @@ class PHiXSpecies:
         plt.show()
 
     def plot_1d_profile(self):
-        """plot r vs electron density or temperature 1D profile
-        """
+        """plot r vs electron density or temperature 1D profile."""
         eq = self.eq
         funcs = [
             self.electron_distribution.density,

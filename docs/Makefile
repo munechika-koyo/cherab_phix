@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
-SPHINXOPTS    ?=
+SPHINXOPTS    ?= -j auto
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = build
@@ -24,10 +24,7 @@ html:
 
 clean:
 	rm -rf $(BUILDDIR)
-	rm -rf api cache gen_modules __pycache
-
-clean-api:
-	rm -rf api
+	rm -rf $(SOURCEDIR)/_api
 
 html-nonb: Makefile
 	@echo $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) -D nbsphinx_execute='never' $(O)

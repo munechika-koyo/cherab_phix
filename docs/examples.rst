@@ -19,7 +19,7 @@ Plasma
 
     notebooks/plasma/*
 
-observer
+Observer
 --------
 .. nbgallery::
     :glob:
