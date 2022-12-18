@@ -7,4 +7,4 @@ echo "Install pandoc"
 apt install pandoc
 
 echo "Build document"
-python dev.py doc
+python dev.py doc -j1

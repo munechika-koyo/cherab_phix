@@ -115,13 +115,20 @@ def install_deps():
 
 @cli.command()
 @click.argument("targets", default="html")
-def doc(targets: str):
+@click.option(
+    "-j",
+    "--parallel",
+    default=N_CPUs,
+    show_default=True,
+    help="Number of parallel jobs for building.",
+)
+def doc(parallel: int, targets: str):
     """:wrench: Build documentation
     TARGETS: Sphinx build targets [default: 'html']
     """
     # move to docs/ and run Makefile
     os.chdir("docs")
-    subprocess.run(["make", targets])
+    subprocess.run(["make", f"-j{parallel}", targets])
 
 
 ############
