@@ -1,10 +1,21 @@
+"""Module for GCV crieterion inversion."""
+from __future__ import annotations
+
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from numpy.typing import NDArray
+
 from .inversion import SVDInversionBase
+
+__all__ = ["GCV"]
 
 
 class GCV(SVDInversionBase):
-    """Generalized Cross-Validation (GCV) criterion inversion method inheriting :py:class:`.SVDInversionBase` class.
+    """Generalized Cross-Validation (GCV) criterion inversion method inheriting
+    :obj:`.SVDInversionBase` class.
+
     GCV criterion function represents as follows:
 
     .. math::
@@ -27,28 +38,24 @@ class GCV(SVDInversionBase):
         list of regularization parameters to search for optimal one, by default
         ``10 ** numpy.linspace(-5, 5, 100)``
     **kwargs : :py:class:`.SVDInversionBase` properties, optional
-        *kwargs* are used to specify properties like a inversion_base_vectors
+        *kwargs* are used to specify properties like a `inversion_base_vectors`
     """
 
     def __init__(self, *args, lambdas=None, **kwargs):
-
         # initialize originaly valuables
-        self._lambda_opt = None
-        self._optimized_solution = None
-        self._gcvs = None
         self._lambdas = 10 ** np.linspace(-5, 5, 100)
-
+        self._lambda_opt = 0.0
         if lambdas is not None:
             self.lambdas = lambdas
+        self._gcvs = np.zeros(0)
 
         # inheritation
         super().__init__(*args, **kwargs)
 
     @property
-    def lambdas(self):
-        """
-        :obj:`numpy.ndarray`: list of regularization parameters used for the optimization process
-        """
+    def lambdas(self) -> NDArray[np.float64]:
+        """list of regularization parameters used for the optimization
+        process."""
         return self._lambdas
 
     @lambdas.setter
@@ -61,32 +68,32 @@ class GCV(SVDInversionBase):
         self._lambdas = np.sort(array)
 
     @property
-    def lambda_opt(self):
-        """
-        float: optimal regularization parameter which is decided after the optimization iteration
-        """
+    def lambda_opt(self) -> float:
+        """optimal regularization parameter which is decided after the
+        optimization iteration."""
         return self._lambda_opt
 
     @property
-    def gcvs(self):
-        """
-        :obj:`numpy.ndarray`: list of values of GCV, elements of which are calculated after the optimization iteration
-        """
+    def gcvs(self) -> NDArray[np.float64]:
+        """list of values of GCV, elements of which are calculated after the
+        optimization iteration."""
         return self._gcvs
 
-    def optimize(self, itemax=3):
-        """Excute the optimization of L-curve regularization.
-        In particular, this method is used to seek the optimal regularization parameter computing gcv.
-        The optimal regularization parameter corresponds to the index of minimum gcv.
-        This procedure is iterated by up to the itemax times. Every time iterately calculating,
-        the range of regularization parameters is narrowed to FWHM around the minimum gcv point.
-        The optimal regularization parameter is cached to ``self._lambda_opt``
-        which can be seen :py:attr:`.lambda_opt` property.
-        And, both :py:attr:`.lambdas` and :py:attr:`.gcvs` are updated and stored to each property.
+    def optimize(self, itemax: int = 3) -> None:
+        """Excute the optimization of L-curve regularization. In particular,
+        this method is used to seek the optimal regularization parameter
+        computing gcv. The optimal regularization parameter corresponds to the
+        index of minimum gcv. This procedure is iterated by up to the itemax
+        times. Every time iterately calculating, the range of regularization
+        parameters is narrowed to FWHM around the minimum gcv point. The
+        optimal regularization parameter is cached to ``self._lambda_opt``
+        which can be seen :py:attr:`.lambda_opt` property. And, both
+        :py:attr:`.lambdas` and :py:attr:`.gcvs` are updated and stored to each
+        property.
 
         Parameters
         ----------
-        itemax : int, optional
+        itemax
             iteration times, by default 3
         """
         # define local valiables
@@ -135,12 +142,12 @@ class GCV(SVDInversionBase):
 
         print(f"completed the optimization (iteration times : {itemax})")
 
-    def gcv(self, beta=None):
-        """definition of GCV criterion function
+    def gcv(self, beta: float | None = None) -> float:
+        """definition of GCV criterion function.
 
         Parameters
         ----------
-        beta : float, optional
+        beta
             regularization parameter, by default None
 
         Returns
@@ -150,14 +157,14 @@ class GCV(SVDInversionBase):
         """
         return self.rho(beta) / (1.0 - np.sum(self.w(beta))) ** 2.0
 
-    def optimized_solution(self, itemax=None):
-        """calculate inverted solution using GCV criterion optimization
+    def optimized_solution(self, itemax: int | None = None):
+        """calculate inverted solution using GCV criterion optimization.
 
         Parameters
         ----------
-        itemax : int, optional
+        itemax
             iteration times of optimization method, by default None.
-            if ``self._optimized_solution`` is None or an integer is given,
+            if an integer is given,
             :obj:`.optimize` is called and optimal lambda is stored in :obj:`.lambda_opt`.
 
         Returns
@@ -166,29 +173,25 @@ class GCV(SVDInversionBase):
             optimized solution vector
         """
         # excute optimization
-        if itemax:
+        if itemax is not None:
             self.optimize(itemax)
-            self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
-
-        elif self._optimized_solution is None:
-            self.optimize()
             self._optimized_solution = self.inverted_solution(beta=self.lambda_opt)
 
         return self._optimized_solution
 
-    def plot_gcv(self, fig=None, axes=None):
-        """Plotting GCV vs regularization parameters in log-log scale
+    def plot_gcv(self, fig: Figure | None = None, axes: Axes | None = None) -> tuple[Figure, Axes]:
+        """Plotting GCV vs regularization parameters in log-log scale.
 
         Parameters
         ----------
-        fig : :obj:`~matplotlib.figure.Figure`, optional
+        fig
             matplotlib figure object, by default None.
-        axes : :obj:`~matplotlib.axes.Axes`, optional
+        axes
             matplotlib Axes object, by default None.
 
         Returns
         ------
-        tuple of :obj:`~matplotlib.figure.Figure` and :obj:`~matplotlib.axes.Axes`
+        tuple[:obj:`~matplotlib.figure.Figure`, :obj:`~matplotlib.axes.Axes`]
             (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # compute the curvature if self.curvatures doesn't exist.
@@ -196,17 +199,19 @@ class GCV(SVDInversionBase):
             self._gcvs = np.array([self.gcv(beta=i) for i in self.lambdas])
 
         # plotting
-        fig = fig or plt.figure()
-        ax = axes or fig.add_subplot()
-        ax.loglog(self.lambdas, self.gcvs, color="C0")
+        if not isinstance(fig, Figure):
+            fig = plt.figure()
+        if not isinstance(axes, Axes):
+            axes = fig.add_subplot()
+        axes.loglog(self.lambdas, self.gcvs, color="C0")
 
         # indicate the max point as the optimal point
         if self.lambda_opt is not None:
             self.beta = self.lambda_opt
-            ax.scatter(self.beta, self.gcv(beta=self.beta), c="r", marker="x")
+            axes.scatter(self.beta, self.gcv(beta=self.beta), c="r", marker="x")
 
         # labels
-        ax.set_xlabel("Regularization parameter $\\lambda$")
-        ax.set_ylabel("$GCV(\\lambda)$")
+        axes.set_xlabel("Regularization parameter $\\lambda$")
+        axes.set_ylabel("$GCV(\\lambda)$")
 
-        return (fig, ax)
+        return (fig, axes)

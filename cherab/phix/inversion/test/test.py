@@ -1,7 +1,7 @@
 import numpy as np
-from cherab.phix.inversion import Lcurve, GCV
-from cherab.phix.inversion import curvature
+from matplotlib import pyplot as plt
 
+from cherab.phix.inversion import GCV, Lcurve
 
 if __name__ == "__main__":
     # define true solution
@@ -35,9 +35,15 @@ if __name__ == "__main__":
     b_noise = np.random.normal(0, 1.0e-4, b_0.size)
     b = b_0 + b_noise
 
-    # ------------- inversion process ----------------
-    # inv = Lcurve(sigma, u, vh, b)
-    inv = GCV(sigma, u, vh, b)
-    inv.lambdas = 10 ** np.linspace(-20, 2, 100)
-    # inv.lambdas = 10 ** np.linspace(-1, 2, 100)
-    inv.optimize(4)
+    # === inversion process
+    lcurve = Lcurve(sigma, u, vh, b)
+    lcurve.lambdas = 10 ** np.linspace(-20, 2, 100)
+    lcurve.optimize(4)
+    lcurve.plot_L_curve()
+
+    gcv = GCV(sigma, u, vh, b)
+    gcv.lambdas = 10 ** np.linspace(-20, 2, 100)
+    gcv.optimize()
+    gcv.plot_gcv()
+
+    plt.show()
