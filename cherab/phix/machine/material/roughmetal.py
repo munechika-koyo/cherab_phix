@@ -1,14 +1,17 @@
-from os import path
+"""Module defining Rough metal material classes."""
 import json
+from pathlib import Path
+
 from numpy import array
 from raysect.optical import InterpolatedSF
 from raysect.optical.material import RoughConductor
 
+__all__ = ["RoughSUS316L"]
+
 
 class _DataLoader(RoughConductor):
     def __init__(self, filename, roughness):
-
-        with open(path.join(path.dirname(__file__), "data", filename + ".json")) as f:
+        with open(Path(__file__).parent.resolve() / "data" / f"{filename}.json", "r") as f:
             data = json.load(f)
 
         wavelength = array(data["wavelength"])

@@ -1,5 +1,8 @@
+"""Resource module for the limiter wall outline."""
 import numpy as np
 from matplotlib import pyplot as plt
+
+__all__ = ["INNER_LIMITER", "OUTER_LIMITER", "plot_phix_wall_outline"]
 
 
 INNER_LIMITER = np.array(
@@ -30,12 +33,12 @@ VESSEL_WALL = np.array(
 )
 
 
-def plot_phix_wall_outline(style="k"):
-    """plot PHiX Limiter and vessel wall polygons
+def plot_phix_wall_outline(style: str = "k"):
+    """plot PHiX Limiter and vessel wall polygons.
 
     Parameters
     ----------
-    style : str, optional
+    style
         Line color, by default "k" means black
     """
 
