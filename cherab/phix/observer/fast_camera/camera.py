@@ -1,61 +1,80 @@
-import os
-import numpy as np
-from raysect.optical import translate, AffineMatrix3D
-from cherab.phix.observer import ThinLensCCDArray
-from calcam import Calibration
+"""Module to offer helper function to load fast camera installed in phix."""
+from pathlib import Path
 
+import numpy as np
+from calcam import Calibration
+from raysect.optical import AffineMatrix3D, Node, translate
+
+from cherab.phix.observer.thin_lens_ccd import ThinLensCCDArray
+from cherab.phix.tools import Spinner
+
+__all__ = ["import_phix_camera"]
 
 # -------------- Load Default calcam calibration data -----------------
-CALCAM = os.path.join(os.path.dirname(__file__), "calibration_data", "shot_17393_ideal.ccc")
-cam = Calibration(CALCAM)
+CALCAM = Path(__file__).parent.resolve() / "calibration_data" / "shot_17393_ideal.ccc"
+cam = Calibration(str(CALCAM))
 ROT_MAT = cam.get_cam_to_lab_rotation()
 CAM_POS = cam.get_pupilpos(coords="Original")
 # -------------------------------------------------------------------
 
 
-def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
-    """importing phix lens camera configured by defalut camera parameters
-    Default camera's extrinsics is loaded from
-    "../cherab/phix/observer/fast_camera/calibration_data/shot_17393_ideal.ccc".
+def import_phix_camera(parent: Node, rotation_matrix=None, camera_pos=None):
+    """Importing PHiX fast lens camera configured by defalut camera parameters.
+
+    Default camera's extrinsics is loaded from ``"../calibration_data/shot_17393_ideal.ccc"``.
     This file is created by calcam package (See: https://github.com/euratom-software/calcam)
 
     Parameters
     ----------
-    parent : :obj:`~raysect.core.scenegraph.node.Node`
+    parent
         Raysect's scene-graph parent node
     rotation_matrx : 2D array-like, optional
-        camera's rotation matrix, by default calcam cam_to_lab_rotation()
+        camera's rotation matrix,
+        by default using :obj:`~calcam.Calibration.get_cam_to_lab_rotation`
     camera_pos : 1D array-like, optional
-        camera's pupil position (in unit [m]), by defalut calcam pupilpos()
+        camera's pupil position (in unit [m]),
+        by defalut using :obj:`~calcam.Calibration.get_pupilpos`
 
     Returns
     --------
     :py:class:`.ThinLensCCDArray`
         instance of ThinLensCCDArray object
-    """
-    print("importing PHiX camera...")
-    # initialise parameters
-    if rotation_matrix is None:
-        rotation_matrix = ROT_MAT
-    if camera_pos is None:
-        camera_pos = CAM_POS
 
-    orientation = rotation_matrix
-    camera_trans = translate(*camera_pos)
-    camera_rot = np.block([[orientation, np.zeros((3, 1))], [np.array([0, 0, 0, 1])]])
-    camera_rot = AffineMatrix3D(camera_rot)
-    # generate ThinLensCCDArray object
-    camera = ThinLensCCDArray(
-        pixels=(256, 512),
-        width=25.6e-3 * 256 / 1280,
-        focal_length=10.0e-3,
-        working_distance=50.0e-2,
-        f_number=0 * (22 - 3.5) / 10 + 3.5,
-        parent=parent,
-        pipelines=None,
-        transform=camera_trans * camera_rot,
-        name="PHiX fast-visible camera",
-    )
+    Example
+    -------
+    .. prompt:: python >>> auto
+
+        >>> from raysect.optical import World
+        >>> from cherab.phix.observer import import_phix_camera
+        >>>
+        >>> world = World()
+        >>> camera = import_phix_camera(world)
+        ✅ importing PHiX camera...
+    """
+    with Spinner("importing PHiX camera...") as sp:
+        # initialise parameters
+        if rotation_matrix is None:
+            rotation_matrix = ROT_MAT
+        if camera_pos is None:
+            camera_pos = CAM_POS
+
+        orientation = rotation_matrix
+        camera_trans = translate(*camera_pos)
+        camera_rot = np.block([[orientation, np.zeros((3, 1))], [np.array([0, 0, 0, 1])]])
+        camera_rot = AffineMatrix3D(camera_rot)
+        # generate ThinLensCCDArray object
+        camera = ThinLensCCDArray(
+            pixels=(256, 512),
+            width=25.6e-3 * 256 / 1280,
+            focal_length=10.0e-3,
+            working_distance=50.0e-2,
+            f_number=0 * (22 - 3.5) / 10 + 3.5,
+            parent=parent,
+            pipelines=None,
+            transform=camera_trans * camera_rot,
+            name="PHiX fast-visible camera",
+        )
+        sp.ok()
 
     return camera
 
@@ -184,3 +203,9 @@ def import_phix_camera(parent, rotation_matrix=None, camera_pos=None):
 #         if working_distance <= 0:
 #             raise ValueError("Working distance must be greater than 0.")
 #         self._working_distance = working_distance
+
+if __name__ == "__main__":
+    from raysect.core import World
+
+    world = World()
+    camera = import_phix_camera(world)

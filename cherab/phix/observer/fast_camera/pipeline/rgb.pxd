@@ -28,8 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 cimport numpy as np
-from raysect.optical.observer.base cimport PixelProcessor, Pipeline2D
-from raysect.core.math cimport StatsArray3D, StatsArray1D
+from raysect.core.math cimport StatsArray1D, StatsArray3D
+from raysect.optical.observer.base cimport Pipeline2D, PixelProcessor
 
 ctypedef np.float64_t DTYPE_t
 

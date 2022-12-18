@@ -1,42 +1,17 @@
-# cython: language_level=3
+"""Module to offer the thin lens modeled observer object
+"""
+from __future__ import annotations
 
-# Copyright (c) 2014-2017, Dr Alex Meakins, Raysect Project
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#     1. Redistributions of source code must retain the above copyright notice,
-#        this list of conditions and the following disclaimer.
-#
-#     2. Redistributions in binary form must reproduce the above copyright
-#        notice, this list of conditions and the following disclaimer in the
-#        documentation and/or other materials provided with the distribution.
-#
-#     3. Neither the name of the Raysect Project nor the names of its
-#        contributors may be used to endorse or promote products derived from
-#        this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
-from raysect.optical.observer.sampler2d import FullFrameSampler2D
 from raysect.optical.observer.pipeline import RGBPipeline2D
+from raysect.optical.observer.sampler2d import FullFrameSampler2D
 
-from raysect.core.math.sampler cimport RectangleSampler3D, DiskSampler3D
-from raysect.optical cimport Ray, AffineMatrix3D, Point3D, Vector3D, translate
-from libc.math cimport M_PI
-from raysect.optical.observer.base cimport Observer2D
 cimport cython
+from libc.math cimport M_PI
+from raysect.core.math.sampler cimport DiskSampler3D, RectangleSampler3D
+from raysect.optical cimport AffineMatrix3D, Point3D, Ray, Vector3D, translate
+from raysect.optical.observer.base cimport Observer2D
+
+__all__ = ["ThinLensCCDArray"]
 
 
 cdef class ThinLensCCDArray(Observer2D):
@@ -106,17 +81,17 @@ cdef class ThinLensCCDArray(Observer2D):
                          pixel_samples=self._lens_samples * self._per_pixel_samples,
                          parent=parent, transform=transform, name=name)
 
-        # setting width & focal_length trigger calculation of image geometry & 
+        # setting width & focal_length trigger calculation of image geometry &
         # lens geometry calculations, respectively.
         self.width = width
         self.focal_length = focal_length
 
     @property
-    def pixels(self):
+    def pixels(self) -> tuple[int, int]:
         """
         Tuple describing the pixel dimensions for this observer (nx, ny), i.e. (512, 512).
 
-        :rtype: tuple
+        :rtype: tuple[int, int]
         """
         return self._pixels
 
@@ -134,7 +109,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_image_geometry()
 
     @property
-    def width(self):
+    def width(self) -> float:
         """
         The CCD sensor x-width in metres.
 
@@ -150,7 +125,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_image_geometry()
 
     @property
-    def pixel_area(self):
+    def pixel_area(self) -> float:
         """
         One pixel area in the CCD sensor
 
@@ -159,7 +134,7 @@ cdef class ThinLensCCDArray(Observer2D):
         return self._pixel_area
 
     @property
-    def focal_length(self):
+    def focal_length(self) -> float:
         """
         Focal length in metres.
 
@@ -176,7 +151,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_lens_geometry()
 
     @property
-    def f_number(self):
+    def f_number(self) -> float:
         """
         f-number which defines the lens radius with focal length.
 
@@ -193,7 +168,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_lens_geometry()
 
     @property
-    def working_distance(self):
+    def working_distance(self) -> float:
         """
         distance between the lens plane and focusing plane in metres.
 
@@ -210,7 +185,7 @@ cdef class ThinLensCCDArray(Observer2D):
         self._update_lens_geometry()
 
     @property
-    def lens_radias(self):
+    def lens_radias(self) -> float:
         """
         Lens Radius in metres.
 
@@ -219,7 +194,7 @@ cdef class ThinLensCCDArray(Observer2D):
         return self._lens_radius
 
     @property
-    def lens_samples(self):
+    def lens_samples(self) -> int:
         """
         The number of samples on lens.
 
@@ -234,9 +209,9 @@ cdef class ThinLensCCDArray(Observer2D):
         self._lens_samples = value
         self._update_lens_geometry()
         self._update_pixel_samples()
-    
+
     @property
-    def per_pixel_samples(self):
+    def per_pixel_samples(self) -> int:
         """
         The number of samples to take per pixel.
 
@@ -250,7 +225,6 @@ cdef class ThinLensCCDArray(Observer2D):
             raise ValueError("The number of pixel samples must be greater than 0.")
         self._per_pixel_samples = value
         self._update_pixel_samples()
-
 
     cdef object _update_image_geometry(self):
 
@@ -271,7 +245,6 @@ cdef class ThinLensCCDArray(Observer2D):
         # pixel_samples means total pixel samples in this case.
         self.pixel_samples = self._per_pixel_samples * self._lens_samples
 
-
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
@@ -283,6 +256,7 @@ cdef class ThinLensCCDArray(Observer2D):
         In this class, the weight will be:
 
         .. math::
+
             wight := \\frac{R^2\\cos^4\\theta}{2d^2},
 
         where :math:`R` is the lens radius, :math:`\\theta` is the angle between a ray vector and
@@ -293,22 +267,31 @@ cdef class ThinLensCCDArray(Observer2D):
 
                 R &= \\frac{f}{F}
 
-                d &= \left(\\frac{1}{f} - \\frac{1}{W}\\right)^{-1}.
+                d &= \\left(\\frac{1}{f} - \\frac{1}{W}\\right)^{-1}.
 
-        Where :math:`f` is the focal lemgth, :math:`F` is the f-number, and :math:`W` is the working distance.
+        Where :math:`f` is the focal length, :math:`F` is the f-number, and :math:`W` is the working distance.
 
-        :param int x: Pixel x index.
-        :param int y: Pixel y index.
-        :param ~raysect.optical.Ray template: The template ray from which all rays should be generated.
-        :param int ray_count: The number of rays to be generated.
-        :return list: A list of tuples of (ray, weight)
+        Parameters
+        ----------
+        x : int
+            Pixel x index.
+        y : int
+            Pixel y index.
+        template : :obj:`~raysect.optical.ray.Ray`
+            The template ray from which all rays should be generated.
+        ray_count : int
+            The number of rays to be generated.
+
+        Return
+        ------
+        list[tuple[:obj:`~raysect.optical.ray.Ray`, float]]
+            A list of tuples of (ray, weight)
         """
         cdef:
-            double pixel_x, pixel_y
+            double pixel_x, pixel_y, weight
             list pixel_origins, lens_origins, rays
             Point3D pixel_origin, lens_origin
             Vector3D pixel_direction, direction
-            Ray ray
             AffineMatrix3D pixel_to_local
 
         # generate pixel transform
@@ -331,13 +314,13 @@ cdef class ThinLensCCDArray(Observer2D):
 
             for lens_origin in lens_origins:
 
-                # generate direction from a sampled pixel point to a sampled lens point 
+                # generate direction from a sampled pixel point to a sampled lens point
                 pixel_direction = pixel_origin.vector_to(lens_origin)
                 pixel_direction = pixel_direction.normalise()
 
                 # generate ray direction from a sampled lens point (lens_origin)
-                direction = pixel_origin.vector_to(Point3D(0,0,0)).normalise()
-                direction = lens_origin.vector_to(Point3D(0,0,0)) + direction * self._working_distance / direction.z
+                direction = pixel_origin.vector_to(Point3D(0, 0, 0)).normalise()
+                direction = lens_origin.vector_to(Point3D(0, 0, 0)) + direction * self._working_distance / direction.z
                 direction = direction.normalise()
 
                 # weight = 0.5 * lens_radias^2 * cos(theta)^4 * 1/image_distance^2

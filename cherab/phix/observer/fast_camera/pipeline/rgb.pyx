@@ -1,46 +1,22 @@
-# Copyright (c) 2014-2018, Dr Alex Meakins, Raysect Project
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#     1. Redistributions of source code must retain the above copyright notice,
-#        this list of conditions and the following disclaimer.
-#
-#     2. Redistributions in binary form must reproduce the above copyright
-#        notice, this list of conditions and the following disclaimer in the
-#        documentation and/or other materials provided with the distribution.
-#
-#     3. Neither the name of the Raysect Project nor the names of its
-#        contributors may be used to endorse or promote products derived from
-#        this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
+"""Module for custom RGB pipeline for phix fast camera.
+"""
 from time import time
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 cimport cython
 cimport numpy as np
 from libc.math cimport M_PI
-from raysect.optical.observer.base cimport PixelProcessor, Pipeline2D
-from raysect.core.math cimport StatsArray3D, StatsArray1D
-from cherab.phix.observer.fast_camera.colour cimport resample_phantom_rgb, phantom_rgb_to_srgb
-
+from raysect.core.math cimport StatsArray1D, StatsArray3D
+from raysect.optical.observer.base cimport Pipeline2D, PixelProcessor
 from raysect.optical.spectrum cimport Spectrum
 
+from cherab.phix.observer.fast_camera.colour cimport phantom_rgb_to_srgb, resample_phantom_rgb
+
 # ctypedef np.float64_t DTYPE_t
+
+__all__ = ["RGBPipeline2D"]
 
 _DEFAULT_PIPELINE_NAME = "Phantom RGBPipeline"
 _DISPLAY_DPI = 100
@@ -64,7 +40,7 @@ cdef class RGBPipeline2D(Pipeline2D):
     :param bool accumulate: Whether to accumulate samples with subsequent calls
       to observe() (default=True).
     :param float exposure_time: Phantom camera's sexposure time (default=1.0).
-    :param bool auto_normalize: if True, Display values will be scaled 
+    :param bool auto_normalize: if True, Display values will be scaled
       to satisfy the maximum pixel value is equal to 4095 (default=True).
     :param str name: User friendly name for this pipeline.
     """
@@ -193,7 +169,16 @@ cdef class RGBPipeline2D(Pipeline2D):
             raise ValueError('Display update time must be greater than zero seconds.')
         self._display_update_time = value
 
-    cpdef object initialise(self, tuple pixels, int pixel_samples, double min_wavelength, double max_wavelength, int spectral_bins, list spectral_slices, bint quiet):
+    cpdef object initialise(
+        self,
+        tuple pixels,
+        int pixel_samples,
+        double min_wavelength,
+        double max_wavelength,
+        int spectral_bins,
+        list spectral_slices,
+        bint quiet
+    ):
 
         nx, ny = pixels
         self._pixels = pixels
@@ -370,7 +355,7 @@ cdef class RGBPipeline2D(Pipeline2D):
 
         # populate figure
         fig.clf()
-        ax = fig.add_axes([0,0,1,1])
+        ax = fig.add_axes([0, 0, 1, 1])
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         ax.imshow(np.transpose(image, (1, 0, 2)), aspect="equal", origin="upper", interpolation=INTERPOLATION)
@@ -386,7 +371,7 @@ cdef class RGBPipeline2D(Pipeline2D):
         cdef:
             int x, y, c, nx, ny, nz
             np.ndarray[DTYPE_t, ndim=3] rgb_image, srgb_image
-            double[:,:,::1] rgb_image_mv
+            double[:, :, ::1] rgb_image_mv
             double peak_value
 
         rgb_image = frame.mean.copy()
@@ -435,12 +420,12 @@ cdef class RGBPipeline2D(Pipeline2D):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.initializedcheck(False)
-    cpdef np.ndarray[DTYPE_t, ndim=3] _generate_srgb_image(self, double[:,:,::1] image_mv):
+    cpdef np.ndarray[DTYPE_t, ndim=3] _generate_srgb_image(self, double[:, :, ::1] image_mv):
 
         cdef:
             int nx, ny, ix, iy
             np.ndarray[DTYPE_t, ndim=3] srgb_image
-            double[:,:,::1] srgb_image_mv
+            double[:, :, ::1] srgb_image_mv
             (double, double, double) rgb_pixel
 
         nx = image_mv.shape[0]
@@ -497,7 +482,7 @@ cdef class RGBPixelProcessor(PixelProcessor):
     Phantom Camera's RGB colourspace values (12bit).
     """
 
-    def __init__(self, double[:,::1] resampled_rgb not None, double exposure_time):
+    def __init__(self, double[:, ::1] resampled_rgb not None, double exposure_time):
         self.resampled_rgb = resampled_rgb
         self.exposure_time = exposure_time
         self.rgb = StatsArray1D(3)
@@ -529,4 +514,3 @@ cdef class RGBPixelProcessor(PixelProcessor):
 
     cpdef tuple pack_results(self):
         return self.rgb.mean, self.rgb.variance
-
