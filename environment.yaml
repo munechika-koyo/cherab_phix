@@ -2,11 +2,11 @@
 #   $ conda env create -f environment.yaml  # `mamba` works too for this command
 #   $ conda activate cherab-phix-dev
 #
-name: cherab-phix-dev
+name: cherab-phix-dev2
 channels:
 - conda-forge
 dependencies:
-- python < 3.10
+- python ==3.8 #< 3.10
 - setuptools
 - numpy
 - scipy
@@ -34,7 +34,7 @@ dependencies:
 - numpy-stl
 - sphinx-design
 - pandoc
-- sphinx_codeautolink
+- sphinx-codeautolink
 # pip-install dependencies
 - pip
 - pip:
