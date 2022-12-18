@@ -1,7 +1,0 @@
-# these are dependencies required to use the package
-numpy
-cython
-matplotlib
-raysect >= 0.7.1
-cherab >= 1.3.0
-calcam

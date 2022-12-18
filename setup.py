@@ -1,56 +1,58 @@
-from setuptools import setup, Extension
-from Cython.Build import cythonize
-import sys
-import numpy
 import os
-import os.path as path
-import multiprocessing
+import sys
+from pathlib import Path
 
-threads = multiprocessing.cpu_count()
-force = False
-profile = False
-install_rates = False
+import numpy
+from Cython.Build import cythonize
+from setuptools import Extension, setup
 
+ROOT = Path(__file__).parent.resolve()
+SRC = ROOT / "cherab"
+
+THREADS = os.cpu_count() or 1
+FORCE = False
+PROFILE = False
+
+# === Set arguments ===========================================================
 if "--force" in sys.argv:
     force = True
     del sys.argv[sys.argv.index("--force")]
+else:
+    force = FORCE
 
 if "--profile" in sys.argv:
     profile = True
     del sys.argv[sys.argv.index("--profile")]
-
+else:
+    profile = PROFILE
 
 compilation_includes = [".", numpy.get_include()]
-compilation_args = []
-cython_directives = {"language_level": 3}
+compilation_args: list[str] = []
+cython_directives = {"language_level": 3, "profile": profile}
 
-setup_path = path.dirname(path.abspath(__file__))
-
-# build .pyx extension list
+# === Build .pyx extension ====================================================
 extensions = []
-for root, dirs, files in os.walk(setup_path):
-    for file in files:
-        if path.splitext(file)[1] == ".pyx":
-            pyx_file = path.relpath(path.join(root, file), setup_path)
-            module = path.splitext(pyx_file)[0].replace("/", ".")
-            extensions.append(
-                Extension(
-                    module,
-                    [pyx_file],
-                    include_dirs=compilation_includes,
-                    extra_compile_args=compilation_args,
-                )
-            )
-
-if profile:
-    cython_directives["profile"] = True
+for pyx in SRC.glob("**/*.pyx"):
+    pyx_path = pyx.relative_to(ROOT)
+    module = ".".join(pyx_path.with_suffix("").parts)
+    extensions.append(
+        Extension(
+            module,
+            [str(pyx_path)],
+            include_dirs=compilation_includes,
+            extra_compile_args=compilation_args,
+        )
+    )
 
 # generate .c files from .pyx
 extensions = cythonize(
     extensions,
-    nthreads=multiprocessing.cpu_count(),
+    nthreads=THREADS,
     force=force,
     compiler_directives=cython_directives,
 )
 
-setup(ext_modules=extensions)
+# === Define setup function ===================================================
+setup(
+    ext_modules=extensions,
+)
