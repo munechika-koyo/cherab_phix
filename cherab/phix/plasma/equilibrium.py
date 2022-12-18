@@ -1,18 +1,21 @@
-import os.path as path
+"""Module to offer the helper function to populate an EFITequilibrium
+instance."""
 import json
+from pathlib import Path
 
-from raysect.core import Point2D
 from cherab.tools.equilibrium.efit import EFITEquilibrium
-from cherab.phix.machine.wall_outline import INNER_LIMITER
+from raysect.core import Point2D
+
+__all__ = ["import_equilibrium"]
 
 
-def import_equilibrium(model_variant="phix10"):
-    """
-    Return a populated instance of the PHiX equilibrium calculated by Tokamak Simulation Code.
+def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
+    """Return a populated instance of the PHiX equilibrium calculated by
+    Tokamak Simulation Code.
 
     Parameters
     ------------
-    model_variant : str
+    model_variant
         Name of the equilibrium model variant to load, by default "phix10".
         each data is stored as a .json file in data directory.
 
@@ -28,7 +31,7 @@ def import_equilibrium(model_variant="phix10"):
         >>> from cherab.phix.plasma import impot_equilibrium
         >>> equilibrium = impot_equilibrium()
     """
-    example_file = path.join(path.dirname(__file__), "data", model_variant + ".json")
+    example_file = Path(__file__).parent.resolve() / "data" / f"{model_variant}.json"
     with open(example_file, "r") as fh:
         eq_data = json.load(fh)
 
@@ -48,13 +51,25 @@ def import_equilibrium(model_variant="phix10"):
     b_vacuum_radius = eq_data["b_vacuum_radius"]
     b_vacuum_magnitude = eq_data["b_vacuum_magnitude"]
     lcfs_polygon = eq_data["lcfs_polygon"]
-    limiter_polygon = INNER_LIMITER[0:-1, :].transpose()
+    limiter_polygon = eq_data["limiter_polygon"]
     time = eq_data["time"]
 
     equilibrium = EFITEquilibrium(
-        r, z, psi, psi_axis, psi_lcfs, axis_coord, x_points, strike_points,
-        f_profile, q_profile, b_vacuum_radius, b_vacuum_magnitude,
-        lcfs_polygon, limiter_polygon, time
+        r,
+        z,
+        psi,
+        psi_axis,
+        psi_lcfs,
+        axis_coord,
+        x_points,
+        strike_points,
+        f_profile,
+        q_profile,
+        b_vacuum_radius,
+        b_vacuum_magnitude,
+        lcfs_polygon,
+        limiter_polygon,
+        time,
     )
 
     return equilibrium

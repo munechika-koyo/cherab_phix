@@ -1,11 +1,12 @@
-import os
-import numpy as np
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.signal import find_peaks
 
 # import spectrum data
 data = np.loadtxt(
-    os.path.join(os.path.dirname(__file__), "spectrum_phix_discharge.TXT"),
+    Path(__file__).parent.resolve() / "spectrum_phix_discharge.TXT",
     delimiter=";",
     skiprows=8,
 )

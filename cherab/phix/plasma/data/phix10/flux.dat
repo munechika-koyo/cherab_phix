@@ -1,20 +1,20 @@
 # -------------------------------------------------------------------------
 #     2020  2/18   1:23
 # -------------------------------------------------------------------------
-# frame length of x-direction[m]: 0.500    
-# frame length of z-direction(/2, if isym=0)[m]: 0.200    
-# minimum of x[m]: 0.200    
+# frame length of x-direction[m]: 0.500
+# frame length of z-direction(/2, if isym=0)[m]: 0.200
+# minimum of x[m]: 0.200
 # isym=1 if updown symmtric, 0 otherwise:  0
 # plasma current "Ip"[MA]: 0.360E-02
 # position of mgnetic axis [m]: (  0.3339567E+00,  0.0000000E+00)
 # position of x-point [m]: (  0.2567824E-08, -0.8008714E+27)
-# ellipticity "kappa":  1.12    
+# ellipticity "kappa":  1.12
 # triangularity "delta":-0.533E-01
-# safety factor at magnetic axis "q0":  1.10    
+# safety factor at magnetic axis "q0":  1.10
 # poloidal flux at magnetic axis "psi0": -0.3989319E-03
 # poloidal flux at LCFS "psi_LCFS": -0.1866115E-03
-# internal inductance "li":  1.13    
-# poloidal beta "beta_p":  0.00    
+# internal inductance "li":  1.13
+# poloidal beta "beta_p":  0.00
 # -------------------------------------------------------------------------
 #mesh   50  49
 #datatype  1
@@ -2519,4 +2519,3 @@
   0.5000000E+00  0.1833333E+00  0.9349424E-04
   0.5000000E+00  0.1916667E+00  0.9555717E-04
   0.5000000E+00  0.2000000E+00  0.9739853E-04
-

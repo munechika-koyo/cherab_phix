@@ -1,34 +1,53 @@
-from raysect.core import translate
-from raysect.primitive import Cylinder, Subtract
-from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
+"""Module to offer an helper function to load a plasma object."""
+from __future__ import annotations
 
-from cherab.openadas import OpenADAS
-from cherab.core import Plasma, Line, elements
+from cherab.core import Line, Plasma, Species, elements
 from cherab.core.math import VectorAxisymmetricMapper
-from cherab.core.model import ExcitationLine, RecombinationLine, Bremsstrahlung
-from cherab.phix.plasma import import_equilibrium, PHiXSpecies
+from cherab.core.model import Bremsstrahlung, ExcitationLine, RecombinationLine
+from cherab.openadas import OpenADAS
+from cherab.tools.equilibrium import EFITEquilibrium
+from raysect.core import Node, translate
+from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
+from raysect.primitive import Cylinder, Subtract
+
 from cherab.phix.machine.wall_outline import VESSEL_WALL
+from cherab.phix.plasma import import_equilibrium
+from cherab.phix.plasma.species import PHiXSpecies
+
+__all__ = ["import_plasma"]
 
 
-def import_plasma(parent, equilibrium="phix10", species=None):
-    """Helper function of generating PHiX plasma
-    As emissions, H :math:`\\alpha`, H :math:`\\beta`, H :math:`\\gamma`, H :math:`\\delta` are applied.
+def import_plasma(
+    parent: Node, equilibrium: str = "phix10", species: Species | None = None
+) -> tuple[Plasma, EFITEquilibrium]:
+    """Helper function of generating PHiX plasma As emissions, H
+    :math:`\\alpha`, H :math:`\\beta`, H :math:`\\gamma`, H :math:`\\delta` are
+    applied.
 
     Parameters
     ----------
-    parent : :obj:`~raysect.core.scenegraph.node.Node`
+    parent
         Raysect's scene-graph parent node
-    equilibrium : str
+    equilibrium
         equilibrium json file name in which TSC data is stored
-    species : object , optional
-        user-defined species object having composition which is a list of :obj:`~cherab.core.Species` objects
-        and electron distribution function attributes,
-        by default :py:class:`.PHiXSpecies`
+    species
+        user-defined species object having composition which is a list of
+        :obj:`~cherab.core.Species` objects and electron distribution function attributes,
+        by default :obj:`.PHiXSpecies`
 
     Returns
     -------
-    tuple
-        (:obj:`~cherab.core.Plasma`, :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`)
+    tuple[:obj:`~cherab.core.plasma.node.Plasma`, :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`]
+
+    Example
+    -------
+    .. prompt:: python >>> auto
+
+        >>> from raysect.optical import World
+        >>> from cherab.phix.plasma import import_plasma
+        >>>
+        >>> world = World()
+        >>> plasma = import_plasma(world)
     """
     print(f"loading plasma (data from: {equilibrium})...")
     # create equilibrium instance
