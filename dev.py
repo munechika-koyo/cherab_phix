@@ -14,6 +14,7 @@ except ImportError:
 
 BASE_DIR = Path(__file__).parent.absolute()
 SRC_PATH = BASE_DIR / "cherab"
+DOC_SRC = BASE_DIR / "docs"
 ENVS = dict(os.environ)
 N_CPUs = os.cpu_count()
 
@@ -115,13 +116,42 @@ def install_deps():
 
 @cli.command()
 @click.argument("targets", default="html")
-def doc(targets: str):
+@click.option(
+    "-j",
+    "--parallel",
+    default=N_CPUs,
+    show_default=True,
+    help="Number of parallel jobs for building.",
+)
+def doc(parallel: int, targets: str):
     """:wrench: Build documentation
     TARGETS: Sphinx build targets [default: 'html']
     """
-    # move to docs/ and run Makefile
+    # move to docs/ and run command
     os.chdir("docs")
-    subprocess.run(["make", targets])
+
+    builddir = DOC_SRC / "build"
+    SPHINXBUILD = "sphinx-build"
+    if targets == "html":
+        cmd = [SPHINXBUILD, "-b", targets, f"-j{parallel}", str(DOC_SRC), str(builddir / "html")]
+
+    elif targets == "clean":
+        cmd = ["rm", "-rf", str(builddir), "&&", "rm", "-rf", str(DOC_SRC / "_api")]
+
+    elif targets == "help":
+        cmd = [SPHINXBUILD, "-M", targets, str(DOC_SRC), str(builddir)]
+
+    else:
+        cmd = [SPHINXBUILD, "-M", targets, f"-j{parallel}", str(DOC_SRC), str(builddir)]
+
+    click.echo(" ".join([str(p) for p in cmd]))
+    ret = subprocess.call(cmd)
+
+    if ret == 0:
+        print("sphinx-build successfully done.")
+    else:
+        print("Sphinx-build has errors.")
+        sys.exit(1)
 
 
 ############
