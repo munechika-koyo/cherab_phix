@@ -75,9 +75,7 @@ if USE_LAPLACIAN:
 if USE_LAPLACIAN:
     rtm = open_memmap(RTM_DIR / "rtm.npy", mode="r").reshape((-1, rtc.bins))
 
-    AL_inv = open_memmap(
-        SAVE_DIR / "AL_inv.npy", mode="w+", dtype=np.float64, shape=rtm.shape
-    )
+    AL_inv = open_memmap(SAVE_DIR / "AL_inv.npy", mode="w+", dtype=np.float64, shape=rtm.shape)
 
     # compute AL^-1
     with Spinner("Compute the product of matrices AL^-1", timer=True) as sp:
@@ -113,9 +111,7 @@ with Spinner("Compute SVD", timer=True) as sp:
 # --------------------------
 # if `USE_LAPLACIAN` is `True`, then calculate it.
 if USE_LAPLACIAN:
-    L_inv_V = open_memmap(
-        SAVE_DIR / "L_inv_V.npy", dtype=np.float64, mode="w+", shape=(n, k)
-    )
+    L_inv_V = open_memmap(SAVE_DIR / "L_inv_V.npy", dtype=np.float64, mode="w+", shape=(n, k))
     with Spinner("Compute the product of matrices L^-1 V", timer=True) as sp:
         L_inv_V[:] = np.dot(L_inv, vh.T)
         sp.ok()

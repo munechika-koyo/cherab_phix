@@ -9,11 +9,7 @@ from textwrap import dedent
 import numpy as np
 from matplotlib import pyplot as plt
 from raysect.optical import World
-from raysect.optical.observer import (
-    PowerPipeline2D,
-    RGBAdaptiveSampler2D,
-    RGBPipeline2D,
-)
+from raysect.optical.observer import PowerPipeline2D, RGBAdaptiveSampler2D, RGBPipeline2D
 
 from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer import import_phix_camera
@@ -40,9 +36,7 @@ camera = import_phix_camera(world)
 # %%
 # Define Observer pipeline
 # ------------------------
-rgb = RGBPipeline2D(
-    display_unsaturated_fraction=1.0, name="sRGB", display_progress=False
-)
+rgb = RGBPipeline2D(display_unsaturated_fraction=1.0, name="sRGB", display_progress=False)
 power = PowerPipeline2D(display_progress=False, name="power")
 camera.pipelines = [rgb, power]
 
