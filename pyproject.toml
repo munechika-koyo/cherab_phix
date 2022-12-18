@@ -37,6 +37,7 @@ dependencies = [
     "numpy",
     "scipy",
     "matplotlib < 3.6",
+    "contourpy",
     "plotly",
     "raysect == 0.7.1",
     "cherab == 1.3.0",

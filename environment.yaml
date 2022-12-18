@@ -2,17 +2,18 @@
 #   $ conda env create -f environment.yaml  # `mamba` works too for this command
 #   $ conda activate cherab-phix-dev
 #
-name: cherab-phix-dev2
+name: cherab-phix-dev
 channels:
 - conda-forge
 dependencies:
-- python ==3.8 #< 3.10
+- python < 3.10
 - setuptools
 - numpy
 - scipy
 # - cython == 3.0.0a11 installed by pip temporarily
 - matplotlib
 - plotly
+- contourpy
   # for developper tools
 - black
 - isort
