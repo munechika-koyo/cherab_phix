@@ -13,6 +13,7 @@ dependencies:
 # - cython == 3.0.0a11 installed by pip temporarily
 - matplotlib
 - plotly
+- contourpy
   # for developper tools
 - black
 - isort
