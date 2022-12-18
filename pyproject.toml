@@ -60,7 +60,7 @@ docs = [
     "numpy-stl",
     "sphinx-design",
     "pandoc",
-    "sphinx_codeautolink",
+    "sphinx-codeautolink",
 ]
 dev = [
     "flake8",
