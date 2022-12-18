@@ -163,9 +163,7 @@ def show_phix_profiles(
         # maske profile out of limiter
         profile = np.ma.masked_array(profile, mask)
         # imshow
-        grids[i].imshow(
-            np.transpose(profile), origin="lower", extent=extent, cmap=cmap, norm=norm
-        )
+        grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, norm=norm)
 
         # plot edge of Outer/Inner Limitter
         grids[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
@@ -268,9 +266,7 @@ def show_phix_profile(
         rtc = import_phix_rtc(world)
 
     # RZ grid
-    z = np.linspace(
-        -1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2]
-    )
+    z = np.linspace(-1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2])
     r = np.linspace(
         rtc.material.rmin,
         rtc.material.rmin + rtc.material.dr * rtc.material.grid_shape[0],
