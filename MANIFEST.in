@@ -3,14 +3,18 @@ include setup.py
 include dev.py
 include pyproject.toml
 # Top-level text files
-include README.md CHANGELOG.txt LICENSE.md AUTHORS.md MANIFEST.in .pre-commit-config.yaml
+include README.md CHANGELOG.md LICENSE.md AUTHORS.md MANIFEST.in .pre-commit-config.yaml .readthedocs.yaml
 include .gitignore .gitattributes
 # All source files
-recursive-include cherab *.py *.pyx *.pxd *.csv *.json *.npy *.rsm *.dat *.txt *.ccm *.ccc
+recursive-include cherab *.py *.pyx *.pxd *.csv *.json *.npy *.rsm *.STL *.txt *.ccm *.ccc
 include cherab/phix/VERSION
-# All documentation
-# recursive-include docs *
-# recursive-include demos *
 # Exclude what we don't want to include
-global-exclude *.c *.pyc
-prune docs/build
+global-exclude *.c *.py[cod]
+# Docs:
+# recursive-include docs *
+# prune docs/build
+# prune docs/_api
+# prune local output
+prune demos
+prune docs
+prune output
