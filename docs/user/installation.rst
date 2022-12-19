@@ -6,16 +6,38 @@
 Installation
 ============
 
+.. note::
+
+    Currently (12/20/2022), cherab-phix recommends using python3.9 because there are built
+    distributions in the `raysect`_ and `cherab`_ dependencies at pypi.
+    Although the user can take the python3.10, It takes time to compile them and
+    therefore takes time to install cherab-phix.
+
+    The rest of dependencies are listed in ``pyproject.toml`` file in source directory,
+    so those who are curious about it should look into it.
+
 
 Installing using pip
 ====================
-Using ``pip`` command allows us to install cherab-phix including dependencies.
-For now, it is only available from `Cherab-phix's GitHub repository`_.
+Using ``pip`` command allows us to install cherab-phix including asset data like a device meshes.
 
 .. prompt:: bash
 
-    python -m pip install git+https://github.com/munechika-koyo/cherab_phix
+    python -m pip install cherab-phix
 
+
+Configuring Atomic data
+-----------------------
+To make use of the phix-modeled plasma object, you have to download the atomic data from openadas
+repository; run the following commands in a python terminal:
+
+.. prompt:: python >>> auto
+
+    from cherab.openadas.repository import populate
+    populate()
+
+If you are curious about it, please see the cherab documentation
+`here <https://www.cherab.info/installation_and_structure.html#configuring-atomic-data>`_.
 
 
 Installing for Developper
@@ -24,16 +46,28 @@ If you plan to make any modifications to do any development work on CHERAB-PHiX,
 and want to be able to edit the source code without having to run the setup script again
 to have your changes take effect, you can install CHERAB-PHiX on editable mode.
 
-manually download source
-------------------------
+Manually downloading source
+---------------------------
 The source codes can be cloned from the GitHub reporepository with the command:
 Before install the package, it is required to download the source code from github repository.
 
 .. prompt:: bash
 
-    git clone https://github.com/munechika-koyo/cherab_phix
+    git clone -b development https://github.com/munechika-koyo/cherab_phix
 
 The repository will be cloned inside a new subdirectory named as ``cherab_phix``.
+
+Downloading data asset by Git LFS
+---------------------------------
+Data assets like device mesh files (``.rsm``, ``.STL``) are stored at the repository
+by `Git LFS <https://git-lfs.github.com>`. After installing the Git LFS, the downloading data assets
+can be accomplished by the following commands at the source root directory:
+
+.. prompt:: bash
+
+    git lfs install
+    git lfs fetch
+
 
 Building and Installing
 -----------------------
@@ -45,7 +79,7 @@ For pip users, run the following command:
 
 ``-e`` or ``--editable`` option allows the user to install the package as the editable mode.
 
-For conda users, creating a conda development environment is the most useful process:
+For conda users, creating a virtual environment is the most useful process:
 
 .. prompt:: bash
 
@@ -61,7 +95,7 @@ Alternatively, the ``dev.py`` CLI is available:
     python dev.py build
     python dev.py install
 
-These commands enable the user to compile cython codes and install it as editable mode.
+These commands enable the user to compile cython codes and install it as the editable mode.
 This interface has some options, allowing you to perform all regular development-related tasks
 (building, building docs, formatting codes, etc.).
 Here we document a few of the most commonly used options; run ``python dev.py --help`` or ``--help``

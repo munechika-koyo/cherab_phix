@@ -75,8 +75,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://cherab-phix.netlify.app/"
-documentation = "https://cherab-phix.netlify.app/"
+Homepage = "https://cherab-phix.readthedocs.io/"
+documentation = "https://cherab-phix.readthedocs.io/"
 repository = "https://github.com/munechika-koyo/cherab_phix"
 
 [tool.black]
