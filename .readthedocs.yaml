@@ -24,6 +24,8 @@ build:
     # install cherab-phix using dev.py CLI
     - python dev.py build
     - python dev.py install
+    # install atomic data from openadas repository
+    - python -c "from cherab.openadas.repository import populate; populate()"
 
 conda:
   environment: environment.yaml
