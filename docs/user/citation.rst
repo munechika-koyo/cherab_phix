@@ -10,4 +10,5 @@ If you would like to publish or write paper using CHERAB-PHiX, Please cite the f
 
 You can also cite the code base itself:
 
-- comming soon...
+.. image:: https://zenodo.org/badge/239309930.svg
+   :target: https://zenodo.org/badge/latestdoi/239309930
