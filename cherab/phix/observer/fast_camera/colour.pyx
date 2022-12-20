@@ -1,8 +1,12 @@
 """Module to offer colour functionalities
 """
+from __future__ import annotations
+
 import os
 
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from numpy import linspace, loadtxt, zeros
 
 cimport cython
@@ -92,7 +96,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     double pixel_area=1.0
 ):
     """
-    Calculates a tuple of R, G, B values from an input spectrum
+    Calculate a tuple of R, G, B values from an input spectrum
     based on Phantom Hight-speed camera.
     The conversion equation from Spectral Power [W/nm] to degital value [12bit]
     is represented as follows:
@@ -196,7 +200,16 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
 
 # plot
 def plot_samples():
-    """Plot RGB sensitivity curvs samplong points of Phantom camera.
+    """Plot RGB raw sensitivity curves of Phantom LAB110 camera.
+
+    Example
+    -------
+
+    .. prompt:: python >>> auto
+
+        >>> plot_samples()
+
+    .. image:: ../_static/images/plots/rgb_sensitivity.png
     """
     fig, ax = plt.subplots()
     ax.plot(R_samples[:, 0], R_samples[:, 1], color="r", label="R")
@@ -208,24 +221,56 @@ def plot_samples():
     plt.show()
 
 
-def plot_RGB_filter(wavelengths=None):
-    """Plot RGB sensitivity curvs of Phantom camera.
+def plot_RGB_filter(
+    wavelengths=None, fig: Figure | None = None, ax: Axes | None = None
+) -> tuple[Figure, Axes]:
+    """Plot interpolated RGB sensitivity curves of Phantom LAB 110 camera.
+
+    This plot handles 1-D interpolated sensitivity data which is used to filter
+    the light through the pipeline.
 
     Parameters
     ----------
     wavelengths : 1D vector-like, optional
         sampling points of wavelength, by default 500 points in range of (380, 780) [nm]
+    fig
+        matplotlib figure object
+    ax
+        matplotlib axes object
+
+    Returns
+    -------
+    tuple[Figure, Axes]
+        matplotlib figure and axes object
+
+    Example
+    -------
+
+    .. prompt:: python >>> auto
+
+        >>> import numpy as np
+        >>> wavelengths = np.linspace(400, 600)
+        >>> fig, ax = plot_RGB_filter(wavelengths)
+        >>> fig.show()
+
+    .. image:: ../_static/images/plots/rgb_filter.png
     """
     if wavelengths is None:
         wavelengths = linspace(350, 780, 500)
 
-    fig, ax = plt.subplots()
+    if not isinstance(ax, Axes):
+        if not isinstance(fig, Figure):
+            fig, ax = plt.subplots(constrained_layout=True)
+        else:
+            ax = fig.add_subplot()
+    else:
+        fig = ax.get_figure()
+
     ax.plot(wavelengths, [filter_r(i) for i in wavelengths], color="r", label="R")
     ax.plot(wavelengths, [filter_g(i) for i in wavelengths], color="g", label="G")
     ax.plot(wavelengths, [filter_b(i) for i in wavelengths], color="b", label="B")
 
-    ax.set_ylim(0, 0.180)
-    ax.set_xlim(350, 780)
     ax.set_xlabel("wavelength [nm]")
     ax.set_ylabel("sensitivity [A/W]")
-    plt.show()
+
+    return (fig, ax)
