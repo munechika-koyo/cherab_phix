@@ -14,6 +14,7 @@ dependencies:
 # - cython == 3.0.0a11 installed by pip temporarily
 - matplotlib < 3.6  # for raysect dependency
 - plotly
+- numpy-stl
 - contourpy
   # for developper tools
 - black
@@ -33,7 +34,6 @@ dependencies:
 - sphinx-prompt
 - sphinx-copybutton
 - pydata-sphinx-theme < 0.11  # for custom css dependency
-- numpy-stl
 - sphinx-design
 - pandoc
 - sphinx-codeautolink
