@@ -21,7 +21,7 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       volumes:
-      - $GITHUB_WORKSPACE:/io
+      - /home/runner/work/cherab_phix/cherab_phix:/io
 
     steps:
     - name: check out repo
