@@ -10,6 +10,7 @@ recursive-include cherab *.py *.pyx *.pxd *.csv *.json *.npy *.rsm *.STL *.txt *
 include cherab/phix/VERSION
 # Exclude what we don't want to include
 global-exclude *.c *.py[cod]
+prune *.egg-info
 # Docs:
 # recursive-include docs *
 # prune docs/build
