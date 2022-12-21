@@ -41,5 +41,5 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        twine upload dist/*-tar.gz
-        twine upload wheelhouse/*-manylinux*.whl
+        twine upload dist/*.tar.gz
+        twine upload wheelhouse/*manylinux*.whl
