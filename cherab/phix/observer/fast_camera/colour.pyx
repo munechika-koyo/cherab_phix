@@ -2,7 +2,7 @@
 """
 from __future__ import annotations
 
-import os
+from pathlib import Path
 
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from numpy import linspace, loadtxt, zeros
 
 cimport cython
-from numpy cimport float64_t, ndarray
+from numpy cimport float64_t, import_array, ndarray
 from raysect.core.math.cython cimport clamp
 from raysect.core.math.function.float.function1d.interpolate cimport Interpolator1DArray
 from raysect.optical.colour cimport srgb_transfer_function
@@ -26,13 +26,15 @@ __all__ = [
     "plot_RGB_filter",
 ]
 
+import_array()
+
 # Path to directry saving fas-camera's RGB color filter curves
-DIR = os.path.join(os.path.dirname(__file__), "sensitivity")
+DIR = Path(__file__).parent / "sensitivity"
 
 # load RGB sensitivity curv samples (unit [A/W])
-R_samples = loadtxt(os.path.join(DIR, "R.txt"), delimiter=",")
-G_samples = loadtxt(os.path.join(DIR, "G.txt"), delimiter=",")
-B_samples = loadtxt(os.path.join(DIR, "B.txt"), delimiter=",")
+R_samples = loadtxt(DIR / "R.txt", delimiter=",")
+G_samples = loadtxt(DIR / "G.txt", delimiter=",")
+B_samples = loadtxt(DIR / "B.txt", delimiter=",")
 
 # interpolation using cubic spline
 filter_r = Interpolator1DArray(R_samples[:, 0], R_samples[:, 1], "cubic", "nearest", 50.0)
@@ -98,12 +100,12 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     """
     Calculate a tuple of R, G, B values from an input spectrum
     based on Phantom Hight-speed camera.
-    The conversion equation from Spectral Power [W/nm] to degital value [12bit]
+    The conversion equation from Spectral Power :math:`P(\\lambda)` [W/nm] to degital number DN [12bit]
     is represented as follows:
 
     .. math::
 
-        W [\\text{W/nm}] = 6.15\\times 10^{-9} \\cdot \\frac{A_\\text{1px}}{S(\\lambda)\\cdot t}\\cdot DN,
+        DN = \\frac{t}{6.15\\times 10^{-9} A_{1\\text{px}}}\\int_{\\mathbb{R}} \\mathrm{d}\\lambda\\; S(\\lambda)P(\\lambda)
 
     where,
 
@@ -131,16 +133,15 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     """
     cdef:
         int index, bins
-        double r, g, b
+        double r = 0.0
+        double g = 0.0
+        double b = 0.0
 
     bins = spectrum.bins
 
     if resampled_rgb is None:
         resampled_rgb = resample_phantom_rgb(spectrum.min_wavelength, spectrum.max_wavelength, spectrum.bins)
 
-    r = 0
-    g = 0
-    b = 0
     for index in range(bins):
         r += spectrum.delta_wavelength * spectrum.samples_mv[index] * resampled_rgb[index, 0]
         g += spectrum.delta_wavelength * spectrum.samples_mv[index] * resampled_rgb[index, 1]
@@ -150,7 +151,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     g *= exposure_time / (6.15e-9 * pixel_area)
     b *= exposure_time / (6.15e-9 * pixel_area)
 
-    return r, g, b
+    return (r, g, b)
 
 
 @cython.wraparound(False)
@@ -195,7 +196,7 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
     sg = clamp(sg, 0, 1)
     sb = clamp(sb, 0, 1)
 
-    return sr, sg, sb
+    return (sr, sg, sb)
 
 
 # plot

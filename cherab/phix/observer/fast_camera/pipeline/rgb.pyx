@@ -14,8 +14,6 @@ from raysect.optical.spectrum cimport Spectrum
 
 from cherab.phix.observer.fast_camera.colour cimport phantom_rgb_to_srgb, resample_phantom_rgb
 
-# ctypedef np.float64_t DTYPE_t
-
 __all__ = ["RGBPipeline2D"]
 
 _DEFAULT_PIPELINE_NAME = "Phantom RGBPipeline"
