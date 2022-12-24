@@ -32,13 +32,13 @@ def import_phix_rtc(
     grid_size
         1 voxel size :math:`(dr=dz)`, by default ``2.0e-3`` [m]
 
-    Return
-    ------
+    Returns
+    -------
     :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder`
         cherab's Ray Transfer Cylinder object
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World

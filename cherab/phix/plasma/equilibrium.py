@@ -14,7 +14,7 @@ def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     Tokamak Simulation Code.
 
     Parameters
-    ------------
+    ----------
     model_variant
         Name of the equilibrium model variant to load, by default "phix10".
         each data is stored as a .json file in data directory.
@@ -24,8 +24,8 @@ def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`
         :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium` instance
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python >>> auto
 
         >>> from cherab.phix.plasma import impot_equilibrium

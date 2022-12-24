@@ -190,7 +190,7 @@ class GCV(SVDInversionBase):
             matplotlib Axes object, by default None.
 
         Returns
-        ------
+        -------
         tuple[:obj:`~matplotlib.figure.Figure`, :obj:`~matplotlib.axes.Axes`]
             (fig, axes), each of which is matplotlib objects applied some properties.
         """

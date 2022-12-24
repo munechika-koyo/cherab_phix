@@ -20,16 +20,15 @@ __all__ = ["import_plasma"]
 def import_plasma(
     parent: Node, equilibrium: str = "phix10", species: Species | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
-    """Helper function of generating PHiX plasma As emissions, H
-    :math:`\\alpha`, H :math:`\\beta`, H :math:`\\gamma`, H :math:`\\delta` are
-    applied.
+    """Helper function of generating PHiX plasma with emissions model:
+    :math:`\\mathrm{H}_\\alpha, \\mathrm{H}_\\beta, \\mathrm{H}_\\gamma, \\mathrm{H}_\\delta`.
 
     Parameters
     ----------
     parent
         Raysect's scene-graph parent node
     equilibrium
-        equilibrium json file name in which TSC data is stored
+        equilibrium json file name in which TSC data is stored, by default ``"phix10"``
     species
         user-defined species object having composition which is a list of
         :obj:`~cherab.core.Species` objects and electron distribution function attributes,
@@ -39,8 +38,8 @@ def import_plasma(
     -------
     tuple[:obj:`~cherab.core.plasma.node.Plasma`, :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium`]
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World

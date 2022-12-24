@@ -82,8 +82,8 @@ def import_phix_mesh(
     dict[str, list[:obj:`~raysect.primitive.mesh.mesh.Mesh`]]
         containing mesh name and :obj:`~raysect.primitive.mesh.mesh.Mesh` objects
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python
 
         from raysect.optical import World
@@ -156,8 +156,8 @@ def show_PFCs_3D(fig: Figure | None = None, fig_size: tuple[int, int] = (700, 50
     -------
         plotly Figure object
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python
 
         fig = show_PFCs_3D(fig_size=(700, 500))

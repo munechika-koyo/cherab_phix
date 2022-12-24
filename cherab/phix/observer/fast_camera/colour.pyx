@@ -1,5 +1,4 @@
-"""Module to offer colour functionalities
-"""
+"""Module to offer colour functionalities"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -45,8 +44,7 @@ filter_b = Interpolator1DArray(B_samples[:, 0], B_samples[:, 1], "cubic", "neare
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef double[:, ::1] resample_phantom_rgb(double min_wavelength, double max_wavelength, int bins):
-    """
-    Pre-calculates samples of Phantom Camera's RGB sensitivity curves [A/W] over desired spectral range.
+    """Pre-calculates samples of Phantom Camera's RGB sensitivity curves [A/W] over desired spectral range.
 
     Returns ndarray of shape [N, 3] where the last dimension (0, 1, 2) corresponds
     to (R, G, B).
@@ -95,11 +93,10 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     Spectrum spectrum,
     double[:, ::1] resampled_rgb=None,
     double exposure_time=1.0,
-    double pixel_area=1.0
+    double pixel_area=1.0,
 ):
-    """
-    Calculate a tuple of R, G, B values from an input spectrum
-    based on Phantom Hight-speed camera.
+    """Calculate a tuple of R, G, B values from an input spectrum based on Phantom Hight-speed camera.
+
     The conversion equation from Spectral Power :math:`P(\\lambda)` [W/nm] to degital number DN [12bit]
     is represented as follows:
 
@@ -118,7 +115,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
     ----------
     spectrum : Spectrum
         raysect spectrum object (in radiance)
-    resampled_rgb: memoryview
+    resampled_rgb : memoryview
         Pre-calculated RGB sensitivity curves optimised
       for this spectral range, by default None
     exposure_time : float, optional
@@ -159,8 +156,7 @@ cpdef (double, double, double) spectrum_to_phantom_rgb(
 @cython.initializedcheck(False)
 @cython.cdivision(True)
 cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b):
-    """
-    Convert Phantom Camera's RGB to sRGB in range [0, 1]
+    """Convert Phantom Camera's RGB to sRGB in range [0, 1]
 
     phntom r, g, b in range [0, 4095]
     sr, sg, sb in range [0, 1]
@@ -203,8 +199,8 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
 def plot_samples():
     """Plot RGB raw sensitivity curves of Phantom LAB110 camera.
 
-    Example
-    -------
+    Examples
+    --------
 
     .. prompt:: python >>> auto
 
@@ -244,8 +240,8 @@ def plot_RGB_filter(
     tuple[Figure, Axes]
         matplotlib figure and axes object
 
-    Example
-    -------
+    Examples
+    --------
 
     .. prompt:: python >>> auto
 

@@ -282,8 +282,8 @@ cdef class ThinLensCCDArray(Observer2D):
         ray_count : int
             The number of rays to be generated.
 
-        Return
-        ------
+        Returns
+        -------
         list[tuple[:obj:`~raysect.optical.ray.Ray`, float]]
             A list of tuples of (ray, weight)
         """

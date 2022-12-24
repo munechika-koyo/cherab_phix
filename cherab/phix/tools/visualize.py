@@ -73,7 +73,7 @@ def show_phix_profiles(
     clabel
         colobar label
     cmap
-        color map, by default "inferno"
+        color map, by default ``"inferno"``
     rtc
         cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
     vmax
@@ -216,7 +216,7 @@ def show_phix_profiles(
 
 def show_phix_profile(
     axes: Axes,
-    profile: list[NDArray] | NDArray,
+    profile: NDArray,
     cmap: str = "inferno",
     rtc: RayTransferCylinder | None = None,
     vmax: float | None = None,
@@ -232,18 +232,16 @@ def show_phix_profile(
     ----------
     axes
         matplotlib Axes object
-    profiles
+    profile
          2D-array-like (nr, nz) profile inner PHiX limiter
     cmap
-        color map, by default "inferno"
+        color map, by default ``"inferno"``
     rtc
         cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
     vmax
-        to set the upper color limitation, by default maximum value of all profiles,
-        if ``cbar_mode=="single"``
+        to set the upper color limitation, by default maximum value of the profile.
     vmin
-        to set the lower color limitation, by default minimal value of all profiles,
-        if ``cbar_mode=="single"``
+        to set the lower color limitation, by default minimal value of the profile.
     toggle_contour
         whether or not to show contours as well as pcolormesh, by default True
     levels : 1D array-like, optional
