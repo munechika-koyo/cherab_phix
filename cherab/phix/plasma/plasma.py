@@ -1,7 +1,9 @@
 """Module to offer an helper function to load a plasma object."""
 from __future__ import annotations
 
-from cherab.core import Line, Plasma, Species, elements
+from collections.abc import Iterable
+
+from cherab.core import DistributionFunction, Line, Plasma, Species, elements
 from cherab.core.math import VectorAxisymmetricMapper
 from cherab.core.model import Bremsstrahlung, ExcitationLine, RecombinationLine
 from cherab.openadas import OpenADAS
@@ -18,7 +20,7 @@ __all__ = ["import_plasma"]
 
 
 def import_plasma(
-    parent: Node, equilibrium: str = "phix10", species: Species | None = None
+    parent: Node, equilibrium: str = "phix10", species: object | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
     """Helper function of generating PHiX plasma with emissions model:
     :math:`\\mathrm{H}_\\alpha, \\mathrm{H}_\\beta, \\mathrm{H}_\\gamma, \\mathrm{H}_\\delta`.
@@ -75,9 +77,23 @@ def import_plasma(
     plasma.geometry_transform = translate(0, 0, VESSEL_WALL[:, 1].min())
 
     # apply species to plasma
-    species = species or PHiXSpecies(equilibrium=eq)
-    plasma.composition = species.composition
-    plasma.electron_distribution = species.electron_distribution
+    if not (hasattr(species, "composition") and hasattr(species, "electron_distribution")):
+        species = PHiXSpecies(equilibrium=eq)
+
+    if isinstance(composition := getattr(species, "composition"), Iterable):
+        for element in composition:
+            if not isinstance(element, Species):
+                raise TypeError("element of composition attr must be a cherab.core.Species object.")
+        plasma.composition = composition
+    else:
+        raise TypeError("composition attr must be an iterable object.")
+
+    if isinstance(
+        electron_distribution := getattr(species, "electron_distribution"), DistributionFunction
+    ):
+        plasma.electron_distribution = electron_distribution
+    else:
+        raise TypeError("electron_distribution must be a cherab.core.DistributionFunction object.")
 
     # apply emission from plasma
     h_alpha = Line(elements.hydrogen, 0, (3, 2))  # , wavelength=656.279)
