@@ -24,16 +24,16 @@ cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
     voxel_map : NDArray[int32]
         (N, M) voxel map matrix (negative value must be input into masked voxels)
         If the additional dimension size of the matrix is 1, then it is squeezed to a 2-D matrix.
-    dir : int, optional
-        the number of laplacian kernel's neighbor in {4, 8}, by default 4.
+    dir : {4, 8}
+        the number of laplacian kernel's neighbor, by default 4.
 
-    Return
-    ------
+    Returns
+    -------
     NDArray[int32]
         (N, N) laplacian matrix (if N > M)
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python >>> auto
 
         >>> from raysect.core import World

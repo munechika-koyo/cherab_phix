@@ -109,6 +109,11 @@ html_theme_options = {
             "icon": "fab fa-github-square",
             "type": "fontawesome",
         },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/cherab-phix",
+            "icon": "fa-solid fa-box",
+        },
     ],
     "pygment_light_style": "default",
     "pygment_dark_style": "native",

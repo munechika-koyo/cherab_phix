@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
-from cherab.core import Maxwellian, Species, elements
+from cherab.core import DistributionFunction, Maxwellian, Species, elements
 from cherab.core.math import Constant3D, ConstantVector3D, Interpolate1DLinear, sample3d
 from cherab.tools.equilibrium import EFITEquilibrium
 from matplotlib import pyplot as plt
@@ -20,12 +20,12 @@ class PHiXSpecies:
     """Class representing PHiX plasma species.
 
     Parameters
-    ------------
+    ----------
     equilibrium
         EFIT equilibrium object, default None
 
     Attributes
-    -----------
+    ----------
     electron_distribution : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`
         electron distribution function
     composition : list of :obj:`~cherab.core.Species`
@@ -68,12 +68,12 @@ class PHiXSpecies:
         bulk_velocity = ConstantVector3D(Vector3D(0, 0, 0))
 
         # set electron distribution assuming Maxwellian
-        self.electron_distribution = Maxwellian(
+        self.electron_distribution: DistributionFunction = Maxwellian(
             e_density, temperature, bulk_velocity, electron_mass
         )
 
         # initialize composition
-        self.composition = []
+        self.composition: list[Species] = []
         # append species to composition list
         # H
         self.set_species(
@@ -115,7 +115,7 @@ class PHiXSpecies:
         distribution.
 
         Parameters
-        ------------
+        ----------
         element
             element name registored in cherabs elements.pyx, by default None
         charge

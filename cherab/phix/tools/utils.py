@@ -86,8 +86,8 @@ def calc_contours(
     rtc
         RayTransferCylinder instance, by default returned instance of `.import_phix_rtc`.
 
-    Return
-    ------
+    Returns
+    -------
     list[NDArray]
         list of contour lines 2-D array
     """

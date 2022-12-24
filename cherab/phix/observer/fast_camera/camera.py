@@ -36,12 +36,12 @@ def import_phix_camera(parent: Node, rotation_matrix=None, camera_pos=None):
         by defalut using :obj:`~calcam.Calibration.get_pupilpos`
 
     Returns
-    --------
+    -------
     :py:class:`.ThinLensCCDArray`
         instance of ThinLensCCDArray object
 
-    Example
-    -------
+    Examples
+    --------
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World

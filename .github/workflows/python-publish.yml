@@ -12,47 +12,34 @@ permissions:
   contents: read
 
 jobs:
-  container-build-dist:
+  build-dist:
     runs-on: ubuntu-latest
-    container:
-      image: quay.io/pypa/manylinux_2_28_x86_64
-      options: --user root
-      env:
-        PLAT: manylinux_2_28_x86_64
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      volumes:
-      - /home/runner/work/cherab_phix/cherab_phix:/io
 
     steps:
-    - name: check out repo
+    - name: Check out repo
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
         lfs: true
 
-    - name: Build 🐍 distribution 📦 in docker with CPython3.8
+    - name: Build 🐍 distribution 📦 in docker
       run: |
-        cd /io
-        /opt/python/cp38-cp38/bin/python -m pip install build --user
-        /opt/python/cp38-cp38/bin/python -m build
-        auditwheel repair dist/*cp38-cp38-linux_x86_64.whl --plat ${PLAT}
+        docker run -v ${{ github.workspace }}:/io quay.io/pypa/manylinux_2_28_x86_64 /bin/bash /io/scripts/build_dist.sh
 
-    - name: Build 🐍 distribution 📦 in docker with CPython3.9
-      run: |
-        cd /io
-        /opt/python/cp39-cp39/bin/python -m pip install build --user
-        /opt/python/cp39-cp39/bin/python -m build
-        auditwheel repair dist/*cp39-cp39-linux_x86_64.whl --plat ${PLAT}
+    - name: Set up Python 🐍 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
 
     - name: Check README rendering for PyPI
       run: |
-        cd /io
-        /opt/python/cp39-cp39/bin/python -m pip install twine --user
-        /opt/python/cp39-cp39/bin/twine check dist/*
+        python -m pip install twine --user
+        twine check dist/*
 
     - name: Publish 🐍 distribution 📦 to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        cd /io
-        /opt/python/cp39-cp39/bin/twine upload dist/*-tar.gz
-        /opt/python/cp39-cp39/bin/twine upload wheelhouse/*-manylinux*.whl
+        twine upload dist/*.tar.gz
+        twine upload wheelhouse/*manylinux*.whl

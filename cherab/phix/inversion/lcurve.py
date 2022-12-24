@@ -232,7 +232,7 @@ class Lcurve(SVDInversionBase):
             This key argument is valid if only ``scatter_plot`` is not None.
 
         Returns
-        ------
+        -------
         tuple of :obj:`~matplotlib.figure.Figure` and :obj:`~matplotlib.axes.Axes`
             (fig, axes), each of which is matplotlib objects applied some properties.
         """
@@ -302,7 +302,7 @@ class Lcurve(SVDInversionBase):
             matplotlib Axes object, by default None.
 
         Returns
-        ------
+        -------
         tuple[:obj:`~matplotlib.figure.Figure`, :obj:`~matplotlib.axes.Axes`]
             (fig, axes), each of which is matplotlib objects applied some properties.
         """

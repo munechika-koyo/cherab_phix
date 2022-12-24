@@ -1,13 +1,14 @@
 # CHERAB-PHiX
 
-![PyPI](https://img.shields.io/pypi/v/cherab-phix?logo=PyPI)
+[![PyPI](https://img.shields.io/pypi/v/cherab-phix?label=PyPI&logo=PyPI)](https://pypi.org/project/cherab-phix/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cherab-phix?logo=Python)
 
 [![DOI](https://zenodo.org/badge/239309930.svg)](https://zenodo.org/badge/latestdoi/239309930)
-![GitHub](https://img.shields.io/github/license/munechika-koyo/cherab_phix)
+[![GitHub](https://img.shields.io/github/license/munechika-koyo/cherab_phix)](https://opensource.org/licenses/BSD-3-Clause)
 
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/munechika-koyo/cherab_phix/master.svg)](https://results.pre-commit.ci/latest/github/munechika-koyo/cherab_phix/master)
 [![Documentation Status](https://readthedocs.org/projects/cherab-phix/badge/?version=stable)](https://cherab-phix.readthedocs.io/en/stable/?badge=stable)
+[![PyPI Publish](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml/badge.svg)](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml)
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)

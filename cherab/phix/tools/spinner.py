@@ -38,8 +38,8 @@ class Spinner:
         Place spinner to the right or left end of the text string, by default "left"
 
 
-    Example
-    -------
+    Examples
+    --------
     In test.py,
 
     .. code-block:: python
@@ -267,7 +267,13 @@ class Spinner:
                 self._clear_line()
 
     def write(self, text: str) -> None:
-        """Write text in the terminal without breaking the spinner."""
+        """Write text in the terminal without breaking the spinner.
+
+        Parameters
+        ----------
+        text
+            text to show in the terminal permanently.
+        """
         with self._stdout_lock:
             self._clear_line()
 

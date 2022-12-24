@@ -51,7 +51,7 @@ class SVDInversionBase:
         w_i \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
 
     Parameters
-    -----------
+    ----------
     s : vector_like
         singular values :math:`\\sigma_i` in :math:`s` vectors.
     u : array_like
@@ -179,12 +179,12 @@ class SVDInversionBase:
         valuable and using singular values.
 
         Parameters
-        -----------
+        ----------
         beta
             regularization parameter, by default None
 
         Returns
-        --------
+        -------
         numpy.ndarray (N, )
             window function :math:`\\frac{1}{1 + \\lambda / \\sigma_i^2}`
         """
@@ -202,7 +202,7 @@ class SVDInversionBase:
             regularization parameter, by default None
 
         Returns
-        --------
+        -------
         numpy.floating
             squared residual norm
         """
