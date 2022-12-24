@@ -31,7 +31,12 @@ Inversion
 .. nbgallery::
     :glob:
 
-    notebooks/inversion/*
+    notebooks/inversion/L_curve
+    notebooks/inversion/calc_rtm
+    notebooks/inversion/rtm2svd
+    notebooks/inversion/RTM_analysis
+    notebooks/inversion/tomography_synthetic
+    notebooks/inversion/tomography_experiment
 
 Others
 -------
