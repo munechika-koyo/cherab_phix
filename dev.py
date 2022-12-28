@@ -82,7 +82,7 @@ def install():
     ```
     """
     # install the package
-    cmd = ["python", "setup.py", "develop"]
+    cmd = [sys.executable, "setup.py", "develop"]
     click.echo(" ".join([str(p) for p in cmd]))
     ret = subprocess.call(cmd)
 

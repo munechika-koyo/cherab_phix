@@ -8,10 +8,10 @@ Installation
 
 .. note::
 
-    Currently (12/20/2022), cherab-phix recommends using python3.9 because there are built
-    distributions in the `raysect`_ and `cherab`_ dependencies at pypi.
-    Although the user can take the python3.10, It takes time to compile them and
-    therefore takes time to install cherab-phix.
+    Currently (12/20/2022), ``cherab-phix`` recommends using python3.8 or 3.9 because there are built
+    distributions in the `raysect`_ and `cherab`_ dependencies at PyPI.
+    Although the user can take the python3.10+, both `raysect`_ and `cherab`_ must be compiled manually
+    from sources.
 
     The rest of dependencies are listed in ``pyproject.toml`` file in source directory,
     so those who are curious about it should look into it.
@@ -19,7 +19,7 @@ Installation
 
 Installing using pip
 ====================
-Using ``pip`` command allows us to install cherab-phix including asset data like a device meshes.
+Using ``pip`` command allows us to install ``cherab-phix`` including asset data like a device meshes.
 
 .. prompt:: bash
 
@@ -28,7 +28,7 @@ Using ``pip`` command allows us to install cherab-phix including asset data like
 
 Configuring Atomic data
 -----------------------
-To make use of the phix-modeled plasma object, you have to download the atomic data from openadas
+To make use of the PHiX-modeled plasma object, you have to download the atomic data from openadas
 repository; run the following commands in a python terminal:
 
 .. prompt:: python >>> auto
@@ -36,15 +36,15 @@ repository; run the following commands in a python terminal:
     from cherab.openadas.repository import populate
     populate()
 
-If you are curious about it, please see the cherab documentation
+If you are curious about it more, please see the ``cherab`` documentation
 `here <https://www.cherab.info/installation_and_structure.html#configuring-atomic-data>`_.
 
 
 Installing for Developper
 ==========================
-If you plan to make any modifications to do any development work on CHERAB-PHiX,
+If you plan to make any modifications to do any development work on ``cherab-phix``,
 and want to be able to edit the source code without having to run the setup script again
-to have your changes take effect, you can install CHERAB-PHiX on editable mode.
+to have your changes take effect, you can install ``cherab-phix`` on editable mode.
 
 Manually downloading source
 ---------------------------

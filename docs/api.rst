@@ -9,7 +9,6 @@ Here we show the list of top 5 sub-packages. They are available in the same name
 .. autosummary::
     :toctree: _api/
     :recursive:
-    :caption: Machine module
     :template: module.rst
 
     machine
