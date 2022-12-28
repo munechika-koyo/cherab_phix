@@ -20,7 +20,7 @@ class SVDInversionBase:
 
         Ax = b,
 
-    Where :math:`A` is a :math:`M \\times N` matrix. Adding the regularization term,
+    where :math:`A` is a :math:`M \\times N` matrix. Adding the regularization term,
     the estimated solution :math:`x_\\lambda` is derived from the following equation:
 
     .. math::
@@ -29,7 +29,7 @@ class SVDInversionBase:
 
                    &= ( A^\\intercal A + \\lambda L^\\intercal L )^{-1} (A^\\intercal\\ b + \\lambda L^\\intercal Lx_0),
 
-    Where :math:`\\lambda` is the reguralization parameter, :math:`L` is a matrix operator in regularization term (e.g. laplacian)
+    where :math:`\\lambda` is the reguralization parameter, :math:`L` is a matrix operator in regularization term (e.g. laplacian)
     and :math:`x_0` is a prior assumption.
 
     The SVD components are based on the following equation:

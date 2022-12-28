@@ -16,7 +16,7 @@ def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     Parameters
     ----------
     model_variant
-        Name of the equilibrium model variant to load, by default "phix10".
+        Name of the equilibrium model variant to load, by default ``"phix10"``.
         each data is stored as a .json file in data directory.
 
     Returns

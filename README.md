@@ -22,7 +22,7 @@ For more information, see the [documentation pages](https://cherab-phix.readthed
 
 Quick installation
 -------------------
-Install it from GitHub repository with pip:
+`pip` command enables us to install `cherab-phix` from [PyPI](https://pypi.org/project/cherab-phix/) repository.
 
 ```Shell
 python -m pip install cherab-phix
@@ -30,14 +30,14 @@ python -m pip install cherab-phix
 
 For Developpers
 ---
-If you would like to modificate codes, it is much easier to create a conda development environment after cloning repository.
+If you would like to develop `cherab-phix`, it is much easier to create a conda environment after cloning repository.
 ```Shell
 conda env create -f environment.yaml
 conda activate cherab-phix-dev
 python dev.py build
 python dev.py install
 ```
-And please follows the development [specified procedure](https://cherab-phix.readthedocs.io/en/development/user/contribution.html).
+Please follow the [development procedure](https://cherab-phix.readthedocs.io/en/development/user/contribution.html).
 
 ![The plasma discharged image captured by the high-speed camera](docs/_static/images/phix.jpg)
 
