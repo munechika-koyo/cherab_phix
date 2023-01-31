@@ -89,7 +89,9 @@ def calc_contours(
     Returns
     -------
     list[NDArray]
-        list of contour lines 2-D array
+        list of contour lines 2-D array :math:`(N, 2)`.
+        The columns of each array show the values of the :math:`R` and :math:`Z` coordinates,
+        respectively.
     """
     # calculate r, z vertices
     if z is None or r is None:
