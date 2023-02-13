@@ -22,6 +22,12 @@ repos:
   - id: check-toml
   - id: check-yaml
 
+# validate pyproject.toml
+- repo: https://github.com/abravalheri/validate-pyproject
+  rev: v0.12.1
+  hooks:
+  - id: validate-pyproject
+
 - repo: https://github.com/psf/black
   rev: 22.12.0
   hooks:
@@ -50,10 +56,8 @@ repos:
     args: [--max-line-length, '140']
 
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.5.0
+  rev: v2.6.0
   hooks:
-  - id: pretty-format-toml
-    args: [--autofix]
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2']
 
