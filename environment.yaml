@@ -41,7 +41,6 @@ dependencies:
 - pip
 - pip:
   - cython == 3.0.0a11
-  - raysect == 0.7.1
-  - cherab == 1.3.0
+  - cherab == 1.4.0
   - calcam
   - cython-lint
