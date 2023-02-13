@@ -28,13 +28,13 @@ repos:
   - id: black
 
 - repo: https://github.com/PyCQA/isort
-  rev: v5.11.3
+  rev: 5.11.4
   hooks:
   - id: isort
     args: [--profile, black]
 
 - repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.5.3
+  rev: 1.6.0
   hooks:
   - id: nbqa-black
     additional_dependencies:
@@ -44,7 +44,7 @@ repos:
     - isort==5.11.3
 
 - repo: https://github.com/MarcoGorelli/cython-lint
-  rev: v0.9.1
+  rev: v0.10.1
   hooks:
   - id: cython-lint
     args: [--max-line-length, '140']
@@ -58,7 +58,7 @@ repos:
     args: [--autofix, --indent, '2']
 
 # for docstrings in python codes
-- repo: https://github.com/myint/docformatter
+- repo: https://github.com/PyCQA/docformatter
   rev: v1.5.1
   hooks:
   - id: docformatter
