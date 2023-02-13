@@ -7,7 +7,7 @@
 [![GitHub](https://img.shields.io/github/license/munechika-koyo/cherab_phix)](https://opensource.org/licenses/BSD-3-Clause)
 
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/munechika-koyo/cherab_phix/master.svg)](https://results.pre-commit.ci/latest/github/munechika-koyo/cherab_phix/master)
-[![Documentation Status](https://readthedocs.org/projects/cherab-phix/badge/?version=stable)](https://cherab-phix.readthedocs.io/en/stable/?badge=stable)
+[![Documentation Status](https://readthedocs.org/projects/cherab-phix/badge/?version=latest)](https://cherab-phix.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Publish](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml/badge.svg)](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml)
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
