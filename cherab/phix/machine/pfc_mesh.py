@@ -168,7 +168,8 @@ def show_PFCs_3D(fig: Figure | None = None, fig_size: tuple[int, int] = (700, 50
 
     .. image:: ../_static/images/show_PFCs_3D_example.png
     """
-    fig = go.Figure()
+    if fig is None or not isinstance(fig, Figure):
+        fig = go.Figure()
 
     for mesh_name, (filename, _) in COMPONENTS.items():
         # use not fine mesh in vessel
