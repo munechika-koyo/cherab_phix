@@ -128,7 +128,6 @@ html_title = "Cherab-PHiX Documentation"
 html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",
-    "css/gallery.css",
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.
@@ -177,7 +176,7 @@ link_github = True
 if link_github:
     import inspect
 
-    from packaging.version import parse
+    # from packaging.version import parse
 
     extensions.append("sphinx.ext.linkcode")
 
@@ -230,7 +229,7 @@ if link_github:
         if not fn.startswith(("cherab")):
             return None
 
-        version = parse(__version__)
+        # version = parse(__version__)
         # tag is temporarily tied to master
         tag = "master"
         # tag = "master" if version.is_devrelease else f"v{version.public}"
