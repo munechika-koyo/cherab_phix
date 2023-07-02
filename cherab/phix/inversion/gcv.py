@@ -54,8 +54,7 @@ class GCV(SVDInversionBase):
 
     @property
     def lambdas(self) -> NDArray[np.float64]:
-        """list of regularization parameters used for the optimization
-        process."""
+        """List of regularization parameters used for the optimization process."""
         return self._lambdas
 
     @lambdas.setter
@@ -69,14 +68,13 @@ class GCV(SVDInversionBase):
 
     @property
     def lambda_opt(self) -> float:
-        """optimal regularization parameter which is decided after the
-        optimization iteration."""
+        """Optimal regularization parameter which is decided after the optimization iteration."""
         return self._lambda_opt
 
     @property
     def gcvs(self) -> NDArray[np.float64]:
-        """list of values of GCV, elements of which are calculated after the
-        optimization iteration."""
+        """List of values of GCV, elements of which are calculated after the optimization
+        iteration."""
         return self._gcvs
 
     def optimize(self, itemax: int = 3) -> None:
@@ -143,7 +141,7 @@ class GCV(SVDInversionBase):
         print(f"completed the optimization (iteration times : {itemax})")
 
     def gcv(self, beta: float | None = None) -> float:
-        """definition of GCV criterion function.
+        """Definition of GCV criterion function.
 
         Parameters
         ----------
@@ -158,7 +156,7 @@ class GCV(SVDInversionBase):
         return self.rho(beta) / (1.0 - np.sum(self.w(beta))) ** 2.0
 
     def optimized_solution(self, itemax: int | None = None):
-        """calculate inverted solution using GCV criterion optimization.
+        """Calculate inverted solution using GCV criterion optimization.
 
         Parameters
         ----------

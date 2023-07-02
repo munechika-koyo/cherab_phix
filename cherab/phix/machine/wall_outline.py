@@ -34,7 +34,7 @@ VESSEL_WALL = np.array(
 
 
 def plot_phix_wall_outline(style: str = "k"):
-    """plot PHiX Limiter and vessel wall polygons.
+    """Plot PHiX Limiter and vessel wall polygons.
 
     Parameters
     ----------

@@ -113,7 +113,7 @@ class SVDInversionBase:
 
     @property
     def L_inv(self) -> NDArray[float64] | None:
-        """inversion matrix in the regularization term.
+        """Inversion matrix in the regularization term.
 
         :obj:`L_inv` is :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
         by default ``numpy.identity(self._vh.shape[1])``
@@ -148,7 +148,7 @@ class SVDInversionBase:
 
     @property
     def data(self) -> NDArray[float64]:
-        """given data for inversion calculation."""
+        """Given data for inversion calculation."""
         return self._data
 
     @data.setter
@@ -161,7 +161,7 @@ class SVDInversionBase:
 
     @property
     def beta(self) -> float:
-        """regularization parameter."""
+        """Regularization parameter."""
         return self._beta
 
     @beta.setter
@@ -175,8 +175,8 @@ class SVDInversionBase:
     # -------------------------------------------------------------------------
 
     def w(self, beta: float | None = None) -> NDArray[float64]:
-        """calculate window function using regularization parameter as a
-        valuable and using singular values.
+        """Calculate window function using regularization parameter as a valuable and using singular
+        values.
 
         Parameters
         ----------
@@ -277,8 +277,7 @@ class SVDInversionBase:
     # -------------------------------------------------------------------------
 
     def inverted_solution(self, beta: float | None = None) -> NDArray[float64]:
-        """calculate the inverted solution using given regularization
-        parameter.
+        """Calculate the inverted solution using given regularization parameter.
 
         Parameters
         ----------
