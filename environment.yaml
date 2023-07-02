@@ -11,36 +11,38 @@ dependencies:
 - setuptools
 - numpy
 - scipy
-# - cython == 3.0.0a11 installed by pip temporarily
-- matplotlib < 3.6  # for raysect dependency
+# - cython == 3.0.0 installed by pip temporarily
+- matplotlib < 3.6  # for raysect v0.7.1 dependency (which is dependency of cherab 1.4.0)
 - plotly
 - numpy-stl
 - contourpy
   # for developper tools
-- black
-- isort
-- flake8
+- ruff
 - mypy
 - rich-click
 - pre-commit
+- pycodestyle  # dependency for cython-lint
   # for documentation
-- docutils >= 0.19, < 0.20
+- docutils
+- ipython
 - ipykernel
 - ipywidgets
+- nbconvert > 7.3
 - nbsphinx
 - pillow
 - pygments >= 2.11.0
-- sphinx >= 5, < 6
+- sphinx >= 5
 - sphinx-prompt
 - sphinx-copybutton
-- pydata-sphinx-theme < 0.11  # for custom css dependency
+- pydata-sphinx-theme < 0.14  # for custom css dependency
 - sphinx-design
-- pandoc
 - sphinx-codeautolink
+- pandoc
+- jinja2 < 3.1
 # pip-install dependencies
-- pip
+- pip < 23.1  # compatible with calcam (to avoid pep517 installation)
 - pip:
-  - cython == 3.0.0a11
+  - cython == 3.0.0b3
   - cherab == 1.4.0
-  - calcam
   - cython-lint
+  - calcam

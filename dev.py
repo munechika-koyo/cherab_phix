@@ -7,9 +7,9 @@ from pathlib import Path
 import rich_click as click
 
 try:
-    import tomlib
+    import tomllib
 except ImportError:
-    import tomli as tomlib
+    import tomli as tomllib
 
 
 BASE_DIR = Path(__file__).parent.absolute()
@@ -97,8 +97,8 @@ def install():
 def install_deps():
     """Install build dependencies using pip.
 
-    Only pip install cannot compile cython files appropriately, so we
-    excute this command before installing this package.
+    Only pip install cannot compile cython files appropriately, so we excute this command before
+    installing this package.
     """
     # Load requires from pyproject.toml
     pyproject = BASE_DIR / "pyproject.toml"
@@ -106,7 +106,7 @@ def install_deps():
         raise FileNotFoundError("pyproject.toml must be placed at the root directory.")
 
     with open(pyproject, "rb") as file:
-        conf = tomlib.load(file)
+        conf = tomllib.load(file)
     requires = conf["build-system"].get("requires")
     subprocess.run([sys.executable, "-m", "pip", "install"] + requires)
 
@@ -159,27 +159,17 @@ def doc(parallel: int, targets: str):
 
 @cli.command()
 def format():
-    """:art: Run black & isort formatting
+    """:art: Run ruff linting & formatting
     The default options are defined in pyproject.toml
     """
-    cmd = ["black", str(BASE_DIR)]
+    cmd = ["ruff", "check", "--fix", str(SRC_PATH)]
     click.echo(" ".join([str(p) for p in cmd]))
     ret = subprocess.call(cmd)
 
     if ret == 0:
-        print("black formated")
+        print("ruff formated")
     else:
-        print("black formatting errors!")
-        sys.exit(1)
-
-    cmd = ["isort", str(BASE_DIR)]
-    click.echo(" ".join([str(p) for p in cmd]))
-    ret = subprocess.call(cmd)
-
-    if ret == 0:
-        print("isort formated")
-    else:
-        print("isort formatting errors!")
+        print("ruff formatting errors!")
         sys.exit(1)
 
 
@@ -188,13 +178,11 @@ def cython_lint():
     """:art: Cython linter. Checking all .pyx files in the source directory.
     The default options are defined at the cython-lint table in pyproject.toml
     """
-    # line length option
-    max_line_length = config("cython-lint")["max-line-length"]
 
     # list of .pyx files
     pyx_files = [str(pyx_path) for pyx_path in SRC_PATH.glob("**/*.pyx")]
 
-    cmd = ["cython-lint", "--max-line-length", str(max_line_length)] + pyx_files
+    cmd = ["cython-lint"] + pyx_files
     ret = subprocess.call(cmd)
 
     if ret == 0:
@@ -212,7 +200,7 @@ def config(tool: str):
         raise FileNotFoundError("pyproject.toml must be placed at the root directory.")
 
     with open(pyproject, "rb") as file:
-        conf = tomlib.load(file)
+        conf = tomllib.load(file)
 
     if not conf["tool"].get(tool):
         raise ValueError(f"{tool} config data does not exist.")
