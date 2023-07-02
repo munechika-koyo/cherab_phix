@@ -27,15 +27,15 @@ plt.tight_layout()
 # annotation
 # peak line label
 label_line = [
-    "$H_{\delta}$",
-    "$H_{\gamma}$",
-    r"$H_{\beta}$",
+    r"$\mathrm{H}_{\delta}$",
+    r"$\mathrm{H}_{\gamma}$",
+    r"$\mathrm{H}_{\beta}$",
     "Ar II, C I, or Fe I",
     "Fe II, O IV, Ar I",
     "C I , Fe, O II ",
     "Ar, C I, O III ",
-    r"$H_{\alpha}$",
-    r"$C III (3d\rightarrow3p)$",
+    r"$\mathrm{H}_{\alpha}$",
+    r"$\mathrm{C III} (3d\rightarrow3p)$",
 ]
 for txt, x, y in zip(label_line, wavelength[peaks], samples[peaks]):
     plt.annotate(txt, (x, y), horizontalalignment="right", rotation=90)

@@ -21,8 +21,8 @@ SPINNERS = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
 
 
 class Spinner:
-    """Implements a context manager that spawns a child process to write
-    spinner frames into a tty (stdout) duringcontext execution.
+    """Implements a context manager that spawns a child process to write spinner frames into a tty
+    (stdout) duringcontext execution.
 
     Parameters
     ----------
@@ -146,7 +146,7 @@ class Spinner:
 
     @property
     def interval(self) -> float:
-        """spinners wait time."""
+        """Spinners wait time."""
         return self._interval
 
     @interval.setter
@@ -157,7 +157,7 @@ class Spinner:
 
     @property
     def frames(self) -> Iterable[str]:
-        """spinner animated frames."""
+        """Spinner animated frames."""
         return self._frames
 
     @frames.setter
@@ -203,7 +203,7 @@ class Spinner:
 
     # === methods ==================================================================================
     def start(self):
-        """start spinner process."""
+        """Start spinner process."""
         self._hide_cursor()
         self._start_time = time.time()
         self._stop_time = None
@@ -216,7 +216,7 @@ class Spinner:
         return self
 
     def stop(self):
-        """stop spinner process."""
+        """Stop spinner process."""
         self._stop_time = time.time()
 
         if self._spin_process:
@@ -347,7 +347,7 @@ class Spinner:
         return out
 
     def _animate(self) -> None:
-        """animate spinners in a child process."""
+        """Animate spinners in a child process."""
         while not self._stop_spin.is_set():
 
             if self._hide_spin.is_set():
@@ -397,5 +397,5 @@ if __name__ == "__main__":
     test()
 
     with Spinner("Loading with context manager..."):
-        for i in range(10):
+        for _i in range(10):
             time.sleep(0.25)

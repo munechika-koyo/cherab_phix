@@ -89,7 +89,7 @@ line-length = 100
 
 # Enable Pyflakes `E` and `F` codes by default.
 select = ["E", "F", "W", "I", "N", "B", "NPY"]
-ignore = ["E501", "N806"]
+ignore = ["E501", "N802", "N803", "N806"]
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["E", "F", "W", "I", "B", "NPY"]
@@ -103,6 +103,12 @@ target-version = "py39"
 
 # namespace package setting
 namespace-packages = ["cherab/phix"]
+
+per-file-ignores = { "cherab/phix/machine/pfc_mesh.py" = [
+    "E741",
+], "cherab/phix/plasma/species.py" = [
+    "B008",
+] }
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

@@ -2,16 +2,17 @@
 from __future__ import annotations
 
 import numpy as np
-from cherab.core import DistributionFunction, Maxwellian, Species, elements
-from cherab.core.math import Constant3D, ConstantVector3D, Interpolate1DLinear, sample3d
-from cherab.tools.equilibrium import EFITEquilibrium
 from matplotlib import pyplot as plt
 from raysect.core.math.function.float.function3d import Function3D
 from raysect.core.math.function.vector3d.function3d import Function3D as VectorFunction3D
 from raysect.optical import Vector3D
 from scipy.constants import Boltzmann, atomic_mass, convert_temperature, electron_mass
 
-from cherab.phix.machine.wall_outline import INNER_LIMITER
+from cherab.core import DistributionFunction, Maxwellian, Species, elements
+from cherab.core.math import Constant3D, ConstantVector3D, Interpolate1DLinear, sample3d
+from cherab.tools.equilibrium import EFITEquilibrium
+
+from ..machine.wall_outline import INNER_LIMITER
 
 __all__ = ["PHiXSpecies"]
 
@@ -111,8 +112,7 @@ class PHiXSpecies:
         temperature: Function3D = Constant3D(1.0e2),
         bulk_velocity: VectorFunction3D = ConstantVector3D(Vector3D(0, 0, 0)),
     ):
-        """add species to composition which is assumed to be Maxwellian
-        distribution.
+        """Add species to composition which is assumed to be Maxwellian distribution.
 
         Parameters
         ----------
@@ -140,7 +140,7 @@ class PHiXSpecies:
                 f"element name '{element}' is not implemented."
                 f"You can implement manually using Element class"
             )
-            raise NotImplementedError(message)
+            raise NotImplementedError(message) from None
 
         # element mass
         element_mass = element.atomic_weight * atomic_mass
@@ -152,7 +152,7 @@ class PHiXSpecies:
         self.composition.append(Species(element, charge, distribution))
 
     def plot_distribution(self, res: float = 0.001):
-        """plot species temperature & density profile.
+        """Plot species temperature & density profile.
 
         Parameters
         ----------
@@ -234,7 +234,7 @@ class PHiXSpecies:
         plt.show()
 
     def plot_1d_profile(self):
-        """plot r vs electron density or temperature 1D profile."""
+        """Plot r vs electron density or temperature 1D profile."""
         eq = self.eq
         funcs = [
             self.electron_distribution.density,

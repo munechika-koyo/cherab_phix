@@ -32,7 +32,8 @@ if __name__ == "__main__":
 
     # mesured exact unperturbed data and added white noise
     b_0 = A.dot(x_0)
-    b_noise = np.random.normal(0, 1.0e-4, b_0.size)
+    rng = np.random.default_rng()
+    b_noise = rng.normal(0, 1.0e-4, b_0.size)
     b = b_0 + b_noise
 
     # === inversion process

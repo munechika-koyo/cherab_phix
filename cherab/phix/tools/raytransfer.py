@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import numpy as np
-from cherab.tools.equilibrium import EFITEquilibrium
-from cherab.tools.raytransfer import RayTransferCylinder
 from raysect.core import Node, translate
 
-from cherab.phix.plasma import import_equilibrium
+from cherab.tools.equilibrium import EFITEquilibrium
+from cherab.tools.raytransfer import RayTransferCylinder
+
+from ..plasma import import_equilibrium
 
 __all__ = ["import_phix_rtc"]
 
@@ -14,8 +15,8 @@ __all__ = ["import_phix_rtc"]
 def import_phix_rtc(
     parent: Node, equilibrium: EFITEquilibrium | None = None, grid_size: float = 2.0e-3
 ) -> RayTransferCylinder:
-    """This is a helper function to easily set up the RayTransfer Cylinder
-    object on PHiX configuration.
+    """This is a helper function to easily set up the RayTransfer Cylinder object on PHiX
+    configuration.
 
     This function returns a instance of
     :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferCylinder` object,

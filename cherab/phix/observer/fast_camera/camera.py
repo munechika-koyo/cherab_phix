@@ -5,8 +5,8 @@ import numpy as np
 from calcam import Calibration
 from raysect.optical import AffineMatrix3D, Node, translate
 
-from cherab.phix.observer.thin_lens_ccd import ThinLensCCDArray
-from cherab.phix.tools import Spinner
+from ...tools import Spinner
+from ..thin_lens_ccd import ThinLensCCDArray
 
 __all__ = ["import_phix_camera"]
 
