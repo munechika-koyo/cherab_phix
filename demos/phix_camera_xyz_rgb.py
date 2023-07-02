@@ -52,7 +52,6 @@ camera.pipelines = [rgb, sp]
 # Define Observer sampler
 # ------------------------
 sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=10, cutoff=0.05)
-# sampler = FullFrameSampler2D()
 camera.frame_sampler = sampler
 
 # %%
