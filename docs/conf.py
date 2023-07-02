@@ -127,7 +127,7 @@ html_title = "Cherab-PHiX Documentation"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = [
-    "css/custom.css",
+    "custom.css",
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.
