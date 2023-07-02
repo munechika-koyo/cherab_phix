@@ -1,5 +1,5 @@
 ci:
-  autofix_prs: false
+  autofix_prs: true
   autoupdate_schedule: quarterly
 
 default_language_version:
@@ -24,46 +24,41 @@ repos:
 
 # validate pyproject.toml
 - repo: https://github.com/abravalheri/validate-pyproject
-  rev: v0.12.1
+  rev: v0.13
   hooks:
   - id: validate-pyproject
 
-- repo: https://github.com/psf/black
-  rev: 22.12.0
+# lint and format python codes by ruff
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.275
   hooks:
-  - id: black
+  - id: ruff
+    args: [--fix, --exit-non-zero-on-fix]
 
-- repo: https://github.com/PyCQA/isort
-  rev: 5.12.0
-  hooks:
-  - id: isort
-    args: [--profile, black]
-
+# lint and format jupyter notebooks by nbqa-ruff
 - repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.6.0
+  rev: 1.7.0
   hooks:
-  - id: nbqa-black
-    additional_dependencies:
-    - black==22.12.0
-  - id: nbqa-isort
-    additional_dependencies:
-    - isort==5.11.3
+  - id: nbqa-ruff
 
+# lint cython codes
 - repo: https://github.com/MarcoGorelli/cython-lint
-  rev: v0.10.1
+  rev: v0.15.0
   hooks:
   - id: cython-lint
     args: [--max-line-length, '140']
 
+# format yaml files
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.6.0
+  rev: v2.9.0
   hooks:
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2']
 
-# for docstrings in python codes
+# format docstrings in python codes
 - repo: https://github.com/PyCQA/docformatter
-  rev: v1.5.1
+  rev: v1.7.3
   hooks:
   - id: docformatter
+    additional_dependencies: [tomli]
     args: [--in-place]
