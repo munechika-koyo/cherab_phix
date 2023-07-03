@@ -79,10 +79,7 @@ documentation = "https://cherab-phix.readthedocs.io/"
 repository = "https://github.com/munechika-koyo/cherab_phix"
 
 [tool.cython-lint]
-max-line-length = 100
-
-[tool.black]
-line-length = 100
+max-line-length = 140
 
 [tool.ruff]
 line-length = 100
@@ -104,11 +101,9 @@ target-version = "py39"
 # namespace package setting
 namespace-packages = ["cherab/phix"]
 
-per-file-ignores = { "cherab/phix/machine/pfc_mesh.py" = [
-    "E741",
-], "cherab/phix/plasma/species.py" = [
-    "B008",
-] }
+[tool.ruff.per-file-ignores]
+"cherab/phix/machine/pfc_mesh.py" = ["E741"]
+"cherab/phix/plasma/species.py" = ["B008"]
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
