@@ -57,8 +57,7 @@ class Lcurve(SVDInversionBase):
 
     @property
     def lambdas(self) -> NDArray[np.float64]:
-        """list of regularization parameters used for the optimization
-        process."""
+        """List of regularization parameters used for the optimization process."""
         return self._lambdas
 
     @lambdas.setter
@@ -72,13 +71,12 @@ class Lcurve(SVDInversionBase):
 
     @property
     def lambda_opt(self) -> float:
-        """optimal regularization parameter which is decided after the
-        optimization iteration."""
+        """Optimal regularization parameter which is decided after the optimization iteration."""
         return self._lambda_opt
 
     @property
     def curvatures(self) -> NDArray[np.float64]:
-        """list of carvature values.
+        """List of carvature values.
 
         This is stored after the optimazation iteration.
         """
@@ -86,7 +84,7 @@ class Lcurve(SVDInversionBase):
 
     @property
     def quiet(self) -> bool:
-        """toggle not to show the text after finishing the optimization."""
+        """Toggle not to show the text after finishing the optimization."""
         return self._quiet
 
     @quiet.setter
@@ -186,7 +184,7 @@ class Lcurve(SVDInversionBase):
             print(f"completed the optimization (iteration times : {itemax})")
 
     def optimized_solution(self, itemax: int | None = None) -> NDArray[np.float64]:
-        """calculate inverted solution using L-curve criterion optimization.
+        """Calculate inverted solution using L-curve criterion optimization.
 
         Parameters
         ----------
@@ -214,8 +212,8 @@ class Lcurve(SVDInversionBase):
         scatter_plot: int | None = None,
         scatter_annotate: bool = True,
     ) -> tuple[Figure, Axes]:
-        """plotting the L curve in log-log scale The range of regularization
-        parameters uses self.lambdas.
+        """Plotting the L curve in log-log scale The range of regularization parameters uses
+        self.lambdas.
 
         Parameters
         ----------
@@ -341,8 +339,8 @@ class Lcurve(SVDInversionBase):
         return (fig, axes)
 
     def curvature(self, beta: float) -> float:
-        """calculate curvature for L-curve method L-curve method is used to
-        solve the ill-posed inversion equation.
+        """Calculate curvature for L-curve method L-curve method is used to solve the ill-posed
+        inversion equation.
 
         L-curve is the trajectory of the point :math:`(\\log||Ax - b||, \\log||L(x - x_0)||)`
         varying the regularization parameter `beta`.

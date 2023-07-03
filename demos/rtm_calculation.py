@@ -9,7 +9,6 @@ from pathlib import Path
 from textwrap import dedent
 
 import numpy as np
-from cherab.tools.raytransfer import RayTransferPipeline2D
 from raysect.core.scenegraph import print_scenegraph
 from raysect.optical import World
 from raysect.optical.observer import FullFrameSampler2D
@@ -18,6 +17,7 @@ from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer import import_phix_camera
 from cherab.phix.plasma import import_equilibrium
 from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.tools.raytransfer import RayTransferPipeline2D
 
 # %%
 # Path deffinition

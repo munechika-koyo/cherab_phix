@@ -9,8 +9,8 @@ BASE_PATH = Path(__file__).parent.resolve()
 
 
 def convert_raw_data_to_json(path=BASE_PATH / "phix10"):
-    """Generate json file data from raw data calculated TSC. output json file
-    is stored in data directory as the same file name as the folder name.
+    """Generate json file data from raw data calculated TSC. output json file is stored in data
+    directory as the same file name as the folder name.
 
     Parameters
     ----------

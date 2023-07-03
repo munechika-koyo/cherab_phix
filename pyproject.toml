@@ -3,7 +3,7 @@ requires = [
     "setuptools <= 65.5.1",
     "wheel",
     "numpy",
-    "cython == 3.0.0a11",
+    "cython == 3.0.0b3",
     "cherab == 1.4.0",
 ]
 build-backend = "setuptools.build_meta"
@@ -19,7 +19,7 @@ maintainers = [
     { name = "Koyo Munechika", email = "munechika.koyo@torus.nr.titech.ac.jp" },
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
     "Intended Audience :: Developers",
@@ -47,29 +47,30 @@ license = { file = "LICENSE.md" }
 
 [project.optional-dependencies]
 docs = [
-    "docutils >= 0.19, < 0.20",
+    "docutils",
     "ipykernel",
     "ipywidgets",
+    "jinja2 < 3.1",
+    "nbconvert >= 7.3",
     "nbsphinx",
     "pillow",
     "pygments >= 2.11.0",
-    "sphinx >= 5, < 6",
+    "sphinx >= 5",
     "sphinx-prompt",
     "sphinx-copybutton",
-    "pydata-sphinx-theme < 0.11",
+    "pydata-sphinx-theme < 0.14",
     "sphinx-design",
     "pandoc",
     "sphinx-codeautolink",
 ]
 dev = [
-    "flake8",
-    "black",
-    "isort",
+    "ipython",
+    "ruff",
     "mypy",
     "rich-click",
     "cython-lint",
     "pre-commit",
-    "cython==3.0.0a11",
+    "cython == 3.0.0b3",
 ]
 
 [project.urls]
@@ -77,26 +78,48 @@ Homepage = "https://cherab-phix.readthedocs.io/"
 documentation = "https://cherab-phix.readthedocs.io/"
 repository = "https://github.com/munechika-koyo/cherab_phix"
 
-[tool.black]
-line-length = 100
-
 [tool.cython-lint]
 max-line-length = 140
 
-[tool.flake8]
-max-line-length = 100
-select = "C,E,F,W,B,B950"
-ignore = "E203,E501,W503"
+[tool.ruff]
+line-length = 100
 
-[tool.isort]
-profile = "black"
-line_length = 100
+# Enable Pyflakes `E` and `F` codes by default.
+select = ["E", "F", "W", "I", "N", "B", "NPY"]
+ignore = ["E501", "N802", "N803", "N806"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["E", "F", "W", "I", "B", "NPY"]
+unfixable = ["E501"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.9
+target-version = "py39"
+
+# namespace package setting
+namespace-packages = ["cherab/phix"]
+
+[tool.ruff.per-file-ignores]
+"cherab/phix/machine/pfc_mesh.py" = ["E741"]
+"cherab/phix/plasma/species.py" = ["B008"]
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
 
 [tool.mypy]
 follow-imports = "silent"
 ignore-missing-imports = true
 show-column-numbers = true
 no-pretty = true
+
+[tool.docformatter]
+recursive = true
+wrap-summaries = 100
+wrap-descriptions = 100
+blank = false
 
 [tool.setuptools]
 zip-safe = false

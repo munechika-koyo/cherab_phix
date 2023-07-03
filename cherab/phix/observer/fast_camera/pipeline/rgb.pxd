@@ -42,8 +42,8 @@ cdef class RGBPipeline2D(Pipeline2D):
         double _display_update_time
         public bint accumulate
         readonly StatsArray3D rgb_frame
-        double[:,:,::1] _working_mean, _working_variance
-        char[:,::1] _working_touched
+        double[:, :, ::1] _working_mean, _working_variance
+        char[:, ::1] _working_touched
         StatsArray3D _display_frame
         list _processors
         tuple _pixels
@@ -64,9 +64,9 @@ cdef class RGBPipeline2D(Pipeline2D):
 
     cpdef np.ndarray[DTYPE_t, ndim=3] _generate_display_image(self, StatsArray3D frame)
 
-    cpdef double _calculate_maximum_pixel_value(self, double[:,:,::1] image_mv)
+    cpdef double _calculate_maximum_pixel_value(self, double[:, :, ::1] image_mv)
 
-    cpdef np.ndarray[DTYPE_t, ndim=3] _generate_srgb_image(self, double[:,:,::1] rgb_image_mv)
+    cpdef np.ndarray[DTYPE_t, ndim=3] _generate_srgb_image(self, double[:, :, ::1] rgb_image_mv)
 
     cpdef object display(self)
 
@@ -76,7 +76,7 @@ cdef class RGBPipeline2D(Pipeline2D):
 cdef class RGBPixelProcessor(PixelProcessor):
 
     cdef:
-        double[:,::1] resampled_rgb
+        double[:, ::1] resampled_rgb
         double exposure_time
         StatsArray1D rgb
 

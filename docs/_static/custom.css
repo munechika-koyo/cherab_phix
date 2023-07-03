@@ -1,10 +1,17 @@
 /* Page width */
 .bd-page-width {
-    max-width: 110rem;
+    max-width: 100rem;
 }
 
 .bd-main .bd-content .bd-article-container {
-    max-width: 100rem;
+    max-width: 90rem;
+}
+
+/* h2 color */
+h2 {
+    color: #4d77cf;
+    /* han blue */
+    letter-spacing: -.03em;
 }
 
 
@@ -81,7 +88,7 @@ Matplotlib images are in png and inverted while other output
 types are assumed to be normal images.
 */
 html[data-theme=dark] img[src*='.png'] {
-    filter: invert(0.82) brightness(0.8) contrast(1.2);
+    filter: invert(0.82) brightness(0.8) contrast(1.2) !important;
 }
 
 html[data-theme=dark] .MathJax_SVG * {

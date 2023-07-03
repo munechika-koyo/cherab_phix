@@ -5,7 +5,7 @@
 CHERAB-PHiX documentation
 =========================
 Welcome to the CHERAB-PHiX's documentation.
-This package is developed to extend cherab's fetures for PHiX - a small tokamak device in
+This package is developed to extend cherab's fetures for PHiX - a small tokamak device developped at
 Tokyo Institute of Technology including specific features like
 Plasma emitter, device CAD, diagnostic configuration, etc.
 
@@ -50,8 +50,8 @@ Plasma emitter, device CAD, diagnostic configuration, etc.
         User Guide
         ^^^^^^^^^^
 
-        key concepts of CHERAB-PHiX with useful tutorials.
         The user guide provides in-depth information on the
+        key concepts of CHERAB-PHiX with useful tutorials.
 
         +++
 

@@ -3,18 +3,19 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from raysect.core import Node, translate
+from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
+from raysect.primitive import Cylinder, Subtract
+
 from cherab.core import DistributionFunction, Line, Plasma, Species, elements
 from cherab.core.math import VectorAxisymmetricMapper
 from cherab.core.model import Bremsstrahlung, ExcitationLine, RecombinationLine
 from cherab.openadas import OpenADAS
 from cherab.tools.equilibrium import EFITEquilibrium
-from raysect.core import Node, translate
-from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
-from raysect.primitive import Cylinder, Subtract
 
-from cherab.phix.machine.wall_outline import VESSEL_WALL
-from cherab.phix.plasma import import_equilibrium
-from cherab.phix.plasma.species import PHiXSpecies
+from ..machine.wall_outline import VESSEL_WALL
+from .equilibrium import import_equilibrium
+from .species import PHiXSpecies
 
 __all__ = ["import_plasma"]
 
@@ -80,7 +81,7 @@ def import_plasma(
     if not (hasattr(species, "composition") and hasattr(species, "electron_distribution")):
         species = PHiXSpecies(equilibrium=eq)
 
-    if isinstance(composition := getattr(species, "composition"), Iterable):
+    if isinstance(composition := species.composition, Iterable):
         for element in composition:
             if not isinstance(element, Species):
                 raise TypeError("element of composition attr must be a cherab.core.Species object.")
@@ -89,7 +90,7 @@ def import_plasma(
         raise TypeError("composition attr must be an iterable object.")
 
     if isinstance(
-        electron_distribution := getattr(species, "electron_distribution"), DistributionFunction
+        electron_distribution := species.electron_distribution, DistributionFunction
     ):
         plasma.electron_distribution = electron_distribution
     else:

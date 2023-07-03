@@ -1,17 +1,16 @@
-"""Module to offer the helper function to populate an EFITequilibrium
-instance."""
+"""Module to offer the helper function to populate an EFITequilibrium instance."""
 import json
 from pathlib import Path
 
-from cherab.tools.equilibrium.efit import EFITEquilibrium
 from raysect.core import Point2D
+
+from cherab.tools.equilibrium.efit import EFITEquilibrium
 
 __all__ = ["import_equilibrium"]
 
 
 def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
-    """Return a populated instance of the PHiX equilibrium calculated by
-    Tokamak Simulation Code.
+    """Return a populated instance of the PHiX equilibrium calculated by Tokamak Simulation Code.
 
     Parameters
     ----------

@@ -10,8 +10,7 @@
 [![Documentation Status](https://readthedocs.org/projects/cherab-phix/badge/?version=latest)](https://cherab-phix.readthedocs.io/en/latest/?badge=latest)
 [![PyPI Publish](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml/badge.svg)](https://github.com/munechika-koyo/cherab_phix/actions/workflows/python-publish.yml)
 
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Docstring formatter: docformatter](https://img.shields.io/badge/%20formatter-docformatter-fedcba.svg)](https://github.com/PyCQA/docformatter)
 [![Docstring style: numpy](https://img.shields.io/badge/%20style-numpy-459db9.svg)](https://numpydoc.readthedocs.io/en/latest/format.html)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)

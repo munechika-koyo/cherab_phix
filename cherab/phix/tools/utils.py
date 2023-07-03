@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import numpy as np
-from cherab.tools.raytransfer import RayTransferCylinder
 from contourpy import contour_generator
 from numpy.typing import NDArray
 from raysect.optical import World
 
-from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.tools.raytransfer import RayTransferCylinder
+
+from .raytransfer import import_phix_rtc
 
 __all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
 

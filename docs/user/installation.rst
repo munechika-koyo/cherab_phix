@@ -8,7 +8,7 @@ Installation
 
 .. note::
 
-    Currently (12/20/2022), ``cherab-phix`` recommends using python3.8 or 3.9 because there are built
+    Currently (7/7/2023), ``cherab-phix`` recommends using python3.8 or 3.9 because there are built
     distributions in the `raysect`_ and `cherab`_ dependencies at PyPI.
     Although the user can take the python3.10+, both `raysect`_ and `cherab`_ must be compiled manually
     from sources.
@@ -19,7 +19,7 @@ Installation
 
 Installing using pip
 ====================
-Using ``pip`` command allows us to install ``cherab-phix`` including asset data like a device meshes.
+Using ``pip`` command allows us to install ``cherab-phix`` including asset data like device meshes.
 
 .. prompt:: bash
 
@@ -48,8 +48,8 @@ to have your changes take effect, you can install ``cherab-phix`` on editable mo
 
 Manually downloading source
 ---------------------------
-The source codes can be cloned from the GitHub reporepository with the command:
 Before install the package, it is required to download the source code from github repository.
+The source code can be cloned from the GitHub reporepository with the command:
 
 .. prompt:: bash
 

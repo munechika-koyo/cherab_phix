@@ -4,7 +4,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from cherab.tools.raytransfer.raytransfer import RayTransferCylinder
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.colors import CenteredNorm, LogNorm, Normalize
@@ -20,15 +19,17 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 from numpy.typing import NDArray
 from raysect.optical import Ray, World
 
-from cherab.phix.machine.wall_outline import INNER_LIMITER, OUTER_LIMITER
-from cherab.phix.tools.raytransfer import import_phix_rtc
-from cherab.phix.tools.utils import calc_contours
+from cherab.tools.raytransfer.raytransfer import RayTransferCylinder
+
+from ..machine.wall_outline import INNER_LIMITER, OUTER_LIMITER
+from .raytransfer import import_phix_rtc
+from .utils import calc_contours
 
 __all__ = ["plot_ray", "show_phix_profiles", "show_phix_profile"]
 
 
 def plot_ray(ray: Ray, world: World):
-    """plotting the spectrum of one ray-tracing.
+    """Plotting the spectrum of one ray-tracing.
 
     Parameters
     ----------
@@ -59,7 +60,7 @@ def show_phix_profiles(
     scientific_notation: bool = True,
     plot_mode: str = "scalar",
 ) -> tuple[Figure, ImageGrid]:
-    """show in-phix-limiter 2D profiles such as emission profile.
+    """Show in-phix-limiter 2D profiles such as emission profile.
 
     This function can show several 2D profiles with matplotlib imshow style.
 

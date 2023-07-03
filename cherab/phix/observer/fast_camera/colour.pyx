@@ -208,7 +208,7 @@ def plot_samples():
 
     .. image:: ../_static/images/plots/rgb_sensitivity.png
     """
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     ax.plot(R_samples[:, 0], R_samples[:, 1], color="r", label="R")
     ax.plot(G_samples[:, 0], G_samples[:, 1], color="g", label="G")
     ax.plot(B_samples[:, 0], B_samples[:, 1], color="b", label="B")

@@ -11,7 +11,6 @@ from textwrap import dedent
 import numpy as np
 from raysect.optical import World
 from raysect.optical.observer import (
-    FullFrameSampler2D,
     RGBAdaptiveSampler2D,
     SpectralPowerPipeline2D,
 )
@@ -53,7 +52,6 @@ camera.pipelines = [rgb, sp]
 # Define Observer sampler
 # ------------------------
 sampler = RGBAdaptiveSampler2D(rgb, ratio=10, fraction=0.2, min_samples=10, cutoff=0.05)
-# sampler = FullFrameSampler2D()
 camera.frame_sampler = sampler
 
 # %%
@@ -77,7 +75,7 @@ Hgamma = (433.6, 434.4)
 xyz_frames = []
 sp_frames_mean = []
 wavelengths = []
-for i, rage_wavelength in enumerate([Halpha, Hbeta, Hgamma]):
+for _i, rage_wavelength in enumerate([Halpha, Hbeta, Hgamma]):
 
     camera.min_wavelength = rage_wavelength[0]
     camera.max_wavelength = rage_wavelength[1]

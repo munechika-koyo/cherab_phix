@@ -113,7 +113,7 @@ class SVDInversionBase:
 
     @property
     def L_inv(self) -> NDArray[float64] | None:
-        """inversion matrix in the regularization term.
+        """Inversion matrix in the regularization term.
 
         :obj:`L_inv` is :math:`L^{-1}` in :math:`||L(x - x_0)||^2`,
         by default ``numpy.identity(self._vh.shape[1])``
@@ -148,7 +148,7 @@ class SVDInversionBase:
 
     @property
     def data(self) -> NDArray[float64]:
-        """given data for inversion calculation."""
+        """Given data for inversion calculation."""
         return self._data
 
     @data.setter
@@ -161,7 +161,7 @@ class SVDInversionBase:
 
     @property
     def beta(self) -> float:
-        """regularization parameter."""
+        """Regularization parameter."""
         return self._beta
 
     @beta.setter
@@ -175,8 +175,8 @@ class SVDInversionBase:
     # -------------------------------------------------------------------------
 
     def w(self, beta: float | None = None) -> NDArray[float64]:
-        """calculate window function using regularization parameter as a
-        valuable and using singular values.
+        """Calculate window function using regularization parameter as a valuable and using singular
+        values.
 
         Parameters
         ----------
@@ -193,8 +193,7 @@ class SVDInversionBase:
         return 1.0 / (1.0 + beta / self._s**2.0)
 
     def rho(self, beta: float | None = None) -> np.floating:
-        """
-        calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.
+        """Calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.
 
         Parameters
         ----------
@@ -209,8 +208,7 @@ class SVDInversionBase:
         return norm((1.0 - self.w(beta=beta)) * self._ub) ** 2.0
 
     def eta(self, beta: float | None = None) -> np.floating:
-        """
-        calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`
+        """Calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`
 
         Parameters
         ----------
@@ -225,7 +223,7 @@ class SVDInversionBase:
         return norm((self.w(beta=beta) / self._s) * self._ub) ** 2.0
 
     def eta_diff(self, beta: float | None = None) -> np.floating:
-        """calculate differential of `eta` by regularization parameter.
+        """Calculate differential of `eta` by regularization parameter.
 
         Parameters
         ----------
@@ -277,8 +275,7 @@ class SVDInversionBase:
     # -------------------------------------------------------------------------
 
     def inverted_solution(self, beta: float | None = None) -> NDArray[float64]:
-        """calculate the inverted solution using given regularization
-        parameter.
+        """Calculate the inverted solution using given regularization parameter.
 
         Parameters
         ----------
