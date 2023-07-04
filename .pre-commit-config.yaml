@@ -1,6 +1,7 @@
 ci:
   autofix_prs: true
   autoupdate_schedule: quarterly
+  autoupdate_branch: development
 
 default_language_version:
   node: 16.15.0
