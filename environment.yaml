@@ -11,7 +11,7 @@ dependencies:
 - setuptools
 - numpy
 - scipy
-# - cython == 3.0.0 installed by pip temporarily
+- cython >= 3.0
 - matplotlib < 3.6  # for raysect v0.7.1 dependency (which is dependency of cherab 1.4.0)
 - plotly
 - numpy-stl
@@ -21,7 +21,7 @@ dependencies:
 - mypy
 - rich-click
 - pre-commit
-- pycodestyle  # dependency for cython-lint
+- cython-lint
   # for documentation
 - docutils
 - ipython
@@ -42,7 +42,5 @@ dependencies:
 # pip-install dependencies
 - pip < 23.1  # compatible with calcam (to avoid pep517 installation)
 - pip:
-  - cython == 3.0.0b3
   - cherab == 1.4.0
-  - cython-lint
   - calcam
