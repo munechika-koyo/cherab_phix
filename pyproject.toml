@@ -3,7 +3,7 @@ requires = [
     "setuptools <= 65.5.1",
     "wheel",
     "numpy",
-    "cython == 3.0.0b3",
+    "cython >= 3.0",
     "cherab == 1.4.0",
 ]
 build-backend = "setuptools.build_meta"
@@ -70,7 +70,7 @@ dev = [
     "rich-click",
     "cython-lint",
     "pre-commit",
-    "cython == 3.0.0b3",
+    "cython >= 3.0",
 ]
 
 [project.urls]
