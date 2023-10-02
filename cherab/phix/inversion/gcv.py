@@ -78,16 +78,13 @@ class GCV(SVDInversionBase):
         return self._gcvs
 
     def optimize(self, itemax: int = 3) -> None:
-        """Excute the optimization of L-curve regularization. In particular,
-        this method is used to seek the optimal regularization parameter
-        computing gcv. The optimal regularization parameter corresponds to the
-        index of minimum gcv. This procedure is iterated by up to the itemax
-        times. Every time iterately calculating, the range of regularization
-        parameters is narrowed to FWHM around the minimum gcv point. The
-        optimal regularization parameter is cached to ``self._lambda_opt``
-        which can be seen :py:attr:`.lambda_opt` property. And, both
-        :py:attr:`.lambdas` and :py:attr:`.gcvs` are updated and stored to each
-        property.
+        """Excute the optimization of L-curve regularization. In particular, this method is used to
+        seek the optimal regularization parameter computing gcv. The optimal regularization
+        parameter corresponds to the index of minimum gcv. This procedure is iterated by up to the
+        itemax times. Every time iterately calculating, the range of regularization parameters is
+        narrowed to FWHM around the minimum gcv point. The optimal regularization parameter is
+        cached to ``self._lambda_opt`` which can be seen :py:attr:`.lambda_opt` property. And, both
+        :py:attr:`.lambdas` and :py:attr:`.gcvs` are updated and stored to each property.
 
         Parameters
         ----------

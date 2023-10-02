@@ -14,8 +14,7 @@ __all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
 
 
 def profile_1D_to_2D(data_1D, rtc: RayTransferCylinder) -> NDArray:
-    """convert 1D vector to 2D array according to raytrasfer object's
-    ``voxel_map``.
+    """Convert 1D vector to 2D array according to raytrasfer object's ``voxel_map``.
 
     Parameters
     ----------
@@ -41,8 +40,7 @@ def profile_2D_to_1D(
     data_2D,
     rtc: RayTransferCylinder,
 ) -> NDArray:
-    """convert 2D array to 1D vector according to raytrasfer object's
-    ``voxel_map``.
+    """Convert 2D array to 1D vector according to raytrasfer object's ``voxel_map``.
 
     Parameters
     ----------

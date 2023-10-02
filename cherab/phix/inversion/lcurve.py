@@ -95,16 +95,13 @@ class Lcurve(SVDInversionBase):
             self._quiet = value
 
     def optimize(self, itemax: int = 5) -> None:
-        """Excute the optimization of L-curve regularization. In particular,
-        this method is used to seek the optimal regularization parameter
-        computing curvature. The optimal regularization parameter corresponds
-        to the index of maximum curvature. This procedure is iterated by up to
-        the itemax times. Every time iterately calculating, the range of
-        regularization parameters is narrowed to FWHM around the maximum
-        curvature point. The optimal regularization parameter is cached to
-        ``self._lambda_opt`` which can be seen :py:attr:`.lambda_opt` property.
-        And, both :py:attr:`.lambdas` and :py:attr:`.curvatures` are updated
-        and stored to each property.
+        """Excute the optimization of L-curve regularization. In particular, this method is used to
+        seek the optimal regularization parameter computing curvature. The optimal regularization
+        parameter corresponds to the index of maximum curvature. This procedure is iterated by up to
+        the itemax times. Every time iterately calculating, the range of regularization parameters
+        is narrowed to FWHM around the maximum curvature point. The optimal regularization parameter
+        is cached to ``self._lambda_opt`` which can be seen :py:attr:`.lambda_opt` property. And,
+        both :py:attr:`.lambdas` and :py:attr:`.curvatures` are updated and stored to each property.
 
         Parameters
         ----------

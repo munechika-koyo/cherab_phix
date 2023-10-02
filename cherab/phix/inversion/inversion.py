@@ -10,8 +10,8 @@ __all__ = ["SVDInversionBase"]
 
 
 class SVDInversionBase:
-    """Base class for inversion calculation based on singular value
-    decomposition (eco algorithum i.e. not full matrices of `u`, `vh`).
+    """Base class for inversion calculation based on singular value decomposition (eco algorithum
+    i.e. not full matrices of `u`, `vh`).
 
     This provides users useful tools for regularization computation using SVD components.
     The estimated solution :math:`x_\\lambda` is defined by the following linear equation:

@@ -1,5 +1,4 @@
-"""Module offering terminal spinner Spinner implementation is referred by the
-`yaspin` package:
+"""Module offering terminal spinner Spinner implementation is referred by the `yaspin` package:
 
 https://github.com/pavdmyt/yaspin
 """
