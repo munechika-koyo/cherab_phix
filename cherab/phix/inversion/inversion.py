@@ -26,10 +26,9 @@ class SVDInversionBase:
 
     .. math::
 
-        \\begin{aling*}
-            x_\\text{ls} :&= \\text{argmin} \\{ ||Ax-b||^2 \\} \\\\
-                          &= ( A^\\mathsf{T} A )^{-1} A^\\mathsf{T} b.
-        \\end{aling*}
+        x_\\text{ls} :&= \\text{argmin} \\{ ||Ax-b||^2 \\} \\
+
+                      &= ( A^\\mathsf{T} A )^{-1} A^\\mathsf{T} b.
 
     This problem is often ill-posed, so the solution is estimated by adding the regularization term
     like :math:`||L(x - x_0)||^2` to the right hand side of the equation:
@@ -38,34 +37,41 @@ class SVDInversionBase:
 
         x_\\lambda :&= \\text{argmin} \\{ ||Ax-b||^2 + \\lambda ||L(x - x_0)||^2 \\} \\
 
-                    &= ( A^\\mathsf{T} A + \\lambda L^\\mathsf{T} L )^{-1} (A^\\mathsf{T}\\ b + \\lambda L^\\mathsf{T} Lx_0),
+                    &= (A^\\mathsf{T} A + \\lambda L^\\mathsf{T} L)^{-1}
+                        (A^\\mathsf{T}\\ b + \\lambda L^\\mathsf{T} Lx_0),
 
     where :math:`\\lambda\\in\\mathbb{R}` is the reguralization parameter,
     :math:`L \\in \\mathbb{R}^{n\\times n}` is a matrix operator in regularization term
-    (e.g. laplacian) and :math:`x_0` is a prior assumption.
+    (e.g. laplacian) and :math:`x_0\\in\\mathbb{R}^n` is a prior assumption.
 
     The SVD components are based on the following equation:
 
     .. math::
 
-        U\\Sigma V^\\mathsf{T} = (u_1, u_2, ...) \\cdot \\text{diag}(\\sigma_1, \\sigma_2,...) \\cdot (v_1, v_2, ...)^\\mathsf{T} = AL^{-1}
+        U\\Sigma V^\\mathsf{T}
+            = (u_1, u_2, ...)
+              \\cdot
+              \\text{diag}(\\sigma_1, \\sigma_2,...)
+              \\cdot
+              (v_1, v_2, ...)^\\mathsf{T}
+            = AL^{-1}
 
-    Using this components, The :math:`x_\\lambda` can be reconstructed as follows:
+    Using this components allows to reconstruct the estimated solution :math:`x_\\lambda` as follows:
 
     .. math::
 
-        x_\\lambda = \\sum_{i=0}^{r} w_i(\\lambda)\\frac{u_i \\cdot b}{\\sigma_i} \\tilde{V}_i,
+        x_\\lambda = \\sum_{i=0}^{r} w_i(\\lambda)\\frac{u_i \\cdot b}{\\sigma_i} \\tilde{v}_i,
 
     where :math:`r` is the rank of :math:`A` (:math:`r \\leq \\min(m, n)`), :math:`w_i` is
     the window function, :math:`\\sigma_i` is the singular value of :math:`A` and
-    :math:`\\tilde{V}_i` is the component of inverted solution basis like
+    :math:`\\tilde{v}_i` is a :math:`i`-th column vector of the inverted solution basis:
     :math:`\\tilde{V} = L^{-1}V \\in \\mathbb{R}^{n\\times r}`.
 
     :math:`w_i` is defined as follows:
 
     .. math::
 
-        w_i \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
+        w_i(\\lambda) \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
 
     Parameters
     ----------
@@ -111,7 +117,8 @@ class SVDInversionBase:
 
     @property
     def s(self) -> NDArray[float64]:
-        """singular values of :math:`A` like :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in \\mathbb{R}^r`
+        """singular values of :math:`A` like
+        :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in \\mathbb{R}^r`
         """
         return self._s
 
@@ -164,8 +171,16 @@ class SVDInversionBase:
     # -------------------------------------------------------------------------
 
     def w(self, beta: float) -> NDArray[float64]:
-        """Calculate window function using regularization parameter as a valuable and using singular
-        values.
+        """Calculate window function using regularization parameter :math:`\\lambda`.
+
+        The window function is defined as follows:
+
+        .. math::
+
+            w(\\lambda) \\equiv \\frac{1}{1 + \\lambda / \\sigma^2},
+
+        where :math:`\\sigma` is the singular value of :math:`A`.
+        Because :math:`\\sigma` is a vector, the window function is also a vector.
 
         Parameters
         ----------
@@ -175,12 +190,22 @@ class SVDInversionBase:
         Returns
         -------
         numpy.ndarray (N, )
-            window function :math:`\\frac{1}{1 + \\lambda / \\sigma_i^2}`
+            vector of window function
         """
         return 1.0 / (1.0 + beta / self._s**2.0)
 
     def rho(self, beta: float) -> np.floating:
-        """Calculate squared residual norm :math:`\\rho = ||Ax - b||^2`.
+        """Calculate squared residual norm: :math:`\\rho = ||Ax_\\lambda - b||^2`.
+
+        :math:`\\rho` can be calculated with SVD components as follows:
+
+        .. math::
+
+            \\rho = \\left\\|
+                        (1 - w(\\lambda)) \\cdot U^\\mathsf{T}b
+                    \\right\\|^2,
+
+        where :math:`w(\\lambda)` is a vector of the window function.
 
         Parameters
         ----------
@@ -195,7 +220,23 @@ class SVDInversionBase:
         return norm((1.0 - self.w(beta)) * self._ub) ** 2.0
 
     def eta(self, beta: float) -> np.floating:
-        """Calculate squared regularization norm :math:`\\eta = ||L(x - x_0)||^2`
+        """Calculate squared regularization norm: :math:`\\eta = ||L(x_\\lambda - x_0)||^2`
+
+        :math:`\\eta` can be calculated with SVD components as follows:
+
+        .. math::
+
+            \\eta = \\left\\|
+                \\begin{pmatrix}
+                    w_1(\\lambda)/\\sigma_1\\\\
+                    \\vdots \\\\
+                    w_r(\\lambda)/\\sigma_r
+                \\end{pmatrix}
+                \\cdot
+                U^\\mathsf{T}b
+            \\right\\|^2,
+
+        where :math:`w_i(\\lambda)` is the window function.
 
         Parameters
         ----------
@@ -210,8 +251,27 @@ class SVDInversionBase:
         return norm((self.w(beta) / self._s) * self._ub) ** 2.0
 
     def eta_diff(self, beta: float) -> np.floating:
-        """Calculate differential of `eta` by regularization parameter
-        :math:`\\eta' = \\frac{d\\eta}{d\\lambda}`
+        """Calculate differential of `eta`: :math:`\\eta' = \\frac{d\\eta}{d\\lambda}`
+
+        :math:`\\eta'` can be calculated with SVD components as follows:
+
+        .. math::
+
+            \\eta' = -\\frac{2}{\\lambda}
+                \\left\\|
+                    \\sqrt{1 - w(\\lambda)}
+                    \\cdot
+                    \\begin{pmatrix}
+                        w_1(\\lambda)/\\sigma_1\\\\
+                        \\vdots \\\\
+                        w_r(\\lambda)/\\sigma_r
+                    \\end{pmatrix}
+                    \\cdot
+                    U^\\mathsf{T}b
+                \\right\\|^2,
+
+        where :math:`w(\\lambda)` is a vector of the window function and
+        :math:`w_i(\\lambda)` is the window function.
 
         Parameters
         ----------
@@ -227,7 +287,7 @@ class SVDInversionBase:
         return (-2.0 / beta) * norm(np.sqrt(1.0 - w) * (w / self._s) * self._ub) ** 2.0
 
     def residual_norm(self, beta: float) -> NDArray[float64]:
-        """Return the residual norm :math:`\\sqrt{\\rho} = ||Ax - b||`
+        """Return the residual norm: :math:`\\sqrt{\\rho} = ||Ax_\\lambda - b||`
 
         Parameters
         ----------
@@ -242,7 +302,7 @@ class SVDInversionBase:
         return np.sqrt(self.rho(beta))
 
     def regularization_norm(self, beta: float) -> float:
-        """Return the residual norm :math:`\\sqrt{\\eta} = ||L (x - x_0)||`
+        """Return the residual norm: :math:`\\sqrt{\\eta} = ||L (x_\\lambda - x_0)||`
 
         Parameters
         ----------
@@ -267,16 +327,16 @@ class SVDInversionBase:
 
         .. math::
 
-            x_\\lambda = \\tilde{V} \\cdot
+            x_\\lambda = \\tilde{V}
             \\begin{pmatrix}
-                w_1(\\lambda) / \\sigma_1\\
+                w_1(\\lambda) / \\sigma_1\\\\
                 \\vdots \\\\
                 w_r(\\lambda) / \\sigma_r
             \\end{pmatrix}
             U^\\mathsf{T} b,
 
-        where :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`, which can be given by
-        :obj:`.basis` as a property.
+        where :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}` is the inverted solution basis,
+        which is defined by :obj:`.basis` as a property.
 
         Parameters
         ----------
@@ -285,7 +345,7 @@ class SVDInversionBase:
 
         Returns
         -------
-        numpy.ndarray
+        numpy.ndarray (N, )
             solution vector
         """
         return self._basis.dot((self.w(beta) / self._s) * self._ub)
