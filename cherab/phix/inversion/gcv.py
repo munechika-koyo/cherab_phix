@@ -179,10 +179,10 @@ class GCV(SVDInversionBase):
 
         .. math::
 
-            GCV(\\lambda) = \\frac{\\rho}{(1 - w(\\lambda))^2},
+            GCV(\\lambda) = \\frac{\\rho}{\\left[1 - \\sum_{i=1}^r w_i(\\lambda)\\right]^2},
 
-        where :math:`\\rho` is the squared residual norm and :math:`w(\\lambda)` is a vector of
-        the window function.
+        where :math:`\\rho` is the squared residual norm and :math:`w_i(\\lambda)` is the
+        window function.
 
         Parameters
         ----------
