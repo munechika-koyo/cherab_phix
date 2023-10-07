@@ -42,7 +42,7 @@ class GCV(SVDInversionBase):
         *kwargs* are used to specify properties like a `data`
     """
 
-    def __init__(self, *args, lambdas=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         # initialize originaly valuables
         self._lambdas = None
         self._lambda_opt = 0.0
