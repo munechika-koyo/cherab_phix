@@ -62,6 +62,7 @@ docs = [
     "sphinx-design",
     "pandoc",
     "sphinx-codeautolink",
+    "sphinx-github-style",
 ]
 dev = [
     "ipython",

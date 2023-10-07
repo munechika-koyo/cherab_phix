@@ -44,3 +44,4 @@ dependencies:
 - pip:
   - cherab == 1.4.0
   - calcam
+  - sphinx-github-style
