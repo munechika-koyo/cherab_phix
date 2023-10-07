@@ -17,6 +17,7 @@ dependencies:
 - numpy-stl
 - contourpy
   # for developper tools
+- black
 - ruff
 - mypy
 - rich-click
