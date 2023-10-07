@@ -54,12 +54,20 @@ if __name__ == "__main__":
 
     # plot L-curve
     _, ax = lcurve.plot_L_curve(bounds=bounds, n_beta=500)
-    ax.scatter(lcurve.residual_norm(lambda1), lcurve.regularization_norm(lambda1), c="g", marker="x", label=f"$\\lambda_1$ = {lambda1:.2e}")
+    ax.scatter(
+        lcurve.residual_norm(lambda1),
+        lcurve.regularization_norm(lambda1),
+        c="g",
+        marker="x",
+        label=f"$\\lambda_1$ = {lambda1:.2e}",
+    )
     ax.legend()
 
     # plot curvature
     _, ax = lcurve.plot_curvature(bounds=(-9, -7), n_beta=500)
-    ax.scatter(lambda1, lcurve.curvature(lambda1), c="g", marker="x", label=f"$\\lambda_1$ = {lambda1:.2e}")
+    ax.scatter(
+        lambda1, lcurve.curvature(lambda1), c="g", marker="x", label=f"$\\lambda_1$ = {lambda1:.2e}"
+    )
     print("----------------------------------------")
 
     print("GCV method")

@@ -76,7 +76,6 @@ xyz_frames = []
 sp_frames_mean = []
 wavelengths = []
 for _i, rage_wavelength in enumerate([Halpha, Hbeta, Hgamma]):
-
     camera.min_wavelength = rage_wavelength[0]
     camera.max_wavelength = rage_wavelength[1]
 

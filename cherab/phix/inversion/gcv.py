@@ -94,7 +94,7 @@ class GCV(SVDInversionBase):
         # optimization
         res = basinhopping(
             self._test_gcv,
-            x0=10 ** init_logbeta,
+            x0=10**init_logbeta,
             minimizer_kwargs={"bounds": [bounds]},
             stepsize=stepsize,
             **kwargs,
@@ -111,8 +111,9 @@ class GCV(SVDInversionBase):
 
         return sol, status
 
-
-    def optimize(self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)) -> NDArray[np.float64]:
+    def optimize(
+        self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)
+    ) -> NDArray[np.float64]:
         """Optimize the regularization parameter using GCV criterion.
 
         Warnings
@@ -209,14 +210,14 @@ class GCV(SVDInversionBase):
         float
             the value of GCV function at given regularization parameter
         """
-        return self.gcv(10 ** logbeta)
+        return self.gcv(10**logbeta)
 
     def plot_gcv(
         self,
         fig: Figure | None = None,
         axes: Axes | None = None,
         bounds: tuple[float, float] = (-20.0, 2.0),
-        n_beta: int = 100
+        n_beta: int = 100,
     ) -> tuple[Figure, Axes]:
         """Plotting GCV vs regularization parameters in log-log scale.
 
@@ -258,7 +259,14 @@ class GCV(SVDInversionBase):
 
         # indicate the max point as the optimal point
         if self.lambda_opt is not None:
-            axes.scatter(self.lambda_opt, self.gcv(self.lambda_opt), c="r", marker="x", zorder=1, label=f"$\\lambda = {self.lambda_opt:.2e}$")
+            axes.scatter(
+                self.lambda_opt,
+                self.gcv(self.lambda_opt),
+                c="r",
+                marker="x",
+                zorder=1,
+                label=f"$\\lambda = {self.lambda_opt:.2e}$",
+            )
 
         # x range limitation
         axes.set_xlim(lambdas.min(), lambdas.max())

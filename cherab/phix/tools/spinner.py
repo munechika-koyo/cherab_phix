@@ -348,7 +348,6 @@ class Spinner:
     def _animate(self) -> None:
         """Animate spinners in a child process."""
         while not self._stop_spin.is_set():
-
             if self._hide_spin.is_set():
                 # Wait a bit to avoid wasting cycles
                 time.sleep(self._interval)

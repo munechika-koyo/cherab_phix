@@ -90,10 +90,10 @@ class Lcurve(SVDInversionBase):
         # optimization
         res = basinhopping(
             self._test_curvature,
-            x0=10 ** init_logbeta,
+            x0=10**init_logbeta,
             minimizer_kwargs={"bounds": [bounds]},
             stepsize=stepsize,
-            **kwargs
+            **kwargs,
         )
 
         # cache optimization status
@@ -107,7 +107,9 @@ class Lcurve(SVDInversionBase):
 
         return sol, status
 
-    def optimize(self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)) -> NDArray[np.float64]:
+    def optimize(
+        self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)
+    ) -> NDArray[np.float64]:
         """Excute the optimization of L-curve regularization.
 
         This method is used to seek the optimal regularization parameter computing curvature.
@@ -153,7 +155,6 @@ class Lcurve(SVDInversionBase):
         # continue to seek the optimal lambda more than 1 time up to itemax
         if isinstance(itemax, int) and itemax > 1:
             for _ in range(itemax - 1):
-
                 # check if curvature has positive values
                 if curvs_temp.max() > 0:
                     # the range of lambdas is narrowd within FWHM
@@ -292,7 +293,6 @@ class Lcurve(SVDInversionBase):
             )
             axes.legend()
 
-
         # labels
         axes.set_xlabel("Residual norm")
         axes.set_ylabel("Regularization norm")
@@ -304,7 +304,7 @@ class Lcurve(SVDInversionBase):
         fig: Figure | None = None,
         axes: Axes | None = None,
         bounds: tuple[float, float] = (-20.0, 2.0),
-        n_beta: int = 100
+        n_beta: int = 100,
     ) -> tuple[Figure, Axes]:
         """Plotting L-curve curvature vs regularization parameters.
 
@@ -422,4 +422,4 @@ class Lcurve(SVDInversionBase):
         float
             negative value of curvature
         """
-        return -self.curvature(10 ** logbeta)
+        return -self.curvature(10**logbeta)
