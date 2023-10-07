@@ -117,16 +117,14 @@ class SVDInversionBase:
 
     @property
     def s(self) -> NDArray[float64]:
-        """singular values of :math:`A` like
-        :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in \\mathbb{R}^r`
-        """
+        """Singular values of :math:`A` like :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in
+        \\mathbb{R}^r`"""
         return self._s
 
     @property
     def u(self) -> NDArray[float64]:
-        """left singular vectors of :math:`A`
-        like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
-        """
+        """Left singular vectors of :math:`A` like :math:`U = (u_1, u_2, ...) \\in
+        \\mathbb{R}^{m\\times r}`"""
         return self._u
 
     @property
