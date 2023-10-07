@@ -41,7 +41,7 @@ dependencies:
 - pandoc
 - jinja2 < 3.1
 # pip-install dependencies
-- pip < 23.1  # compatible with calcam (to avoid pep517 installation)
+- pip
 - pip:
   - cherab == 1.4.0
   - calcam
