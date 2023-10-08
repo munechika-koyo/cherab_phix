@@ -50,7 +50,6 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx_codeautolink",
     "sphinx_github_style",
-    "sphinx_remove_toctrees",
 ]
 
 default_role = "obj"
