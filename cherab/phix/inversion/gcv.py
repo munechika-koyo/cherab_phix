@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from numpy.typing import NDArray
-from scipy.optimize import basinhopping
 
 from .inversion import SVDInversionBase
 
@@ -45,71 +44,9 @@ class GCV(SVDInversionBase):
     def __init__(self, *args, **kwargs):
         # initialize originaly valuables
         self._lambdas = None
-        self._lambda_opt = 0.0
 
         # inheritation
         super().__init__(*args, **kwargs)
-
-    @property
-    def lambdas(self) -> NDArray[np.float64] | None:
-        """Regularization parameters cached when :obj:`.optimize` was executed."""
-        return self._lambdas
-
-    @property
-    def lambda_opt(self) -> float:
-        """Optimal regularization parameter which is decided after the optimization iteration."""
-        return self._lambda_opt
-
-    def solve(
-        self,
-        bounds: tuple[float, float] = (-20.0, 2.0),
-        stepsize: float = 10,
-        **kwargs,
-    ) -> tuple[NDArray[np.float64], dict]:
-        """Solve the ill-posed inversion equation using GCV criterion optimization.
-
-        This method is used to seek the optimal regularization parameter computing the minimum GCV
-        value with :obj:`~scipy.optimize.basinhopping` function.
-
-        Parameters
-        ----------
-        bounds
-            bounds of log10 of regularization parameter, by default (-20.0, 2.0).
-        stepsize
-            stepsize of optimization, by default 10.
-        **kwargs
-            keyword arguments for :obj:`~scipy.optimize.basinhopping` function.
-
-        Returns
-        -------
-        tuple of :obj:`~numpy.ndarray` and :obj:`dict`
-            (solution, status), where solution is the inverted solution vector
-            and status is the dictionary of optimization status which has keys of
-            ``iter_num``: iteration number, ``logbeta``: log10 of optimal regularization parameter,
-            ``gcv``: gcv value at the optimal regularization parameter.
-        """
-        # initial guess of log10 of regularization parameter
-        init_logbeta = 0.5 * (bounds[0] + bounds[1])
-
-        # optimization
-        res = basinhopping(
-            self._test_gcv,
-            x0=10**init_logbeta,
-            minimizer_kwargs={"bounds": [bounds]},
-            stepsize=stepsize,
-            **kwargs,
-        )
-
-        # cache optimization status
-        status = dict(logbeta=res.x[0], gcv=res.fun)
-
-        # set property of optimal lambda
-        self._lambda_opt = 10 ** res.x[0]
-
-        # optmized solution
-        sol = self.inverted_solution(beta=self._lambda_opt)
-
-        return sol, status
 
     def optimize(
         self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)
@@ -197,8 +134,10 @@ class GCV(SVDInversionBase):
         """
         return self.rho(beta) / (1.0 - np.sum(self.w(beta))) ** 2.0
 
-    def _test_gcv(self, logbeta: float) -> np.floating:
-        """Test function for GCV criterion optimization.
+    def _objective_function(self, logbeta: float) -> np.floating:
+        """Objective function for optimization.
+
+        The optimal regularization parameter corresponds to the minimum value of GCV function.
 
         Parameters
         ----------
@@ -240,10 +179,10 @@ class GCV(SVDInversionBase):
             (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # define regularization parameters
-        if self.lambdas is None:
+        if self._lambdas is None:
             lambdas = np.logspace(*bounds, n_beta)
         else:
-            lambdas = self.lambdas
+            lambdas = self._lambdas
 
         # calculate GCV values
         gcvs = np.array([self.gcv(beta) for beta in lambdas])

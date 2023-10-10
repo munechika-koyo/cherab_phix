@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from numpy.typing import NDArray
-from scipy.optimize import basinhopping
 
 from .inversion import SVDInversionBase
 
@@ -18,7 +17,8 @@ class Lcurve(SVDInversionBase):
 
     L curve is the trajectory of the point :math:`(\\log||Ax_\\lambda-b||, \\log||L(x_\\lambda-x_0)||)`,
     those of which mean the residual and the regularization norm, respectively.
-    The "corner" of this curve is assosiated with optimized point of regularization parameter.
+    The "corner" of this curve is assosiated with optimized point of regularization parameter, where
+    the curvature of the L curve is maximized.
     This theory is mentioned by P.C.Hansen.
 
     Parameters
@@ -41,76 +41,18 @@ class Lcurve(SVDInversionBase):
     def __init__(self, *args, **kwargs):
         # initialize originaly valuables
         self._lambdas = None
-        self._lambda_opt = 0.0
 
         # inheritation
         super().__init__(*args, **kwargs)
-
-    @property
-    def lambdas(self) -> NDArray[np.float64] | None:
-        """Regularization parameters cached when :obj:`.optimize` was executed."""
-        return self._lambdas
-
-    @property
-    def lambda_opt(self) -> float:
-        """Optimal regularization parameter which is decided after the optimization iteration."""
-        return self._lambda_opt
-
-    def solve(
-        self,
-        bounds: tuple[float, float] = (-20.0, 2.0),
-        stepsize: float = 10,
-        **kwargs,
-    ) -> tuple[NDArray[np.float64], dict]:
-        """Solve the ill-posed inversion equation using L-curve criterion optimization.
-
-        This method is used to seek the optimal regularization parameter computing the maximum
-        curvature of L-curve with :obj:`~scipy.optimize.basinhopping` function.
-
-        Parameters
-        ----------
-        bounds
-            bounds of log10 of regularization parameter, by default (-20.0, 2.0).
-        stepsize
-            stepsize of optimization, by default 10.
-        **kwargs
-            keyword arguments for :obj:`~scipy.optimize.basinhopping` function.
-
-        Returns
-        -------
-        tuple of :obj:`~numpy.ndarray` and :obj:`dict`
-            (solution, status), where solution is the inverted solution vector
-            and status is the dictionary of optimization status which has keys of
-            ``logbeta``: log10 of optimal regularization parameter,
-            ``curvature``: curvature of L-curve at the optimal regularization parameter.
-        """
-        # initial guess of log10 of regularization parameter
-        init_logbeta = 0.5 * (bounds[0] + bounds[1])
-
-        # optimization
-        res = basinhopping(
-            self._test_curvature,
-            x0=10**init_logbeta,
-            minimizer_kwargs={"bounds": [bounds]},
-            stepsize=stepsize,
-            **kwargs,
-        )
-
-        # cache optimization status
-        status = dict(logbeta=res.x[0], curvature=-res.fun)
-
-        # set property of optimal lambda
-        self._lambda_opt = 10 ** res.x[0]
-
-        # optmized solution
-        sol = self.inverted_solution(beta=self._lambda_opt)
-
-        return sol, status
 
     def optimize(
         self, itemax: int = 5, bounds: tuple[float, float] = (-20.0, 2.0)
     ) -> NDArray[np.float64]:
         """Excute the optimization of L-curve regularization.
+
+        Warnings
+        --------
+        This method will be deprecated in the future. Please use :py:meth:`.solve` instead.
 
         This method is used to seek the optimal regularization parameter computing curvature.
         The optimal regularization parameter corresponds to the index of maximum curvature.
@@ -119,10 +61,6 @@ class Lcurve(SVDInversionBase):
         point. The optimal regularization parameter is cached to ``self._lambda_opt``
         which can be seen :py:attr:`.lambda_opt` property.
         And, :py:attr:`.lambdas` is updated and stored to the property.
-
-        Warnings
-        --------
-        This method will be deprecated in the future. Please use :py:meth:`.solve` instead.
 
         Parameters
         ----------
@@ -240,10 +178,10 @@ class Lcurve(SVDInversionBase):
             (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # define regularization parameters
-        if self.lambdas is None:
+        if self._lambdas is None:
             lambdas = np.logspace(*bounds, n_beta)
         else:
-            lambdas = self.lambdas
+            lambdas = self._lambdas
 
         # compute norms
         residual_norms = np.array([self.residual_norm(i) for i in lambdas])
@@ -327,10 +265,10 @@ class Lcurve(SVDInversionBase):
             (fig, axes), each of which is matplotlib objects applied some properties.
         """
         # define regularization parameters
-        if self.lambdas is None:
+        if self._lambdas is None:
             lambdas = np.logspace(*bounds, n_beta)
         else:
-            lambdas = self.lambdas
+            lambdas = self._lambdas
 
         # compute the curvature
         curvatures = np.array([self.curvature(beta) for beta in lambdas])
@@ -409,8 +347,11 @@ class Lcurve(SVDInversionBase):
             / ((beta * eta) ** 2.0 + rho**2.0) ** 1.5
         )
 
-    def _test_curvature(self, logbeta: float) -> float:
-        """Test function for optimization.
+    def _objective_function(self, logbeta: float) -> float:
+        """Objective function for optimization.
+
+        The optimal regularization parameter corresponds to the index of maximum curvature.
+        So, this function is defined as the negative value of curvature.
 
         Parameters
         ----------
