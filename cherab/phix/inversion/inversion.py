@@ -32,36 +32,46 @@ class SVDInversionBase:
                       &= ( A^\\mathsf{T} A )^{-1} A^\\mathsf{T} b.
 
     This problem is often ill-posed, so the solution is estimated by adding the regularization term
-    like :math:`||L(x - x_0)||^2` to the right hand side of the equation:
+    like :math:`||Lx||^2` to the right hand side of the equation:
 
     .. math::
 
-        x_\\lambda :&= \\text{argmin} \\{ ||Ax-b||^2 + \\lambda ||L(x - x_0)||^2 \\} \\
+        x_\\lambda :&= \\text{argmin} \\{ ||Ax-b||^2 + \\lambda ||Lx||^2 \\} \\
 
-                    &= (A^\\mathsf{T} A + \\lambda L^\\mathsf{T} L)^{-1}
-                        (A^\\mathsf{T}\\ b + \\lambda L^\\mathsf{T} Lx_0),
+                    &= (A^\\mathsf{T} A + \\lambda L^\\mathsf{T} L)^{-1} A^\\mathsf{T}\\ b,
 
-    where :math:`\\lambda\\in\\mathbb{R}` is the reguralization parameter,
+    where :math:`\\lambda\\in\\mathbb{R}` is the reguralization parameter and
     :math:`L \\in \\mathbb{R}^{n\\times n}` is a matrix operator in regularization term
-    (e.g. laplacian) and :math:`x_0\\in\\mathbb{R}^n` is a prior assumption.
+    (e.g. laplacian).
 
     The SVD components are based on the following equation:
 
     .. math::
 
         U\\Sigma V^\\mathsf{T}
-            = (u_1, u_2, ...)
-              \\cdot
-              \\text{diag}(\\sigma_1, \\sigma_2,...)
-              \\cdot
-              (v_1, v_2, ...)^\\mathsf{T}
+            = \\begin{pmatrix}
+                u_1 & \\cdots & u_r
+              \\end{pmatrix}
+              \\ \\text{diag}(\\sigma_1,..., \\sigma_r)
+              \\ \\begin{pmatrix}
+                v_1 & \\cdots & v_r
+              \\end{pmatrix}^\\mathsf{T}
             = AL^{-1}
 
     Using this components allows to reconstruct the estimated solution :math:`x_\\lambda` as follows:
 
     .. math::
 
-        x_\\lambda = \\sum_{i=0}^{r} w_i(\\lambda)\\frac{u_i \\cdot b}{\\sigma_i} \\tilde{v}_i,
+        x_\\lambda &= \\tilde{V}W\\Sigma^{-1}U^\\mathsf{T}b \\\\
+                   &= \\begin{pmatrix} \\tilde{v}_1 & \\cdots & \\tilde{v}_r \\end{pmatrix}
+                      \\ \\text{diag}(w_1(\\lambda), ..., w_r(\\lambda))
+                      \\ \\text{diag}(\\sigma_1^{-1}, ..., \\sigma_r^{-1})
+                      \\begin{pmatrix}
+                        u_1^\\mathsf{T}b \\\\
+                        \\vdots \\\\
+                        u_r^\\mathsf{T}b
+                      \\end{pmatrix} \\\\
+                   &= \\sum_{i=0}^{r} w_i(\\lambda)\\frac{u_i^\\mathsf{T} b}{\\sigma_i} \\tilde{v}_i,
 
     where :math:`r` is the rank of :math:`A` (:math:`r \\leq \\min(m, n)`), :math:`w_i` is
     the window function, :math:`\\sigma_i` is the singular value of :math:`A` and
@@ -230,11 +240,23 @@ class SVDInversionBase:
 
         .. math::
 
-            \\rho = \\left\\|
-                        (1 - w(\\lambda)) \\cdot U^\\mathsf{T}b
-                    \\right\\|^2,
+            \\rho &= \\left\\|
+                        U (I_r - W) U^\\mathsf{T} b
+                    \\right\\|^2\\\\
+                  &= \\left\\|
+                        \\begin{pmatrix} u_1 & \\cdots & u_r \\end{pmatrix}
+                        (I_r - W) U^\\mathsf{T} b
+                     \\right\\|^2\\\\
+                  &= \\left\\|
+                        (I_r - W) U^\\mathsf{T} b
+                     \\right\\|^2
+                     \\quad(
+                        \\because U^\\mathsf{T}U = I_r,
+                        \\quad\\text{i.e.}\\quad u_i\\cdot u_j = \\delta_{ij}
+                      ),
 
-        where :math:`w(\\lambda)` is a vector of the window function.
+        where :math:`W = \\text{diag}(w_1(\\lambda), ..., w_r(\\lambda))`
+        and :math:`w_i(\\lambda)` is the window function.
 
         Parameters
         ----------
@@ -249,23 +271,29 @@ class SVDInversionBase:
         return norm((1.0 - self.w(beta)) * self._ub) ** 2.0
 
     def eta(self, beta: float) -> np.floating:
-        """Calculate squared regularization norm: :math:`\\eta = ||L(x_\\lambda - x_0)||^2`
+        """Calculate squared regularization norm: :math:`\\eta = ||Lx_\\lambda||^2`
 
         :math:`\\eta` can be calculated with SVD components as follows:
 
         .. math::
 
-            \\eta = \\left\\|
-                \\begin{pmatrix}
-                    w_1(\\lambda)/\\sigma_1\\\\
-                    \\vdots \\\\
-                    w_r(\\lambda)/\\sigma_r
-                \\end{pmatrix}
-                \\cdot
-                U^\\mathsf{T}b
-            \\right\\|^2,
+            \\eta &= \\left\\|
+                        V W \\Sigma^{-1} U^\\mathsf{T} b
+                    \\right\\|^2\\\\
+                  &= \\left\\|
+                        \\begin{pmatrix} v_1 & \\cdots & v_r \\end{pmatrix}
+                        W \\Sigma^{-1} U^\\mathsf{T} b
+                     \\right\\|^2\\\\
+                  &= \\left\\|
+                        W \\Sigma^{-1} U^\\mathsf{T} b
+                     \\right\\|^2
+                     \\quad(
+                        \\because V^\\mathsf{T}V = I_r,
+                        \\quad\\text{i.e.}\\quad v_i\\cdot v_j = \\delta_{ij}
+                      ),
 
-        where :math:`w_i(\\lambda)` is the window function.
+        where :math:`W = \\text{diag}(w_1(\\lambda), ..., w_r(\\lambda))`
+        and :math:`w_i(\\lambda)` is the window function.
 
         Parameters
         ----------
@@ -282,25 +310,37 @@ class SVDInversionBase:
     def eta_diff(self, beta: float) -> np.floating:
         """Calculate differential of `eta`: :math:`\\eta' = \\frac{d\\eta}{d\\lambda}`
 
-        :math:`\\eta'` can be calculated with SVD components as follows:
+        Before calculating :math:`\\eta'`, let us calculate the differential of window function
+        matrix :math:`W = \\text{diag}(w_1(\\lambda), ..., w_r(\\lambda))` using SVD components:
 
         .. math::
 
-            \\eta' = -\\frac{2}{\\lambda}
-                \\left\\|
-                    \\sqrt{1 - w(\\lambda)}
-                    \\cdot
-                    \\begin{pmatrix}
-                        w_1(\\lambda)/\\sigma_1\\\\
-                        \\vdots \\\\
-                        w_r(\\lambda)/\\sigma_r
-                    \\end{pmatrix}
-                    \\cdot
-                    U^\\mathsf{T}b
-                \\right\\|^2,
+            \\frac{dW}{d\\lambda}
+                &= \\frac{d}{d\\lambda}
+                    \\text{diag}\\left(..., \\frac{1}{1 + \\lambda/\\sigma_i^2}, ...\\right)
+                    \\quad \\left(\\because w_i(\\lambda) = \\frac{1}{1 + \\lambda/\\sigma_i^2} \\right)\\\\
+                &= \\text{diag}\\left(
+                    ..., -\\frac{\\sigma_i^{-2}}{(1 + \\lambda/\\sigma_i^2)^2}, ...
+                    \\right)\\\\
+                &= - W^2 \\Sigma^{-2}\\\\
+                &= - \\frac{1}{\\lambda} W (I_r - W). \\quad(\\because I_r - W = \\lambda W \\Sigma^{-2})
 
-        where :math:`w(\\lambda)` is a vector of the window function and
-        :math:`w_i(\\lambda)` is the window function.
+        Therefore :math:`\\eta'` can be calculated as follows:
+
+        .. math::
+
+            \\eta' &= \\frac{d}{d\\lambda} \\left\\|W\\Sigma^{^-1}U^\\mathsf{T}b\\right\\|\\\\
+                   &= a^\\mathsf{T}\\left(\\frac{d}{d\\lambda} W^2 \\right) a
+                        \\quad(\\because a\\equiv\\Sigma^{-1}U^\\mathsf{T}b, \\ W^2 = W^\\mathsf{T}W)\\\\
+                   &= 2a^\\mathsf{T}W\\frac{dW}{d\\lambda}a\\\\
+                   &= -\\frac{2}{\\lambda} a^\\mathsf{T} W^2 (I_r - W) a\\\\
+                   &= -\\frac{2}{\\lambda} a^\\mathsf{T} W^\\mathsf{T} (I_r - W)^{\\mathsf{T}/2}
+                        (I_r - W)^{1/2} W a\\\\
+                   &= -\\frac{2}{\\lambda}
+                        \\left\\|
+                            \\sqrt{I_r - W}\\ W \\Sigma^{-1} U^\\mathsf{T} b
+                        \\right\\|^2.
+
 
         Parameters
         ----------
@@ -331,7 +371,7 @@ class SVDInversionBase:
         return np.sqrt(self.rho(beta))
 
     def regularization_norm(self, beta: float) -> float:
-        """Return the residual norm: :math:`\\sqrt{\\eta} = ||L (x_\\lambda - x_0)||`
+        """Return the residual norm: :math:`\\sqrt{\\eta} = ||L x_\\lambda||`
 
         Parameters
         ----------
@@ -356,11 +396,15 @@ class SVDInversionBase:
 
         .. math::
 
-            x_\\lambda = \\tilde{V}
+            x_\\lambda
+            =
+            \\tilde{V}W\\Sigma^{-1}U^\\mathsf{T}b
+            =
+            \\tilde{V}
             \\begin{pmatrix}
-                w_1(\\lambda) / \\sigma_1\\\\
-                \\vdots \\\\
-                w_r(\\lambda) / \\sigma_r
+                w_1(\\lambda)\\frac{1}{\\sigma_1} & & \\\\
+                & \\ddots & \\\\
+                & & w_r(\\lambda)\\frac{1}{\\sigma_r}
             \\end{pmatrix}
             U^\\mathsf{T} b,
 
@@ -377,7 +421,7 @@ class SVDInversionBase:
         numpy.ndarray (N, )
             solution vector
         """
-        return self._basis.dot((self.w(beta) / self._s) * self._ub)
+        return self._basis @ (self.w(beta) / self._s) * self._ub
 
     # ------------------------------------------------------
     # Optimization for the regularization parameter
