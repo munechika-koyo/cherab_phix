@@ -25,14 +25,14 @@
    {% endif %}
    {% endblock %}
 
-   {% block classes %}
-   {% if classes %}
+   {% block all_classes %}
+   {% if all_classes %}
    .. rubric:: Classes
 
    .. autosummary::
       :toctree:
       :template: class.rst
-   {% for item in classes %}
+   {% for item in all_classes %}
       {{ item }}
    {%- endfor %}
    {% endif %}
@@ -50,15 +50,15 @@
    {% endif %}
    {% endblock %}
 
-{% block modules %}
-{% if modules %}
+{% block all_modules %}
+{% if all_modules %}
 .. rubric:: Modules
 
 .. autosummary::
    :toctree:
    :template: module.rst
    :recursive:
-{% for item in modules %}
+{% for item in all_modules %}
    {{ item }}
 {%- endfor %}
 {% endif %}

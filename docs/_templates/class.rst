@@ -4,7 +4,6 @@
 
 .. autoclass:: {{ objname }}
    :show-inheritance:
-   :private-members: _generate_rays
 
    {% block all_methods %}
 
