@@ -1,18 +1,15 @@
 """Module to offer the Base class for various inversion methods."""
 from __future__ import annotations
 
-import numpy as np
-from numpy import float64
+from numpy import asarray, floating, ndarray, sqrt
 from numpy.linalg import norm
-from numpy.typing import NDArray
 from scipy.optimize import basinhopping
-from scipy.sparse import csr_matrix
 
-__all__ = ["SVDInversionBase"]
+__all__ = ["_SVDBase"]
 
 
-class SVDInversionBase:
-    """Base class for inversion calculation based on singular value decomposition (SVD) method.
+class _SVDBase:
+    """Base class for inversion calculation based on Singular Value Decomposition (SVD) method.
 
     This class offers the calculation of the inverted solution defined by
 
@@ -84,6 +81,13 @@ class SVDInversionBase:
 
         w_i(\\lambda) \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
 
+    .. note::
+
+        This class is designed to be inherited by subclasses which define the objective function
+        to optimize the regularization parameter :math:`\\lambda` using the
+        :obj:`~scipy.optimize.basinhopping` function.
+
+
     Parameters
     ----------
     s : vector_like
@@ -92,7 +96,7 @@ class SVDInversionBase:
     u : array_like
         left singular vectors of :math:`A`
         like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
-    basis
+    basis : array_like
         inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
         Here, :math:`\\tilde{V} = L^{-1}V`, where :math:`V\\in\\mathbb{R}^{n\\times r}` is
         the right singular vectors of :math:`A` and :math:`L^{-1}` is the inverse of
@@ -101,13 +105,13 @@ class SVDInversionBase:
         given data for inversion calculation forms as a vector in :math:`\\mathbb{R}^m`
     """
 
-    def __init__(self, s, u, basis: NDArray[float64] | csr_matrix, data=None):
+    def __init__(self, s, u, basis, data=None):
         # validate SVD components
-        s = np.asarray_chkfinite(s, dtype=float)
+        s = asarray(s, dtype=float)
         if s.ndim != 1:
             raise ValueError("s must be a vector.")
 
-        u = np.asarray_chkfinite(u, dtype=float)
+        u = asarray(u, dtype=float)
         if u.ndim != 2:
             raise ValueError("u must be a matrix.")
         if s.size != u.shape[1]:
@@ -139,19 +143,19 @@ class SVDInversionBase:
         )
 
     def __getstate__(self):
-        """Return the state of the SVDInversionBase object."""
+        """Return the state of the _SVDBase object."""
         state = self.__dict__.copy()
         return state
 
     def __setstate__(self, state):
-        """Set the state of the SVDInversionBase object."""
+        """Set the state of the _SVDBase object."""
         self.__dict__.update(state)
 
     def __reduce__(self):
         return self.__new__, (self.__class__,), self.__getstate__()
 
     @property
-    def s(self) -> NDArray[float64]:
+    def s(self) -> ndarray:
         """Singular values of :math:`A`
 
         Singular values form a vector array like
@@ -160,7 +164,7 @@ class SVDInversionBase:
         return self._s
 
     @property
-    def u(self) -> NDArray[float64]:
+    def u(self) -> ndarray:
         """Left singular vectors of :math:`A`.
 
         Left singular vactors form a matrix containing column vectors like
@@ -169,7 +173,7 @@ class SVDInversionBase:
         return self._u
 
     @property
-    def basis(self) -> NDArray[float64] | csr_matrix:
+    def basis(self) -> ndarray:
         """The inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
 
         If the regularization term is described as :math:`||Lx||^2`, then
@@ -182,8 +186,8 @@ class SVDInversionBase:
 
     @basis.setter
     def basis(self, mat):
-        if not isinstance(mat, (np.ndarray, csr_matrix)):
-            raise TypeError("basis must be a numpy.ndarray or scipy.sparse.csr_matrix")
+        if not isinstance(mat, ndarray):
+            raise TypeError("basis must be a numpy.ndarray")
         if mat.shape[1] != self._s.size:
             raise ValueError(
                 "the number of columns of inverted solution basis must be same as that of singular values"
@@ -191,25 +195,25 @@ class SVDInversionBase:
         self._basis = mat
 
     @property
-    def data(self) -> NDArray[float64]:
+    def data(self) -> ndarray:
         """Given data for inversion calculation."""
         return self._data
 
     @data.setter
     def data(self, value):
-        data = np.asarray_chkfinite(value, dtype=float)
+        data = asarray(value, dtype=float)
         if data.ndim != 1:
             raise ValueError("data must be a vector.")
         if data.size != self._u.shape[0]:
             raise ValueError("data size must be the same as the number of rows of U matrix")
         self._data = data
-        self._ub = self._u.T.dot(self._data)  # U^T b
+        self._ub = self._u.T @ data  # U^T b
 
     # -------------------------------------------------------------------------
     # Define methods calculating some norms, window function, etc...
     # -------------------------------------------------------------------------
 
-    def w(self, beta: float) -> NDArray[float64]:
+    def w(self, beta: float) -> ndarray:
         """Calculate window function using regularization parameter :math:`\\lambda`.
 
         The window function is defined as follows:
@@ -233,7 +237,7 @@ class SVDInversionBase:
         """
         return 1.0 / (1.0 + beta / self._s**2.0)
 
-    def rho(self, beta: float) -> np.floating:
+    def rho(self, beta: float) -> floating:
         """Calculate squared residual norm: :math:`\\rho = ||Ax_\\lambda - b||^2`.
 
         :math:`\\rho` can be calculated with SVD components as follows:
@@ -270,7 +274,7 @@ class SVDInversionBase:
         """
         return norm((1.0 - self.w(beta)) * self._ub) ** 2.0
 
-    def eta(self, beta: float) -> np.floating:
+    def eta(self, beta: float) -> floating:
         """Calculate squared regularization norm: :math:`\\eta = ||Lx_\\lambda||^2`
 
         :math:`\\eta` can be calculated with SVD components as follows:
@@ -307,7 +311,7 @@ class SVDInversionBase:
         """
         return norm((self.w(beta) / self._s) * self._ub) ** 2.0
 
-    def eta_diff(self, beta: float) -> np.floating:
+    def eta_diff(self, beta: float) -> floating:
         """Calculate differential of `eta`: :math:`\\eta' = \\frac{d\\eta}{d\\lambda}`
 
         Before calculating :math:`\\eta'`, let us calculate the differential of window function
@@ -353,9 +357,9 @@ class SVDInversionBase:
             differential of squared regularization norm
         """
         w = self.w(beta)
-        return (-2.0 / beta) * norm(np.sqrt(1.0 - w) * (w / self._s) * self._ub) ** 2.0
+        return (-2.0 / beta) * norm(sqrt(1.0 - w) * (w / self._s) * self._ub) ** 2.0
 
-    def residual_norm(self, beta: float) -> NDArray[float64]:
+    def residual_norm(self, beta: float) -> ndarray:
         """Return the residual norm: :math:`\\sqrt{\\rho} = ||Ax_\\lambda - b||`
 
         Parameters
@@ -368,7 +372,7 @@ class SVDInversionBase:
         float
             residual norm
         """
-        return np.sqrt(self.rho(beta))
+        return sqrt(self.rho(beta))
 
     def regularization_norm(self, beta: float) -> float:
         """Return the residual norm: :math:`\\sqrt{\\eta} = ||L x_\\lambda||`
@@ -383,13 +387,13 @@ class SVDInversionBase:
         float
             regularization norm
         """
-        return np.sqrt(self.eta(beta))
+        return sqrt(self.eta(beta))
 
     # ------------------------------------------------------
     # calculating the inverted solution using SVD components
     # ------------------------------------------------------
 
-    def inverted_solution(self, beta: float) -> NDArray[float64]:
+    def inverted_solution(self, beta: float) -> ndarray:
         """Calculate the inverted solution using SVD components at given regularization parameter.
 
         The solution is calculated as follows:
@@ -418,7 +422,7 @@ class SVDInversionBase:
 
         Returns
         -------
-        numpy.ndarray (N, )
+        vector_like (N, )
             solution vector
         """
         return self._basis @ (self.w(beta) / self._s) * self._ub
@@ -436,7 +440,7 @@ class SVDInversionBase:
         bounds: tuple[float, float] = (-20.0, 2.0),
         stepsize: float = 10,
         **kwargs,
-    ) -> tuple[NDArray[np.float64], dict]:
+    ) -> tuple[ndarray, dict]:
         """Solve the ill-posed inversion equation.
 
         This method is used to seek the optimal regularization parameter finding the global minimum
@@ -479,5 +483,5 @@ class SVDInversionBase:
 
         return sol, res
 
-    def _objective_function(self, logbeta: float) -> np.floating | float:
+    def _objective_function(self, logbeta: float) -> floating | float:
         raise NotImplementedError("To be defined in subclass.")

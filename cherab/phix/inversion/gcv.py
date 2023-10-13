@@ -7,22 +7,21 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from numpy.typing import NDArray
 
-from .inversion import SVDInversionBase
+from .inversion import _SVDBase
 
 __all__ = ["GCV"]
 
 
-class GCV(SVDInversionBase):
-    """Generalized Cross-Validation (GCV) criterion inversion method inheriting
-    :obj:`.SVDInversionBase` class.
+class GCV(_SVDBase):
+    """Generalized Cross-Validation (GCV) criterion optimization for regularization parameter.
 
-    GCV criterion function represents as follows:
+    GCV criterion function is defined as follows:
 
     .. math::
 
         GCV(\\lambda) := \\frac{||Ax_\\lambda - b||^2}{\\left[1 - \\sum_{i=1}^N w_i(\\lambda)\\right]^2}
 
-    The optimal regularization parameter is decided by the minimum value of GCV function.
+    The optimal regularization parameter corresponds to the minimum value of GCV function.
 
     Parameters
     ----------
@@ -32,12 +31,12 @@ class GCV(SVDInversionBase):
     u : array_like
         left singular vectors of :math:`A`
         like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
-    basis
+    basis : array_like
         inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
         Here, :math:`\\tilde{V} = L^{-1}V`, where :math:`V\\in\\mathbb{R}^{n\\times r}` is
         the right singular vectors of :math:`A` and :math:`L^{-1}` is the inverse of
         regularization operator :math:`L \\in \\mathbb{R}^{n\\times n}`.
-    **kwargs : :py:class:`.SVDInversionBase` properties, optional
+    **kwargs : :py:class:`._SVDBase` properties, optional
         *kwargs* are used to specify properties like a `data`
     """
 

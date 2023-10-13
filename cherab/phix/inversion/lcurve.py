@@ -7,19 +7,19 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from numpy.typing import NDArray
 
-from .inversion import SVDInversionBase
+from .inversion import _SVDBase
 
 __all__ = ["Lcurve"]
 
 
-class Lcurve(SVDInversionBase):
-    """L-curve criterion inversion method inheriting :obj:`.SVDInversionBase` class.
+class Lcurve(_SVDBase):
+    """L-curve criterion optimization for regularization parameter.
 
     L curve is the trajectory of the point :math:`(\\log||Ax_\\lambda-b||, \\log||L(x_\\lambda-x_0)||)`,
     those of which mean the residual and the regularization norm, respectively.
     The "corner" of this curve is assosiated with optimized point of regularization parameter, where
     the curvature of the L curve is maximized.
-    This theory is mentioned by P.C.Hansen.
+    This theory is mentioned by P.C.Hansen [1]_.
 
     Parameters
     ----------
@@ -29,13 +29,19 @@ class Lcurve(SVDInversionBase):
     u : array_like
         left singular vectors of :math:`A`
         like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
-    basis
+    basis : array_like
         inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
         Here, :math:`\\tilde{V} = L^{-1}V`, where :math:`V\\in\\mathbb{R}^{n\\times r}` is
         the right singular vectors of :math:`A` and :math:`L^{-1}` is the inverse of
         regularization operator :math:`L \\in \\mathbb{R}^{n\\times n}`.
-    **kwargs : :py:class:`.SVDInversionBase` properties, optional
+    **kwargs : :py:class:`._SVDBase` properties, optional
         *kwargs* are used to specify properties like a `data`
+
+    References
+    ----------
+    .. [1] P.C.Hansen, "The L-curve and its use in the numerical treatment of inverse problems",
+           January 2001 In book: Computational Inverse Problems in Electrocardiology,
+           Publisher: WIT Press
     """
 
     def __init__(self, *args, **kwargs):
