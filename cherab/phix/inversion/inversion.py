@@ -425,7 +425,7 @@ class _SVDBase:
         vector_like (N, )
             solution vector
         """
-        return self._basis @ (self.w(beta) / self._s) * self._ub
+        return self._basis.dot((self.w(beta) / self._s) * self._ub)
 
     # ------------------------------------------------------
     # Optimization for the regularization parameter
