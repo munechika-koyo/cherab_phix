@@ -13,9 +13,9 @@
 import os
 import sys
 from datetime import datetime
-from pathlib import Path
 
-from cherab.phix import __file__ as phix_file
+from packaging.version import parse
+
 from cherab.phix import __version__
 
 sys.path.insert(0, os.path.abspath("."))
@@ -30,7 +30,6 @@ copyright = f"2019-{datetime.now().year}, {author}"
 version = __version__
 # The full version, including alpha/beta/rc tags.
 release = __version__
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -50,6 +49,7 @@ extensions = [
     "nbsphinx",
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx_codeautolink",
+    "sphinx_github_style",
 ]
 
 default_role = "obj"
@@ -57,7 +57,7 @@ default_role = "obj"
 # autodoc config
 autodoc_typehints = "description"
 autodoc_typehints_format = "short"
-autodoc_member_order = "groupwise"
+autodoc_member_order = "bysource"
 
 # autosummary config
 autosummary_generate = True
@@ -167,73 +167,13 @@ nbsphinx_thumbnails = {
     "notebooks/inversion/tomography_experiment": "_static/images/frames.gif",
 }
 
-# -----------------------------------------------------------------------------
-# Source code links
-# -----------------------------------------------------------------------------
-link_github = True
-# You can add build old with link_github = False
+# === sphinx_github_style configuration ============================================
+# create version object
+version_obj = parse(__version__)
+tag = "master" if version_obj.is_devrelease else f"v{version_obj.public}"
 
-if link_github:
-    import inspect
-
-    # from packaging.version import parse
-
-    extensions.append("sphinx.ext.linkcode")
-
-    def linkcode_resolve(domain, info):
-        """Determine the URL corresponding to Python object."""
-        if domain != "py":
-            return None
-
-        modname = info["module"]
-        fullname = info["fullname"]
-
-        submod = sys.modules.get(modname)
-        if submod is None:
-            return None
-
-        obj = submod
-        for part in fullname.split("."):
-            try:
-                obj = getattr(obj, part)
-            except AttributeError:
-                return None
-
-        if inspect.isfunction(obj):
-            obj = inspect.unwrap(obj)
-        try:
-            fn = inspect.getsourcefile(obj)
-        except TypeError:
-            fn = None
-        if not fn or fn.endswith("__init__.py"):
-            try:
-                fn = inspect.getsourcefile(sys.modules[obj.__module__])
-            except (TypeError, AttributeError, KeyError):
-                fn = None
-        if not fn:
-            return None
-
-        try:
-            source, lineno = inspect.getsourcelines(obj)
-        except (OSError, TypeError):
-            lineno = None
-
-        linespec = f"#L{lineno:d}-L{lineno + len(source) - 1:d}" if lineno else ""
-
-        startdir = Path(phix_file).parent.parent.parent
-        try:
-            fn = os.path.relpath(fn, start=startdir).replace(os.path.sep, "/")
-        except ValueError:
-            return None
-
-        if not fn.startswith(("cherab")):
-            return None
-
-        # version = parse(__version__)
-        # tag is temporarily tied to master
-        tag = "master"
-        # tag = "master" if version.is_devrelease else f"v{version.public}"
-        return f"https://github.com/munechika-koyo/cherab_phix/blob/{tag}/{fn}{linespec}"
-
-else:
-    extensions.append("sphinx.ext.viewcode")
+# set sphinx_github_style options
+top_level = "cherab"
+linkcode_blob = tag
+linkcode_url = "https://github.com/munechika-koyo/cherab_phix"
+linkcode_link_text = "Source"

@@ -89,9 +89,7 @@ def import_plasma(
     else:
         raise TypeError("composition attr must be an iterable object.")
 
-    if isinstance(
-        electron_distribution := species.electron_distribution, DistributionFunction
-    ):
+    if isinstance(electron_distribution := species.electron_distribution, DistributionFunction):
         plasma.electron_distribution = electron_distribution
     else:
         raise TypeError("electron_distribution must be a cherab.core.DistributionFunction object.")

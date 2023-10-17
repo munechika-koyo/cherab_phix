@@ -29,6 +29,7 @@ from pathlib import Path
 import numpy as np
 from numpy.lib.format import open_memmap
 from raysect.optical import World
+from scipy.sparse.linalg import inv
 
 from cherab.phix.tools import Spinner, laplacian_matrix
 from cherab.phix.tools.raytransfer import import_phix_rtc
@@ -64,7 +65,7 @@ if USE_LAPLACIAN:
         )
 
         # compute L^-1
-        L_inv[:] = np.linalg.inv(laplacian)
+        L_inv[:] = inv(laplacian).toarray()
         sp.ok()
 
 # %%
@@ -79,7 +80,7 @@ if USE_LAPLACIAN:
 
     # compute AL^-1
     with Spinner("Compute the product of matrices AL^-1", timer=True) as sp:
-        AL_inv[:] = np.dot(rtm, L_inv)
+        AL_inv[:] = rtm.dot(L_inv)
         sp.ok()
 else:
     AL_inv = open_memmap(RTM_DIR / "rtm.npy", mode="r").reshape((-1, rtc.bins))
@@ -113,5 +114,5 @@ with Spinner("Compute SVD", timer=True) as sp:
 if USE_LAPLACIAN:
     L_inv_V = open_memmap(SAVE_DIR / "L_inv_V.npy", dtype=np.float64, mode="w+", shape=(n, k))
     with Spinner("Compute the product of matrices L^-1 V", timer=True) as sp:
-        L_inv_V[:] = np.dot(L_inv, vh.T)
+        L_inv_V[:] = L_inv.dot(vh.T)
         sp.ok()

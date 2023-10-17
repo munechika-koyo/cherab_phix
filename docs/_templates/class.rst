@@ -3,9 +3,7 @@
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ objname }}
-   :members:
    :show-inheritance:
-   :private-members: _generate_rays
 
    {% block all_methods %}
 
@@ -13,6 +11,8 @@
    .. rubric:: Methods
 
    .. autosummary::
+      :toctree: {{ objname }}
+
    {% for item in all_methods %}
    {%- if not item.startswith('_') or item in ['__call__', '_generate_rays'] %}
       ~{{ name }}.{{ item }}
@@ -26,6 +26,8 @@
    .. rubric:: Attributes
 
    .. autosummary::
+      :toctree: {{ objname }}
+
    {% for item in attributes %}
       ~{{ name }}.{{ item }}
    {%- endfor %}

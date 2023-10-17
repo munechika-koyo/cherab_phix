@@ -62,9 +62,11 @@ docs = [
     "sphinx-design",
     "pandoc",
     "sphinx-codeautolink",
+    "sphinx-github-style",
 ]
 dev = [
     "ipython",
+    "black",
     "ruff",
     "mypy",
     "rich-click",
@@ -80,6 +82,9 @@ repository = "https://github.com/munechika-koyo/cherab_phix"
 
 [tool.cython-lint]
 max-line-length = 140
+
+[tool.black]
+line-length = 100
 
 [tool.ruff]
 line-length = 100

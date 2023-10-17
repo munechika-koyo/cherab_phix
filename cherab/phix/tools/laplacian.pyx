@@ -1,8 +1,9 @@
 """Module to offer the function to generate a laplacian matrix."""
 import numpy as np
+from scipy.sparse import lil_matrix
 
 cimport cython
-from numpy cimport import_array, int32_t, ndarray
+from numpy cimport import_array, ndarray
 
 __all__ = ["laplacian_matrix"]
 
@@ -13,11 +14,11 @@ import_array()
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.initializedcheck(False)
-cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
+cpdef object laplacian_matrix(
     ndarray voxel_map,
     int dir=4,
 ):
-    """generate Laplacian matrix.
+    """Generate Laplacian sparse matrix.
 
     Parameters
     ----------
@@ -29,8 +30,8 @@ cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
 
     Returns
     -------
-    NDArray[int32]
-        (N, N) laplacian matrix (if N > M)
+    :obj:`~scipy.sparse.csr_matrix`
+        (N, N) laplacian Compressed Sparse Row matrix (if N > M)
 
     Examples
     --------
@@ -45,7 +46,7 @@ cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
         >>> rtm = import_phix_rtm(world, equilibrium=eq)
         >>>
         >>> laplacian = laplacian_matrix(rtm.voxel_map, dir=8)
-        >>> laplacian
+        >>> laplacian.toarray()
         array([[-8,  1,  0, ...,  0,  0,  0],
                [ 1, -8,  1, ...,  0,  0,  0],
                [ 0,  1, -8, ...,  0,  0,  0],
@@ -57,10 +58,9 @@ cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
     cdef:
         int i, j, x, y, row, col, map_mat_max
         int[3][3] kernel
-        ndarray[int32_t, ndim=2] map_matrix
-        ndarray[int32_t, ndim=2] laplacian_mat
+        ndarray map_matrix
+        object laplacian_mat
         int[:, ::] map_matrix_mv
-        int[:, ::] laplacian_mat_mv
 
     # define laplacian kernel
     if dir == 4:
@@ -78,24 +78,23 @@ cpdef ndarray[int32_t, ndim=2] laplacian_matrix(
 
     # padding voxel map boundary by -1
     map_matrix = np.pad(np.squeeze(voxel_map), pad_width=1, constant_values=-1)
-    map_mat_max = np.max(map_matrix)
+    map_mat_max = map_matrix.max()
 
-    # define laplacian matrix
-    laplacian_mat = np.zeros((map_mat_max + 1, map_mat_max + 1), dtype=np.int32)
+    # define laplacian matrix as a sparse matrix
+    laplacian_mat = lil_matrix((map_mat_max + 1, map_mat_max + 1), dtype=np.int32)
 
     # define memoryview
     map_matrix_mv = map_matrix
-    laplacian_mat_mv = laplacian_mat
 
     # generate laplacian matrix
     for row in range(map_mat_max + 1):
-        x, y = np.where(map_matrix == row)  # TODO: replace to cythonic codes
+        (x,), (y,) = np.where(map_matrix == row)  # TODO: replace to cythonic codes
         for i in range(-1, 1 + 1):
             for j in range(-1, 1 + 1):
                 col = map_matrix_mv[x + i, y + j]
                 if col > -1:
-                    laplacian_mat_mv[row, col] = kernel[i + 1][j + 1]
+                    laplacian_mat[row, col] = kernel[i + 1][j + 1]
                 else:
                     pass
 
-    return laplacian_mat
+    return laplacian_mat.tocsr()

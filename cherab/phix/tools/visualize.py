@@ -226,8 +226,8 @@ def show_phix_profile(
     levels: NDArray | None = None,
     plot_mode: str = "scalar",
 ) -> list[NDArray] | None:
-    """show in-phix-limiter 2D profile with
-    :obj:`~matplotlib.axes.Axes.pcolormesh` and plot their contours.
+    """Show in-phix-limiter 2D profile with :obj:`~matplotlib.axes.Axes.pcolormesh` and plot their
+    contours.
 
     Parameters
     ----------
