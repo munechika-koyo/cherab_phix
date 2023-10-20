@@ -31,7 +31,7 @@ from numpy.lib.format import open_memmap
 from raysect.optical import World
 from scipy.sparse.linalg import inv
 
-from cherab.phix.tools import Spinner, laplacian_matrix
+from cherab.phix.tools import Spinner, compute_dmat
 from cherab.phix.tools.raytransfer import import_phix_rtc
 
 # %%
@@ -59,7 +59,7 @@ rtc = import_phix_rtc(world)
 # if `USE_LAPLACIAN` is `True`, then calculate it.
 if USE_LAPLACIAN:
     with Spinner("Compute the inverse Laplacian matrix", timer=True) as sp:
-        laplacian = laplacian_matrix(rtc.voxel_map, dir=8)
+        laplacian = compute_dmat(rtc.voxel_map)
         L_inv = open_memmap(
             SAVE_DIR / "L_inv.npy", mode="w+", dtype=np.float64, shape=laplacian.shape
         )
