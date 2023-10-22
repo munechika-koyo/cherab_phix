@@ -16,7 +16,8 @@ import_array()
 @cython.initializedcheck(False)
 cpdef object compute_dmat(
     ndarray voxel_map,
-    str kernel="laplacian4",
+    str kernel_type="laplacian4",
+    ndarray kernel=None,
 ):
     """Generate derivative sparse matrix.
 
@@ -25,8 +26,11 @@ cpdef object compute_dmat(
     voxel_map : numpy.ndarray
         (N, M) voxel map matrix (negative value must be input into masked voxels)
         If the additional dimension size of the matrix is 1, then it is squeezed to a 2-D matrix.
-    kernel : {"x", "y", "laplacian4", "laplacian8"}, optional
+    kernel_type : {"x", "y", "laplacian4", "laplacian8", "custom"}, optional
         Derivative kernel type. Default is "laplacian8".
+        `"custom"` is available only when `.kernel` is specified.
+    kernel : numpy.ndarray, optional
+        (3, 3) custom kernel matrix. Default is None.
 
     Returns
     -------
@@ -51,17 +55,18 @@ cpdef object compute_dmat(
 
         \\mathbf{I}' = \\mathbf{K} \\cdot \\mathbf{I},
 
-    where :math:`\\mathbf{I}` is the vecotrized image and :math:`\\mathbf{K}` is the derivative.
+    where :math:`\\mathbf{I}` is the vecotrized image and :math:`\\mathbf{K}` is the derivative
+    matrix.
 
     The implemented derivative kernels are as follows:
 
-    - First derivative in x-direction (`kernel="x"`):
-      :math:`\\mathbf{K} = \\begin{bmatrix} 0 & 0 & 0 \\\\ -1 & 0 & 1 \\\\ 0 & 0 & 0 \\end{bmatrix}`
-    - First derivative in y-direction (`kernel="y"`):
-      :math:`\\mathbf{K} = \\begin{bmatrix} 0 & -1 & 0 \\\\ 0 & 0 & 0 \\\\ 0 & 1 & 0 \\end{bmatrix}`
-    - Laplacian-4 (`kernel="laplacian4"`):
+    - First derivative in x-direction (`kernel_type="x"`):
+      :math:`\\mathbf{K} = \\begin{bmatrix} 0 & 0 & 0 \\\\ -1 & 1 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix}`
+    - First derivative in y-direction (`kernel_type="y"`):
+      :math:`\\mathbf{K} = \\begin{bmatrix} 0 & -1 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix}`
+    - Laplacian-4 (`kernel_type="laplacian4"`):
       :math:`\\mathbf{K} = \\begin{bmatrix} 0 & 1 & 0 \\\\ 1 & -4 & 1 \\\\ 0 & 1 & 0 \\end{bmatrix}`
-    - Laplacian-8 (`kernel="laplacian8"`):
+    - Laplacian-8 (`kernel_type="laplacian8"`):
       :math:`\\mathbf{K} = \\begin{bmatrix} 1 & 1 & 1 \\\\ 1 & -8 & 1 \\\\ 1 & 1 & 1 \\end{bmatrix}`
 
 
@@ -70,61 +75,77 @@ cpdef object compute_dmat(
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World
-        >>> from cherab.phix.plasma import import_equilibrium
         >>> from cherab.phix.tools.raytransfer import import_phix_rtc
         >>> from cherab.phix.tools import compute_dmat
         >>>
         >>> world = World()
-        >>> eq = import_equilibrium()
-        >>> rtc = import_phix_rtc(world, equilibrium=eq)
+        >>> rtc = import_phix_rtc(world)
         >>>
         >>> laplacian = compute_dmat(rtc.voxel_map)
         >>> laplacian.toarray()
-        array([[-8,  1,  0, ...,  0,  0,  0],
-               [ 1, -8,  1, ...,  0,  0,  0],
-               [ 0,  1, -8, ...,  0,  0,  0],
+        array([[-8.,  1.,  0., ...,  0.,  0.,  0.],
+               [ 1., -8.,  1., ...,  0.,  0.,  0.],
+               [ 0.,  1., -8., ...,  0.,  0.,  0.],
                ...,
-               [ 0,  0,  0, ..., -8,  1,  0],
-               [ 0,  0,  0, ...,  1, -8,  1],
-               [ 0,  0,  0, ...,  0,  1, -8]], dtype=int32)
+               [ 0.,  0.,  0., ..., -8.,  1.,  0.],
+               [ 0.,  0.,  0., ...,  1., -8.,  1.],
+               [ 0.,  0.,  0., ...,  0.,  1., -8.]])
     """
     cdef:
         int i, j, x, y, row, col, map_mat_max
-        int[3][3] kernel_array
+        double[3][3] kernel_carray
         ndarray map_matrix
         object dmatrix
+        double[:, ::] kernel_mv
         int[:, ::] map_matrix_mv
 
     # define derivative kernel
-    if kernel == "x":
-        kernel_array[0][:] = [0, 0, 0]
-        kernel_array[1][:] = [-1, 0, 1]
-        kernel_array[2][:] = [0, 0, 0]
+    if kernel_type == "x":
+        kernel_carray[0][:] = [0, 0, 0]
+        kernel_carray[1][:] = [-1, 1, 0]
+        kernel_carray[2][:] = [0, 0, 0]
+        kernel_mv = kernel_carray
 
-    elif kernel == "y":
-        kernel_array[0][:] = [0, -1, 0]
-        kernel_array[1][:] = [0, 0, 0]
-        kernel_array[2][:] = [0, 1, 0]
+    elif kernel_type == "y":
+        kernel_carray[0][:] = [0, -1, 0]
+        kernel_carray[1][:] = [0, 1, 0]
+        kernel_carray[2][:] = [0, 0, 0]
+        kernel_mv = kernel_carray
 
-    elif kernel == "laplacian4":
-        kernel_array[0][:] = [0, 1, 0]
-        kernel_array[1][:] = [1, -4, 1]
-        kernel_array[2][:] = [0, 1, 0]
+    elif kernel_type == "laplacian4":
+        kernel_carray[0][:] = [0, 1, 0]
+        kernel_carray[1][:] = [1, -4, 1]
+        kernel_carray[2][:] = [0, 1, 0]
+        kernel_mv = kernel_carray
 
-    elif kernel == "laplacian8":
-        kernel_array[0][:] = [1, 1, 1]
-        kernel_array[1][:] = [1, -8, 1]
-        kernel_array[2][:] = [1, 1, 1]
+    elif kernel_type == "laplacian8":
+        kernel_carray[0][:] = [1, 1, 1]
+        kernel_carray[1][:] = [1, -8, 1]
+        kernel_carray[2][:] = [1, 1, 1]
+        kernel_mv = kernel_carray
+
+    elif kernel_type == "custom":
+        if kernel is None:
+            raise ValueError("kernel must be specified when kernel_type is 'custom'")
+        else:
+            if kernel.shape[0] != 3 or kernel.shape[1] != 3:
+                raise ValueError("kernel must be 3x3 matrix")
+            else:
+                kernel_mv = kernel.astype(float)
 
     else:
-        raise ValueError("kernel must be 'x', 'y', 'laplacian4' or 'laplacian8'")
+        raise ValueError("kernel must be 'x', 'y', 'laplacian4', 'laplacian8' or 'custom'")
 
     # padding voxel map boundary by -1
-    map_matrix = np.pad(np.squeeze(voxel_map), pad_width=1, constant_values=-1)
-    map_mat_max = map_matrix.max()
+    voxel_map = np.squeeze(voxel_map)
+    if voxel_map.ndim == 2:
+        map_matrix = np.pad(np.squeeze(voxel_map), pad_width=1, constant_values=-1)
+        map_mat_max = map_matrix.max()
+    else:
+        raise ValueError("voxel_map must be 2-D matrix")
 
     # define derivative matrix as a sparse matrix
-    dmatrix = lil_matrix((map_mat_max + 1, map_mat_max + 1), dtype=np.int32)
+    dmatrix = lil_matrix((map_mat_max + 1, map_mat_max + 1), dtype=float)
 
     # define memoryview
     map_matrix_mv = map_matrix
@@ -136,7 +157,7 @@ cpdef object compute_dmat(
             for j in range(-1, 1 + 1):
                 col = map_matrix_mv[x + i, y + j]
                 if col > -1:
-                    dmatrix[row, col] = kernel_array[i + 1][j + 1]
+                    dmatrix[row, col] = kernel_mv[i + 1, j + 1]
                 else:
                     pass
 
