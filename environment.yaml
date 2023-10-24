@@ -23,6 +23,7 @@ dependencies:
 - rich-click
 - pre-commit
 - cython-lint
+- pytest
   # for documentation
 - docutils
 - ipython
