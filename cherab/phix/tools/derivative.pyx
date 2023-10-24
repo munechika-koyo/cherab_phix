@@ -128,8 +128,12 @@ cpdef object compute_dmat(
         if kernel is None:
             raise ValueError("kernel must be specified when kernel_type is 'custom'")
         else:
-            if kernel.shape[0] != 3 or kernel.shape[1] != 3:
+            if kernel.ndim != 2:
+                raise ValueError("kernel must be 2-D matrix")
+
+            elif kernel.shape[0] != 3 or kernel.shape[1] != 3:
                 raise ValueError("kernel must be 3x3 matrix")
+
             else:
                 kernel_mv = kernel.astype(float)
 
@@ -148,7 +152,7 @@ cpdef object compute_dmat(
     dmatrix = lil_matrix((map_mat_max + 1, map_mat_max + 1), dtype=float)
 
     # define memoryview
-    map_matrix_mv = map_matrix
+    map_matrix_mv = map_matrix.astype(np.intc)
 
     # generate derivative matrix
     for row in range(map_mat_max + 1):
