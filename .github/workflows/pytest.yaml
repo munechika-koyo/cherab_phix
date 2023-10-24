@@ -1,0 +1,53 @@
+name: Run pytest ✅
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.8', '3.9']
+
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    - name: Set up Python 🐍 ${{ matrix.python }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install .[dev]
+
+    # pytest -> JUnit xml format
+    - name: Execute pytest ✅
+      run: |
+        python -m pytest --junit-xml results/pytest.xml
+      continue-on-error: true
+
+    - name: Upload PyTest Results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: PyTest Results (Python ${{ matrix.python }})
+        path: results/*.xml
+
+    - name: Download Artifacts
+      if: success() || failure()
+      uses: actions/download-artifact@v2
+      with:
+        path: artifacts
+
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        junit_files: artifacts/**/*.xml
