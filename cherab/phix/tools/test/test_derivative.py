@@ -20,8 +20,36 @@ CASES = [
         ),
     },
     {
+        "vmap": np.arange(6).reshape(2, 3),
+        "kernel_type": "z",
+        "expected": np.array(
+            [
+                [1, 0, 0, 0, 0, 0],
+                [-1, 1, 0, 0, 0, 0],
+                [0, -1, 1, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0],
+                [0, 0, 0, -1, 1, 0],
+                [0, 0, 0, 0, -1, 1],
+            ]
+        ),
+    },
+    {
         "vmap": np.arange(6).reshape(3, 2),
         "kernel_type": "y",
+        "expected": np.array(
+            [
+                [1, 0, 0, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0],
+                [-1, 0, 1, 0, 0, 0],
+                [0, -1, 0, 1, 0, 0],
+                [0, 0, -1, 0, 1, 0],
+                [0, 0, 0, -1, 0, 1],
+            ]
+        ),
+    },
+    {
+        "vmap": np.arange(6).reshape(3, 2),
+        "kernel_type": "r",
         "expected": np.array(
             [
                 [1, 0, 0, 0, 0, 0],
@@ -87,7 +115,7 @@ INVALID_CASES = [
     },
     {
         "vmap": np.zeros((4, 3)),
-        "kernel_type": "z",  # invalid kernel type
+        "kernel_type": "_",  # invalid kernel type
         "error": ValueError,
     },
     {

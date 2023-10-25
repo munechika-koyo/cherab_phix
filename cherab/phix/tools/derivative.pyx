@@ -26,9 +26,10 @@ cpdef object compute_dmat(
     voxel_map : numpy.ndarray
         (N, M) voxel map matrix (negative value must be input into masked voxels)
         If the additional dimension size of the matrix is 1, then it is squeezed to a 2-D matrix.
-    kernel_type : {"x", "y", "laplacian4", "laplacian8", "custom"}, optional
+    kernel_type : {"x", "y", "r", "z", "laplacian4", "laplacian8", "custom"}, optional
         Derivative kernel type. Default is "laplacian8".
         `"custom"` is available only when `.kernel` is specified.
+        "r" and "z" are the same as "y" and "x", respectively.
     kernel : numpy.ndarray, optional
         (3, 3) custom kernel matrix. Default is None.
 
@@ -60,9 +61,9 @@ cpdef object compute_dmat(
 
     The implemented derivative kernels are as follows:
 
-    - First derivative in x-direction (`kernel_type="x"`):
+    - First derivative in x-direction (`kernel_type="x"` or `"z"`):
       :math:`\\mathbf{K} = \\begin{bmatrix} 0 & 0 & 0 \\\\ -1 & 1 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix}`
-    - First derivative in y-direction (`kernel_type="y"`):
+    - First derivative in y-direction (`kernel_type="y"` or `"r"`):
       :math:`\\mathbf{K} = \\begin{bmatrix} 0 & -1 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 0 \\end{bmatrix}`
     - Laplacian-4 (`kernel_type="laplacian4"`):
       :math:`\\mathbf{K} = \\begin{bmatrix} 0 & 1 & 0 \\\\ 1 & -4 & 1 \\\\ 0 & 1 & 0 \\end{bmatrix}`
@@ -100,13 +101,13 @@ cpdef object compute_dmat(
         int[:, ::] map_matrix_mv
 
     # define derivative kernel
-    if kernel_type == "x":
+    if kernel_type in {"z", "x"}:
         kernel_carray[0][:] = [0, 0, 0]
         kernel_carray[1][:] = [-1, 1, 0]
         kernel_carray[2][:] = [0, 0, 0]
         kernel_mv = kernel_carray
 
-    elif kernel_type == "y":
+    elif kernel_type in {"r", "y"}:
         kernel_carray[0][:] = [0, -1, 0]
         kernel_carray[1][:] = [0, 1, 0]
         kernel_carray[2][:] = [0, 0, 0]
@@ -138,7 +139,9 @@ cpdef object compute_dmat(
                 kernel_mv = kernel.astype(float)
 
     else:
-        raise ValueError("kernel must be 'x', 'y', 'laplacian4', 'laplacian8' or 'custom'")
+        raise ValueError(
+            "kernel must be 'x', 'y', 'r', 'z', 'laplacian4', 'laplacian8' or 'custom'"
+        )
 
     # padding voxel map boundary by -1
     voxel_map = np.squeeze(voxel_map)
