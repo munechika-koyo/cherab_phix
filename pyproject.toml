@@ -73,6 +73,7 @@ dev = [
     "cython-lint",
     "pre-commit",
     "cython >= 3.0",
+    "pytest",
 ]
 
 [project.urls]
