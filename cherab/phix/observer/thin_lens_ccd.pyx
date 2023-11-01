@@ -273,14 +273,15 @@ cdef class ThinLensCCDArray(Observer2D):
 
         Parameters
         ----------
-        x : int
+        ix : int
             Pixel x index.
-        y : int
+        iy : int
             Pixel y index.
         template : :obj:`~raysect.optical.ray.Ray`
             The template ray from which all rays should be generated.
-        ray_count : int
-            The number of rays to be generated.
+        ray_samples : int
+            The number of rays to be generated. This is not used in this class.
+            The number of rays is determined by `.per_pixel_samples`
 
         Returns
         -------
