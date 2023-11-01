@@ -120,7 +120,7 @@ html_theme_options = {
 }
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Cherab-PHiX Documentation"
+html_title = "Cherab-PHiX"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
