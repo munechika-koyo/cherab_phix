@@ -11,6 +11,31 @@ __all__ = ["_SVDBase"]
 class _SVDBase:
     """Base class for inversion calculation based on Singular Value Decomposition (SVD) method.
 
+    .. note::
+
+        This class is designed to be inherited by subclasses which define the objective function
+        to optimize the regularization parameter :math:`\\lambda` using the
+        :obj:`~scipy.optimize.basinhopping` function.
+
+
+    Parameters
+    ----------
+    s : vector_like
+        singular values of :math:`A`
+        like :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in \\mathbb{R}^r`
+    u : array_like
+        left singular vectors of :math:`A`
+        like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
+    basis : array_like
+        inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
+        Here, :math:`\\tilde{V} = L^{-1}V`, where :math:`V\\in\\mathbb{R}^{n\\times r}` is
+        the right singular vectors of :math:`A` and :math:`L^{-1}` is the inverse of
+        regularization operator :math:`L \\in \\mathbb{R}^{n\\times n}`.
+    data : vector_like
+        given data for inversion calculation forms as a vector in :math:`\\mathbb{R}^m`
+
+    Notes
+    -----
     This class offers the calculation of the inverted solution defined by
 
     .. math::
@@ -80,29 +105,6 @@ class _SVDBase:
     .. math::
 
         w_i(\\lambda) \\equiv \\frac{1}{1 + \\lambda / \\sigma_i^2}.
-
-    .. note::
-
-        This class is designed to be inherited by subclasses which define the objective function
-        to optimize the regularization parameter :math:`\\lambda` using the
-        :obj:`~scipy.optimize.basinhopping` function.
-
-
-    Parameters
-    ----------
-    s : vector_like
-        singular values of :math:`A`
-        like :math:`\\sigma = (\\sigma_1, \\sigma_2, ...) \\in \\mathbb{R}^r`
-    u : array_like
-        left singular vectors of :math:`A`
-        like :math:`U = (u_1, u_2, ...) \\in \\mathbb{R}^{m\\times r}`
-    basis : array_like
-        inverted solution basis :math:`\\tilde{V} \\in \\mathbb{R}^{n\\times r}`.
-        Here, :math:`\\tilde{V} = L^{-1}V`, where :math:`V\\in\\mathbb{R}^{n\\times r}` is
-        the right singular vectors of :math:`A` and :math:`L^{-1}` is the inverse of
-        regularization operator :math:`L \\in \\mathbb{R}^{n\\times n}`.
-    data : vector_like
-        given data for inversion calculation forms as a vector in :math:`\\mathbb{R}^m`
     """
 
     def __init__(self, s, u, basis, data=None):
@@ -134,7 +136,7 @@ class _SVDBase:
         self._beta = 0.0
 
         # set initial optimal regularization parameter
-        self._lambda_opt = 0.0
+        self._lambda_opt: float | None = None
 
     def __repr__(self):
         return (
@@ -431,7 +433,7 @@ class _SVDBase:
     # Optimization for the regularization parameter
     # ------------------------------------------------------
     @property
-    def lambda_opt(self) -> float:
+    def lambda_opt(self) -> float | None:
         """Optimal regularization parameter defined after `.solve` is executed."""
         return self._lambda_opt
 
