@@ -104,8 +104,6 @@ def show_phix_profiles(
     cbar_mode
         ImgeGrid's parameter to set colorbars in ``"single"`` axes or ``"each"`` axes,
         by default ``"single"``
-    scientific_notation
-        whether or not to set colorbar format with scientific notation, by default True
     plot_mode
         the way of normalize the data scale.
         Must select one in {``"scalar"``, ``"log"``, ``"centered"``, ``"symlog"``, ``"asinh"``},
@@ -186,7 +184,7 @@ def show_phix_profiles(
         # imshow
         grids[i].imshow(np.transpose(profile), origin="lower", extent=extent, cmap=cmap, norm=norm)
 
-        # plot edge of Outer/Inner Limitter
+        # plot edge of Outer/Inner Limiter
         grids[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
         grids[i].plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "k")
 
@@ -210,10 +208,10 @@ def show_phix_profiles(
             cbars.append(cbar)
 
     else:  # cbar_mode == "single"
-        vmax, vmin = max(vmaxs), min(vmins)
-        _vmax, _vmin = max(_vmaxs), min(_vmins)
+        vmin, vmax = min(vmins), max(vmaxs)
+        _vmin, _vmax = min(_vmins), max(_vmaxs)
         extend = _set_cbar_extend(vmin, vmax, _vmin, _vmax)
-        norm = set_norm(plot_mode, vmins[0], vmaxs[0], linear_width=linear_width)
+        norm = set_norm(plot_mode, vmin, vmax, linear_width=linear_width)
         mappable = ScalarMappable(norm=norm, cmap=cmap)
         cbar = plt.colorbar(mappable, grids.cbar_axes[0], extend=extend)
         set_cbar_format(cbar.ax, plot_mode, linear_width=linear_width)
@@ -327,7 +325,7 @@ def show_phix_profile(
     return lines
 
 
-def set_axis_properties(axes: Axes) -> Axes:
+def set_axis_properties(axes: Axes) -> None:
     """Set x-, y-axis property.
 
     This function set axis properties such as tick direction, tick size, and so on.
@@ -337,20 +335,15 @@ def set_axis_properties(axes: Axes) -> Axes:
     ----------
     axes
         matplotlib Axes object
-
-    Returns
-    -------
-    :obj:`~matplotlib.axes.Axes`
-        axes object with new properties
     """
     axes.xaxis.set_minor_locator(MultipleLocator(0.05))
     axes.yaxis.set_minor_locator(MultipleLocator(0.05))
     axes.tick_params(direction="in", labelsize=10, which="both", top=True, right=True)
 
-    return axes
 
-
-def set_cbar_format(cax: CbarAxesBase | Axes, formatter: str, linear_width: float = 1.0, **kwargs):
+def set_cbar_format(
+    cax: CbarAxesBase | Axes, formatter: str, linear_width: float = 1.0, **kwargs
+) -> None:
     """Set colorbar's locator and formatter.
 
     Parameters
@@ -359,16 +352,12 @@ def set_cbar_format(cax: CbarAxesBase | Axes, formatter: str, linear_width: floa
         colorbar axes object
     formatter
         formatter for colorbar yaxis major locator.
-        Must select one in {``"scalar"``, ``"log"``, ``"symlog"``, ``"asinh"``, ``percent``, ``eng``}
+        Must select one in
+        {``"scalar"``, ``"log"``, ``"symlog"``, ``"asinh"``, ``percent``, ``eng``}
     linear_width
         linear width of asinh/symlog norm, by default 1.0
     **kwargs
         keyword arguments for formatter
-
-    Returns
-    -------
-    Colorbar
-        colorbar object with new properties
     """
     # define colobar formatter and locator
     if formatter == "log":
@@ -397,7 +386,7 @@ def set_cbar_format(cax: CbarAxesBase | Axes, formatter: str, linear_width: floa
         minor_locator = AutoMinorLocator()
 
     else:
-        fmt = ScalarFormatter(useMathText=True)
+        fmt = ScalarFormatter(useMathText=True, **kwargs)
         fmt.set_powerlimits((0, 0))
         major_locator = AutoLocator()
         minor_locator = AutoMinorLocator()
@@ -426,8 +415,8 @@ def set_norm(mode: str, vmin: float, vmax: float, linear_width: float = 1.0) -> 
 
     Returns
     -------
-    Normalize
-        norm object
+    :obj:`~matplotlib.colors.Normalize`
+        Normalize object corresponding to the mode.
     """
     # set norm
     absolute = max(abs(vmax), abs(vmin))
