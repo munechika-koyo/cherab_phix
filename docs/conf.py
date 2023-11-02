@@ -26,10 +26,8 @@ sys.path.insert(0, os.path.abspath("."))
 project = "cherab-phix"
 author = "Koyo Munechika"
 copyright = f"2019-{datetime.now().year}, {author}"
-# The short X.Y version.
-version = __version__
-# The full version, including alpha/beta/rc tags.
-release = __version__
+version_obj = parse(__version__)
+release = str(version_obj)
 
 # -- General configuration ---------------------------------------------------
 
@@ -101,6 +99,24 @@ source_suffix = ".rst"
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pydata_sphinx_theme"
 
+# Define the json_url for our version switcher.
+json_url = "https://cherab-phix.readthedocs.io/en/latest/_static/switcher.json"
+version_match = os.environ.get("READTHEDOCS_VERSION")
+# If READTHEDOCS_VERSION doesn't exist, we're not on RTD
+# If it is an integer, we're in a PR build and the version isn't correct.
+# If it's "latest" → change to "dev" (that's what we want the switcher to call it)
+if not version_match or version_match.isdigit() or version_match == "latest":
+    # For local development, infer the version to match from the package.
+    if version_obj.is_prerelease:
+        version_match = "dev"
+        # We want to keep the relative reference if we are in dev mode
+        # but we want the whole url if we are effectively in a released version
+        json_url = "_static/switcher.json"
+    else:
+        version_match = f"v{release}"
+elif version_match == "stable":
+    version_match = f"v{release}"
+
 html_theme_options = {
     "icon_links": [
         {
@@ -117,6 +133,12 @@ html_theme_options = {
     ],
     "pygment_light_style": "default",
     "pygment_dark_style": "native",
+    "switcher": {
+        "json_url": json_url,
+        "version_match": version_match,
+    },
+    "show_version_warning_banner": True,
+    "navbar_start": ["navbar-logo", "version-switcher"],
 }
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -168,8 +190,7 @@ nbsphinx_thumbnails = {
 }
 
 # === sphinx_github_style configuration ============================================
-# create version object
-version_obj = parse(__version__)
+# get tag name which exists in GitHub
 tag = "master" if version_obj.is_devrelease else f"v{version_obj.public}"
 
 # set sphinx_github_style options
