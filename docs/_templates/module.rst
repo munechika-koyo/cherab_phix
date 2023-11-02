@@ -62,7 +62,7 @@
    :template: module.rst
    :recursive:
 {% for item in all_modules %}
-{% if not item.endswith("test") %}
+{% if not item.endswith("tests") %}
    {{ item.split(".")[-1] }}
 {% endif %}
 {%- endfor %}
