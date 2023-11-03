@@ -2,7 +2,9 @@
 Ray-tracing simulation of fast camera
 =====================================
 """
+import sys
 from datetime import datetime
+from io import TextIOBase
 from pathlib import Path
 from textwrap import dedent
 
@@ -15,7 +17,35 @@ from cherab.phix.machine import import_phix_mesh
 from cherab.phix.observer import import_phix_camera
 from cherab.phix.plasma import import_plasma
 
+# %%
+# Path deffinition
+# ----------------
 ROOT = Path(__file__).parent.parent
+time_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+SAVE_DIR = ROOT / "output" / "synthetic_images" / f"{time_now}"
+SAVE_DIR.mkdir(parents=True)
+
+
+# %%
+# Define custum logger
+# --------------------
+class Logger(TextIOBase):
+    def __init__(self, filename: Path):
+        self.console = sys.stdout
+        self.file = open(filename, "w")
+
+    def write(self, message: str):
+        self.console.write(message)
+        self.file.write(message)
+
+    def flush(self):
+        self.console.flush()
+        self.file.flush()
+
+
+# set logger
+sys.stdout = Logger(SAVE_DIR / "log.txt")
+
 
 # %%
 # Create scene-graph
@@ -61,9 +91,6 @@ camera.observe()
 # %%
 # Save results
 # ------------
-time_now = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-save_dir = ROOT / "output" / "synthetic_images" / f"{time_now}"
-save_dir.mkdir(parents=True)
 
 # save config info as text
 result = dedent(
@@ -81,9 +108,14 @@ result = dedent(
     ----------------------------------------------------------------------------------------
     """
 )[1:-1]
-(save_dir / "results.txt").write_text(result)
+(SAVE_DIR / "results.txt").write_text(result)
 print(result)
-rgb.save(str(save_dir / "rgb.png"))
-power.save(str(save_dir / "power.png"))
-np.save(save_dir / "power.npy", power.frame.mean)
-print(f"successfully saved in {save_dir}.")
+
+# save rgb image
+rgb.save(str(SAVE_DIR / "rgb.png"))
+
+# save power data
+power.save(str(SAVE_DIR / "power.png"))
+np.save(SAVE_DIR / "power.npy", power.frame.mean)
+
+print(f"successfully saved in {SAVE_DIR}.")
