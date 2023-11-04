@@ -11,9 +11,9 @@ import time
 from collections.abc import Callable, Iterable
 from datetime import timedelta
 from itertools import cycle
-from multiprocessing import Event, Lock, Process
+from multiprocessing import Event, Lock, Pipe, Process
 
-__all__ = ["Spinner"]
+__all__ = ["Spinner", "DummySpinner"]
 
 
 SPINNERS = ["⢿", "⣻", "⣽", "⣾", "⣷", "⣯", "⣟", "⡿"]
@@ -92,6 +92,7 @@ class Spinner:
         timer: bool = False,
         side: str = "left",
     ) -> None:
+        self._child_conn, self._parent_conn = Pipe(duplex=False)
         self.text = text
         self.interval = interval
         self.frames = frames
@@ -111,7 +112,7 @@ class Spinner:
 
     # === dunders ==================================================================================
     def __repr__(self) -> str:
-        return f"<Spinner object frames={self._frames!s}>"
+        return f"<{self.__class__.__name__} text='{self._text}'>"
 
     def __call__(self, fn) -> Callable:
         @functools.wraps(fn)
@@ -141,6 +142,7 @@ class Spinner:
     def text(self, value: str):
         if not isinstance(value, str):
             raise TypeError("text must be a str type.")
+        self._parent_conn.send(value)
         self._text = value
 
     @property
@@ -319,6 +321,8 @@ class Spinner:
         # Ensure Unicode input
         assert isinstance(frame, str)
 
+        if self._child_conn.poll():
+            self._text = self._child_conn.recv()
         text = str(self._text)
         assert isinstance(text, str)
 
@@ -384,6 +388,48 @@ class Spinner:
             # ANSI Control Sequence DECTCEM 2 does not work in Jupyter
             sys.stdout.write("\033[?25h")
             sys.stdout.flush()
+
+
+class DummySpinner:
+    """Dummy spinner class that does nothing.
+
+    This class is used when the spinner is not needed.
+    """
+
+    def __init__(self):
+        # dummy properties
+        self.text: str = "Loading..."
+        self.interval: float = 0.1
+        self.frames: Iterable[str] = SPINNERS
+        self.timer: bool = False
+        self.side: str = "left"
+        self.elapsed_time: float = 0.0
+
+        # dummy methods
+        self.start = lambda *args, **kwargs: None
+        self.stop = lambda *args, **kwargs: None
+        self.hide = lambda *args, **kwargs: None
+        self.show = lambda *args, **kwargs: None
+        self.write = lambda *args, **kwargs: None
+        self.ok = lambda *args, **kwargs: None
+        self.fail = lambda *args, **kwargs: None
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} text='{self.text}'>"
+
+    def __call__(self, fn) -> Callable:
+        @functools.wraps(fn)
+        def inner(*args, **kwargs):
+            with self:
+                return fn(*args, **kwargs)
+
+        return inner
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
 
 
 if __name__ == "__main__":
