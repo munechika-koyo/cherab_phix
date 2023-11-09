@@ -11,11 +11,13 @@ dependencies:
 - setuptools
 - numpy
 - scipy
+- cupy
 - cython >= 3.0
 - matplotlib < 3.6  # for raysect v0.7.1 dependency (which is dependency of cherab 1.4.0)
 - plotly
 - numpy-stl
 - contourpy
+- scikit-sparse
   # for developper tools
 - black
 - ruff
