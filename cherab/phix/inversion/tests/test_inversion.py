@@ -5,7 +5,7 @@ from scipy.sparse import csc_matrix
 from cherab.phix.inversion import _SVDBase, compute_svd
 
 
-@pytest.mark.parametrize("use_gpu", [True, False])
+@pytest.mark.parametrize("use_gpu", [False])
 def test_compute_svd(test_data, computed_svd, use_gpu):
     hmat = csc_matrix(np.eye(test_data.matrix.shape[0]))
     s, u, v = compute_svd(test_data.matrix, hmat, use_gpu=use_gpu)

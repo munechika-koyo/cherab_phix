@@ -505,7 +505,7 @@ class _SVDBase:
 def compute_svd(
     gmat,
     hmat: sp_csc_matrix,
-    use_gpu=True,
+    use_gpu=False,
     sp: Spinner | DummySpinner | None = None,
 ) -> tuple[ndarray, ndarray, ndarray]:
     """Computes singular value decomposition (SVD) components of the geometry matrix :math:`T` and
@@ -519,9 +519,11 @@ def compute_svd(
     hmat : scipy.sparse.csc_matrix
         regularization matrix :math:`H \\in \\mathbb{R}^{n\\times n}`
     use_gpu : bool, optional
-        whether to use GPU or not, by default True.
-        If True, the cupy functionalities is used instead of numpy and scipy ones when calculating
-        the inverse of :math:`L`, svd, inverted solution basis :math:`\\tilde{V}`, etc.
+        whether to use GPU or not, by default False.
+        If True, the :obj:`cupy` functionalities is used instead of numpy and scipy ones when
+        calculating the inverse of :math:`L`, svd, inverted solution basis :math:`\\tilde{V}`, etc.
+        Please ensure :obj:`cupy` is installed before using this option,
+        otherwise an ModuleNotFoundError will be raised.
     sp : Spinner or DummySpinner, optional
         spinner object to show the progress of calculation, by default DummySpinner()
 

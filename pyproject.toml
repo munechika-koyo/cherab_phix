@@ -37,7 +37,6 @@ dependencies = [
     "scipy",
     "matplotlib < 3.6",
     "contourpy",
-    "cupy",
     "scikit-sparse",
     "plotly",
     "numpy-stl",
