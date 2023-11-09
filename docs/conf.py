@@ -48,6 +48,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx_codeautolink",
     "sphinx_github_style",
+    "doi_role",
 ]
 
 default_role = "obj"
