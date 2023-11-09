@@ -48,6 +48,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx_codeautolink",
     "sphinx_github_style",
+    "doi_role",
 ]
 
 default_role = "obj"
@@ -160,6 +161,7 @@ intersphinx_mapping = {
     "plotly": ("https://plotly.com/python-api-reference/", None),
     "calcam": ("https://euratom-software.github.io/calcam/html/", None),
     "contourpy": ("https://contourpy.readthedocs.io/en/latest/", None),
+    "cupy": ("https://docs.cupy.dev/en/stable/", None),
 }
 
 intersphinx_timeout = 10
