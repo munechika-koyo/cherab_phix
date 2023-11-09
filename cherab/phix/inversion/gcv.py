@@ -15,14 +15,6 @@ __all__ = ["GCV"]
 class GCV(_SVDBase):
     """Generalized Cross-Validation (GCV) criterion optimization for regularization parameter.
 
-    GCV criterion function is defined as follows:
-
-    .. math::
-
-        GCV(\\lambda) := \\frac{||Ax_\\lambda - b||^2}{\\left[1 - \\sum_{i=1}^N w_i(\\lambda)\\right]^2}
-
-    The optimal regularization parameter corresponds to the minimum value of GCV function.
-
     Parameters
     ----------
     s : vector_like
@@ -38,6 +30,21 @@ class GCV(_SVDBase):
         regularization operator :math:`L \\in \\mathbb{R}^{n\\times n}`.
     **kwargs : :py:class:`._SVDBase` properties, optional
         *kwargs* are used to specify properties like a `data`
+
+    Notes
+    -----
+    GCV criterion function is defined as follows:
+
+    .. math::
+
+        GCV(\\lambda) := \\frac{||Ax_\\lambda - b||^2}{\\left[1 - \\sum_{i=1}^N w_i(\\lambda)\\right]^2}
+
+    The optimal regularization parameter corresponds to the minimum value of GCV function [1]_.
+
+    References
+    ----------
+    .. [1] IWAMA Naofumi and OHDACHI Satoshi, "Numerical Methods of Tomography for Plasma
+        Diagnostics", Journal of Plasma and Fusion Research, Vol.82, No.7 (2006) 399 - 409
     """
 
     def __init__(self, *args, **kwargs):
