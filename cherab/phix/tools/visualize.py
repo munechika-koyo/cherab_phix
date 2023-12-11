@@ -35,6 +35,7 @@ __all__ = [
     "set_axis_properties",
     "set_cbar_format",
     "set_norm",
+    "CMAP_RED",
 ]
 
 
