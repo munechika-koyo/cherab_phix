@@ -1,13 +1,11 @@
 """Modules to offer visualization tools."""
 from __future__ import annotations
 
-from pathlib import Path
-
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import LogNorm, Normalize, SymLogNorm
+from matplotlib.colors import Colormap, ListedColormap, LogNorm, Normalize, SymLogNorm
 from matplotlib.figure import Figure
 from matplotlib.ticker import (
     AutoLocator,
@@ -40,6 +38,11 @@ __all__ = [
 ]
 
 
+# custom Red colormap but
+cmap = plt.get_cmap("RdBu_r")
+CMAP_RED = ListedColormap(cmap(np.linspace(0.5, 1.0, 256)))
+
+
 def plot_ray(ray: Ray, world: World):
     """Plotting the spectrum of one ray-tracing.
 
@@ -64,7 +67,7 @@ def show_phix_profiles(
     fig: Figure | None = None,
     nrow_ncols: tuple[int, int] | None = None,
     clabel: str = "",
-    cmap: str = "inferno",
+    cmap: str | Colormap = CMAP_RED,
     rtc: RayTransferCylinder | None = None,
     vmax: float | None = None,
     vmin: float | None = None,
@@ -90,7 +93,7 @@ def show_phix_profiles(
     clabel
         colobar label
     cmap
-        color map, by default ``"inferno"``
+        color map, by default Red colormap extracted from ``"RdBu_r"``.
     rtc
         cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
     vmax
@@ -226,7 +229,7 @@ def show_phix_profiles(
 def show_phix_profile(
     axes: Axes,
     profile: NDArray,
-    cmap: str = "inferno",
+    cmap: str | Colormap = CMAP_RED,
     rtc: RayTransferCylinder | None = None,
     vmax: float | None = None,
     vmin: float | None = None,
@@ -245,7 +248,7 @@ def show_phix_profile(
     profile
          2D-array-like (nr, nz) profile inner PHiX limiter
     cmap
-        color map, by default ``"inferno"``
+        color map, by default Red colormap extracted from ``"RdBu_r"``.
     rtc
         cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
     vmax
@@ -472,20 +475,3 @@ def _set_cbar_extend(user_vmin: float, user_vmax: float, data_vmin: float, data_
             extend = "neither"
 
     return extend
-
-
-if __name__ == "__main__":
-    DIR = (
-        Path(__file__).parent.parent.parent.parent
-        / "docs"
-        / "notebooks"
-        / "data"
-        / "reconstructed_data"
-        / "synthetic"
-    )
-    profile = np.load(DIR / "reconstructed.npy")
-
-    fig, ax = plt.subplots()
-    con = show_phix_profile(ax, profile, cmap="inferno")
-    # con = show_phix_profiles(profile, cmap="inferno")
-    plt.show()
