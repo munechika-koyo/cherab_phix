@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 
-# custom Red colormap but
+# custom Red colormap extracted from "RdBu_r"
 cmap = plt.get_cmap("RdBu_r")
 CMAP_RED = ListedColormap(cmap(np.linspace(0.5, 1.0, 256)))
 
