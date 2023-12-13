@@ -238,6 +238,7 @@ def show_phix_profile(
     levels: NDArray | None = None,
     plot_mode: str = "scalar",
     linear_width: float = 1.0,
+    aspect: str = "equal",
 ) -> list[NDArray] | None:
     """Show in-phix-limiter 2D profile with :obj:`~matplotlib.axes.Axes.pcolormesh` and plot their
     contours.
@@ -267,6 +268,8 @@ def show_phix_profile(
         Each mode corresponds to the :obj:`~matplotlib.colors.Normalize` object as follows.
     linear_width
         linear width of asinh/symlog norm, by default 1.0
+    aspect
+        aspect ratio of the axes, by default ``"equal"``
 
     Returns
     -------
@@ -274,7 +277,7 @@ def show_phix_profile(
         list of contour line array :math:`(R, Z)` if `plot_contour` is True.
     """
     # set axes option
-    axes.set_aspect("equal")
+    axes.set_aspect(aspect)
 
     # import phix raytransfer object
     if rtc is None:
