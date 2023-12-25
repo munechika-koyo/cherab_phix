@@ -1,16 +1,18 @@
 [build-system]
 requires = [
-    "setuptools <= 65.5.1",
     "wheel",
     "numpy",
+    "meson-python >= 0.15",
     "cython >= 3.0",
     "cherab == 1.4.0",
+    "tomli; python_version < '3.11'",
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "mesonpy"
 
 [project]
 name = "cherab-phix"
 description = "Cherab spectroscopy framework: PHiX machine configuration"
+version = "1.2.0.dev0"
 readme = "README.md"
 authors = [
     { name = "Koyo Munechika", email = "munechika.koyo@torus.nr.titech.ac.jp" },
@@ -31,18 +33,16 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">= 3.8, < 3.10"
+requires-python = ">= 3.8, < 3.11"
 dependencies = [
     "numpy",
     "scipy",
-    "matplotlib < 3.6",
+    "matplotlib < 3.6",  # cherab v1.4.0 dependency
     "contourpy",
     "plotly",
-    "numpy-stl",
     "cherab == 1.4.0",
     "calcam",
 ]
-dynamic = ["version"]
 license = { file = "LICENSE.md" }
 
 [project.optional-dependencies]
@@ -53,16 +53,16 @@ docs = [
     "jinja2 < 3.1",
     "nbconvert >= 7.3",
     "nbsphinx",
+    "pandoc",
     "pillow",
+    "pydata-sphinx-theme < 0.15",
     "pygments >= 2.11.0",
     "sphinx < 8.0",
-    "sphinx-prompt",
-    "sphinx-copybutton",
-    "pydata-sphinx-theme < 0.15",
-    "sphinx-design",
-    "pandoc",
     "sphinx-codeautolink",
+    "sphinx-copybutton",
+    "sphinx-design",
     "sphinx-github-style",
+    "sphinx-prompt",
 ]
 dev = [
     "ipython",
@@ -73,6 +73,8 @@ dev = [
     "cython-lint",
     "pre-commit",
     "cython >= 3.0",
+    "meson-python >= 0.15",
+    "setuptools",  # for installing with setup.py editable mode
     "pytest",
 ]
 
@@ -101,8 +103,8 @@ unfixable = ["E501"]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.9
-target-version = "py39"
+# Assume Python 3.10
+target-version = "py310"
 
 # namespace package setting
 namespace-packages = ["cherab/phix"]
@@ -127,10 +129,9 @@ wrap-summaries = 100
 wrap-descriptions = 100
 blank = false
 
-[tool.setuptools]
-zip-safe = false
 
-[tool.setuptools.dynamic]
-version = { attr = "cherab.phix.__version__" }
-
-[tool.setuptools.packages.find]
+[tool.cibuildwheel]
+skip = "pp* *_ppc64le *_i686 *_s390x"
+build-frontend = "build"
+test-requires = "pytest"
+test-command = "pytest --pyargs cherab.phix"
