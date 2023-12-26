@@ -12,7 +12,7 @@ from raysect.core.math cimport StatsArray1D, StatsArray3D
 from raysect.optical.observer.base cimport Pipeline2D, PixelProcessor
 from raysect.optical.spectrum cimport Spectrum
 
-from cherab.phix.observer.fast_camera.colour cimport phantom_rgb_to_srgb, resample_phantom_rgb
+from ..colour cimport phantom_rgb_to_srgb, resample_phantom_rgb
 
 __all__ = ["RGBPipeline2D"]
 
