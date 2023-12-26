@@ -11,7 +11,7 @@ from ..thin_lens_ccd import ThinLensCCDArray
 __all__ = ["import_phix_camera"]
 
 # -------------- Load Default calcam calibration data -----------------
-CALCAM = Path(__file__).parent.resolve() / "calibration_data" / "shot_17393_ideal.ccc"
+CALCAM = Path(__file__).parent.resolve() / "data" / "calibration" / "shot_17393_ideal.ccc"
 cam = Calibration(str(CALCAM))
 ROT_MAT = cam.get_cam_to_lab_rotation()
 CAM_POS = cam.get_pupilpos(coords="Original")
@@ -21,8 +21,8 @@ CAM_POS = cam.get_pupilpos(coords="Original")
 def import_phix_camera(parent: Node, rotation_matrix=None, camera_pos=None):
     """Importing PHiX fast lens camera configured by defalut camera parameters.
 
-    Default camera's extrinsics is loaded from ``"../calibration_data/shot_17393_ideal.ccc"``.
-    This file is created by calcam package (See: https://github.com/euratom-software/calcam)
+    Default camera's extrinsics is loaded from ``"../data/calibration/shot_17393_ideal.ccc"``.
+    This file is created by `calcam` package (See: https://github.com/euratom-software/calcam)
 
     Parameters
     ----------
