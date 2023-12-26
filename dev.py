@@ -7,10 +7,10 @@ from pathlib import Path
 
 import rich_click as click
 
-try:
-    import tomllib
-except ImportError:
+if sys.version_info < (3, 11):
     import tomli as tomllib
+else:
+    import tomllib
 
 
 BASE_DIR = Path(__file__).parent.absolute()
