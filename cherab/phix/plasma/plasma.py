@@ -24,7 +24,7 @@ def import_plasma(
     parent: Node, equilibrium: str = "phix10", species: object | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
     """Helper function of generating PHiX plasma with emissions model:
-    :math:`\\mathrm{H}_\\alpha, \\mathrm{H}_\\beta, \\mathrm{H}_\\gamma, \\mathrm{H}_\\delta`.
+    :math:`\\mathrm{H}\\alpha, \\mathrm{H}\\beta, \\mathrm{H}\\gamma, \\mathrm{H}\\delta`.
 
     Parameters
     ----------
