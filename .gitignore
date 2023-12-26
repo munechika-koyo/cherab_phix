@@ -77,6 +77,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_api/
 docs/html/.doctrees
 
 # PyBuilder
@@ -142,4 +143,6 @@ dmypy.json
 # Other directories
 output/
 cherab/phix/observer/fast_camera/calibration_data/checkerboard10mm/
-docs/_api/
+
+# version.py created at build time
+**/version.py
