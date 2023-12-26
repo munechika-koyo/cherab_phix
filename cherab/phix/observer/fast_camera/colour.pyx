@@ -1,7 +1,7 @@
 """Module to offer colour functionalities"""
 from __future__ import annotations
 
-from pathlib import Path
+from importlib.resources import files
 
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -27,13 +27,14 @@ __all__ = [
 
 import_array()
 
-# Path to directory saving fas-camera's RGB color filter curves
-DIR = Path(__file__).parent / "data" / "sensitivity"
-
-# load sampled RGB sensitivity curve (unit [A/W])
-red_samples = load(DIR / "red.npz")
-green_samples = load(DIR / "green.npz")
-blue_samples = load(DIR / "blue.npz")
+# Load Phantom LAB110 camera RGB sensitivity curves
+resource = files("cherab.phix.observer.fast_camera.data.sensitivity")
+with resource.joinpath("red.npz").open("rb") as file:
+    red_samples = dict(load(file))
+with resource.joinpath("green.npz").open("rb") as file:
+    green_samples = dict(load(file))
+with resource.joinpath("blue.npz").open("rb") as file:
+    blue_samples = dict(load(file))
 
 # interpolation using cubic spline
 filter_red = Interpolator1DArray(red_samples["wavelength"], red_samples["sensitivity"], "cubic", "nearest", 50.0)
