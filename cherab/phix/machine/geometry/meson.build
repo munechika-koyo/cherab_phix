@@ -1,5 +1,6 @@
 python_sources = [
-    'format_cad_file.py',
+  '__init__.py',
+  'format_cad.py',
 ]
 
 py.install_sources(
