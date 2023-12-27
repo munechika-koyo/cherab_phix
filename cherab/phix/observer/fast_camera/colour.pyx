@@ -6,7 +6,7 @@ from importlib.resources import files
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from numpy import linspace, load, zeros
+from numpy import asarray, linspace, load, zeros
 
 cimport cython
 from numpy cimport float64_t, import_array, ndarray
@@ -164,11 +164,11 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
 
     Parameters
     ----------
-    r: float
+    r : float
         phantom R
-    g: float
+    g : float
         phantom G
-    b: float
+    b : float
         phantom B
 
     Returns
@@ -256,6 +256,10 @@ def plot_RGB_filter(
     """
     if wavelengths is None:
         wavelengths = linspace(350, 780, 500)
+    else:
+        wavelengths = asarray(wavelengths)
+        if wavelengths.ndim != 1:
+            raise ValueError("wavelengths must be 1D vector-like.")
 
     if not isinstance(ax, Axes):
         if not isinstance(fig, Figure):
@@ -269,6 +273,8 @@ def plot_RGB_filter(
     ax.plot(wavelengths, [filter_green(i) for i in wavelengths], color="g", label="G")
     ax.plot(wavelengths, [filter_blue(i) for i in wavelengths], color="b", label="B")
 
+    ax.set_xlim(wavelengths.min(), wavelengths.max())
+    ax.set_ylim(ymin=0.0)
     ax.set_xlabel("wavelength [nm]")
     ax.set_ylabel("sensitivity [A/W]")
 
