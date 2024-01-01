@@ -11,3 +11,4 @@ py.install_sources(
 )
 
 subdir('data')
+subdir('tests')

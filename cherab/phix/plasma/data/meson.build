@@ -1,5 +1,9 @@
 python_sources = [
     '__init__.py',
+    'phix10.json',
+    'phix12.json',
+    'phix13.json',
+    'phix14.json',
 ]
 
 py.install_sources(
