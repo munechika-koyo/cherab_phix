@@ -396,13 +396,20 @@ class DummySpinner:
     This class is used when the spinner is not needed.
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        text: str = "Loading...",
+        interval: float = 0.1,
+        frames: Iterable[str] = SPINNERS,
+        timer: bool = False,
+        side: str = "left",
+    ):
         # dummy properties
-        self.text: str = "Loading..."
-        self.interval: float = 0.1
-        self.frames: Iterable[str] = SPINNERS
-        self.timer: bool = False
-        self.side: str = "left"
+        self.text: str = text
+        self.interval: float = interval
+        self.frames: Iterable[str] = frames
+        self.timer: bool = timer
+        self.side: str = side
         self.elapsed_time: float = 0.0
 
         # dummy methods
