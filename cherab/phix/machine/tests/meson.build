@@ -1,7 +1,7 @@
 python_sources = [
-    '__init__.py',
-    'test_pfc_mesh.py',
-    'test_wall_outline.py',
+  '__init__.py',
+  'test_pfc_mesh.py',
+  'test_wall_outline.py',
 ]
 
 py.install_sources(

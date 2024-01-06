@@ -1,7 +1,7 @@
 python_sources = [
-    '__init__.py',
-    'test_camera.py',
-    'test_colour.py',
+  '__init__.py',
+  'test_camera.py',
+  'test_colour.py',
 ]
 
 py.install_sources(

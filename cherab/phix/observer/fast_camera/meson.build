@@ -20,9 +20,9 @@ foreach file : cython_sources
 endforeach
 
 python_sources = [
-    '__init__.py',
-    '__init__.pxd',
-    'camera.py',
+  '__init__.py',
+  '__init__.pxd',
+  'camera.py',
 ]
 
 py.install_sources(
