@@ -48,6 +48,7 @@ extensions = [
     "IPython.sphinxext.ipython_console_highlighting",
     "sphinx_codeautolink",
     "sphinx_github_style",
+    "doi_role",
 ]
 
 default_role = "obj"
@@ -109,9 +110,6 @@ if not version_match or version_match.isdigit() or version_match == "latest":
     # For local development, infer the version to match from the package.
     if version_obj.is_prerelease:
         version_match = "dev"
-        # We want to keep the relative reference if we are in dev mode
-        # but we want the whole url if we are effectively in a released version
-        json_url = "_static/switcher.json"
     else:
         version_match = f"v{release}"
 elif version_match == "stable":

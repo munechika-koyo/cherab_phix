@@ -9,7 +9,7 @@ default_language_version:
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.5.0
   hooks:
   - id: check-ast
   - id: trailing-whitespace
@@ -25,40 +25,40 @@ repos:
 
 # validate pyproject.toml
 - repo: https://github.com/abravalheri/validate-pyproject
-  rev: v0.14
+  rev: v0.15
   hooks:
   - id: validate-pyproject
 
 # format python codes by black
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 23.9.1
+  rev: 23.12.1
   hooks:
   - id: black
-    language_version: python3.9
+    language_version: python3.10
 
 # lint and format python codes by ruff
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.0.292
+  rev: v0.1.9
   hooks:
   - id: ruff
     args: [--fix]
 
 # lint and format jupyter notebooks by nbqa-ruff
 - repo: https://github.com/nbQA-dev/nbQA
-  rev: 1.7.0
+  rev: 1.7.1
   hooks:
   - id: nbqa-ruff
     args: [--fix, --ignore=E402]
 
 # lint cython codes
 - repo: https://github.com/MarcoGorelli/cython-lint
-  rev: v0.15.0
+  rev: v0.16.0
   hooks:
   - id: cython-lint
 
 # format yaml files
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.10.0
+  rev: v2.12.0
   hooks:
   - id: pretty-format-yaml
     args: [--autofix, --indent, '2']

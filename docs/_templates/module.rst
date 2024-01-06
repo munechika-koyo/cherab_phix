@@ -6,7 +6,6 @@
 {% block attributes %}
 {% if attributes %}
 .. rubric:: Module Attributes
-
 .. autosummary::
    :toctree:
 {% for item in attributes %}

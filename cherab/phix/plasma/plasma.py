@@ -7,9 +7,12 @@ from raysect.core import Node, translate
 from raysect.optical.material.emitter.inhomogeneous import NumericalIntegrator
 from raysect.primitive import Cylinder, Subtract
 
-from cherab.core import DistributionFunction, Line, Plasma, Species, elements
+from cherab.core import Line, Plasma
+from cherab.core.atomic.elements import hydrogen
+from cherab.core.distribution import DistributionFunction
 from cherab.core.math import VectorAxisymmetricMapper
 from cherab.core.model import Bremsstrahlung, ExcitationLine, RecombinationLine
+from cherab.core.species import Species
 from cherab.openadas import OpenADAS
 from cherab.tools.equilibrium import EFITEquilibrium
 
@@ -24,7 +27,7 @@ def import_plasma(
     parent: Node, equilibrium: str = "phix10", species: object | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
     """Helper function of generating PHiX plasma with emissions model:
-    :math:`\\mathrm{H}_\\alpha, \\mathrm{H}_\\beta, \\mathrm{H}_\\gamma, \\mathrm{H}_\\delta`.
+    :math:`\\mathrm{H}\\alpha, \\mathrm{H}\\beta, \\mathrm{H}\\gamma, \\mathrm{H}\\delta`.
 
     Parameters
     ----------
@@ -49,7 +52,7 @@ def import_plasma(
         >>> from cherab.phix.plasma import import_plasma
         >>>
         >>> world = World()
-        >>> plasma = import_plasma(world)
+        >>> plasma, eq = import_plasma(world)
     """
     print(f"loading plasma (data from: {equilibrium})...")
     # create equilibrium instance
@@ -81,7 +84,7 @@ def import_plasma(
     if not (hasattr(species, "composition") and hasattr(species, "electron_distribution")):
         species = PHiXSpecies(equilibrium=eq)
 
-    if isinstance(composition := species.composition, Iterable):
+    if isinstance(composition := getattr(species, "composition", None), Iterable):
         for element in composition:
             if not isinstance(element, Species):
                 raise TypeError("element of composition attr must be a cherab.core.Species object.")
@@ -89,18 +92,21 @@ def import_plasma(
     else:
         raise TypeError("composition attr must be an iterable object.")
 
-    if isinstance(electron_distribution := species.electron_distribution, DistributionFunction):
+    if isinstance(
+        electron_distribution := getattr(species, "electron_distribution", None),
+        DistributionFunction,
+    ):
         plasma.electron_distribution = electron_distribution
     else:
         raise TypeError("electron_distribution must be a cherab.core.DistributionFunction object.")
 
     # apply emission from plasma
-    h_alpha = Line(elements.hydrogen, 0, (3, 2))  # , wavelength=656.279)
-    h_beta = Line(elements.hydrogen, 0, (4, 2))  # , wavelength=486.135)
-    h_gamma = Line(elements.hydrogen, 0, (5, 2))  # , wavelength=434.0472)
-    h_delta = Line(elements.hydrogen, 0, (6, 2))  # , wavelength=410.1734)
+    h_alpha = Line(hydrogen, 0, (3, 2))  # , wavelength=656.279)
+    h_beta = Line(hydrogen, 0, (4, 2))  # , wavelength=486.135)
+    h_gamma = Line(hydrogen, 0, (5, 2))  # , wavelength=434.0472)
+    h_delta = Line(hydrogen, 0, (6, 2))  # , wavelength=410.1734)
     # ciii_777 = Line(
-    #     elements.carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
+    #     carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
     # )  # , wavelength=770.743)
     plasma.models = [
         Bremsstrahlung(),
