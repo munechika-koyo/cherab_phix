@@ -1,0 +1,72 @@
+# This workflow will build sdist & bdist of Python Package using cibuildwheel and
+# upload them to PyPI using Twine when a release is created
+
+name: PyPI Publish
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build_wheels:
+    name: Build wheels 📦 on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    - name: Build 🐍 wheels
+      uses: pypa/cibuildwheel@v2.16.2
+
+    - name: Upload distribution 📦 as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution 📦
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    - name: Build sdist 📦
+      run: pipx run build --sdist
+
+    - name: Upload distribution 📦 as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: dist/*.tar.gz
+
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+    steps:
+    - name: Download distribution 📦 from artifact
+      uses: actions/download-artifact@v3
+      with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+        name: artifact
+        path: dist
+
+    - name: Publish 🐍 distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
