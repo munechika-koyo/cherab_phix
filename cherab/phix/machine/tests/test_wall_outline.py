@@ -23,10 +23,13 @@ from cherab.phix.machine.wall_outline import plot_wall_outline
 def test_plot_wall_outline(ax, kwargs):
     results = plot_wall_outline(ax, **kwargs)
     if isinstance(results, tuple):
-        assert isinstance(results[0], Figure)
-        assert isinstance(results[1], Axes)
-        results[0].show()
+        fig, axes = results
+        assert isinstance(fig, Figure)
+        assert isinstance(axes, Axes)
+        fig.show()
     else:
         assert isinstance(results, Axes)
         fig = results.get_figure()
         fig.show()
+
+    plt.close(fig)

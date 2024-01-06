@@ -25,13 +25,13 @@ from raysect.optical import Ray, World
 from cherab.tools.raytransfer.raytransfer import RayTransferCylinder
 
 from ..machine.wall_outline import INNER_LIMITER, OUTER_LIMITER
-from .raytransfer import import_phix_rtc
+from .raytransfer import load_rtc
 from .utils import calc_contours
 
 __all__ = [
     "plot_ray",
-    "show_phix_profiles",
-    "show_phix_profile",
+    "show_profiles",
+    "show_profile",
     "set_axis_properties",
     "set_cbar_format",
     "set_norm",
@@ -63,7 +63,7 @@ def plot_ray(ray: Ray, world: World):
     plt.show()
 
 
-def show_phix_profiles(
+def show_profiles(
     profiles: list[NDArray] | NDArray,
     fig: Figure | None = None,
     nrow_ncols: tuple[int, int] | None = None,
@@ -96,7 +96,7 @@ def show_phix_profiles(
     cmap
         color map, by default Red colormap extracted from ``"RdBu_r"``.
     rtc
-        cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
+        cherab's raytransfer objects, by default the instance loaded by `.load_rtc`.
     vmax
         to set the upper color limitation, by default maximum value of all profiles,
         if ``cbar_mode=="single"``
@@ -121,9 +121,11 @@ def show_phix_profiles(
     tuple[:obj:`~matplotlib.figure.Figure`, :obj:`~mpl_toolkits.axes_grid1.axes_grid.ImageGrid`]
         tuple containing matplotlib figure object and instance of ImageGrid.
     """
-    # transform the type of argument if it is not list type.
-    if not isinstance(profiles, list):
+    # set profiles as a list
+    if isinstance(profiles, np.ndarray):
         profiles = [profiles]
+    if not isinstance(profiles, list):
+        raise TypeError("profiles must be a list of 2D-array or a numpy.darray.")
 
     # set ImageGrid
     if not isinstance(fig, Figure):
@@ -164,7 +166,7 @@ def show_phix_profiles(
     # import phix raytransfer object
     if rtc is None:
         world = World()
-        rtc = import_phix_rtc(world)
+        rtc = load_rtc(world)
 
     # set image extent
     extent = (
@@ -227,7 +229,7 @@ def show_phix_profiles(
     return (fig, grids)
 
 
-def show_phix_profile(
+def show_profile(
     axes: Axes,
     profile: NDArray,
     cmap: str | Colormap = CMAP_RED,
@@ -252,7 +254,7 @@ def show_phix_profile(
     cmap
         color map, by default Red colormap extracted from ``"RdBu_r"``.
     rtc
-        cherab's raytransfer objects, by default the instance loaded by `.import_phix_rtc`.
+        cherab's raytransfer objects, by default the instance loaded by `.load_rtc`.
     vmax
         to set the upper color limitation, by default maximum value of the profile.
     vmin
@@ -282,7 +284,7 @@ def show_phix_profile(
     # import phix raytransfer object
     if rtc is None:
         world = World()
-        rtc = import_phix_rtc(world)
+        rtc = load_rtc(world)
 
     # RZ grid
     z = np.linspace(-1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2])
@@ -314,7 +316,7 @@ def show_phix_profile(
             levels = np.linspace(0.0, vmax, 8)
 
         lines = []
-        for level in levels[1:]:
+        for level in levels[1:-1]:
             lines += calc_contours(profile, level, rtc=rtc, r=r, z=z)
 
         for line in lines:

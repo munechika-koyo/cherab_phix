@@ -6,10 +6,10 @@ from raysect.core import Point2D
 
 from cherab.tools.equilibrium.efit import EFITEquilibrium
 
-__all__ = ["import_equilibrium"]
+__all__ = ["load_equilibrium"]
 
 
-def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
+def load_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     """Return a populated instance of the PHiX equilibrium calculated by Tokamak Simulation Code.
 
     Parameters

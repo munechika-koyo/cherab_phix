@@ -1,11 +1,11 @@
 import pytest
 from raysect.optical import World
 
-from cherab.phix.plasma.equilibrium import import_equilibrium
-from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.phix.plasma.equilibrium import load_equilibrium
+from cherab.phix.tools.raytransfer import load_rtc
 from cherab.tools.raytransfer.raytransfer import RayTransferCylinder
 
-DEFAULT_EQ = import_equilibrium(model_variant="phix12")
+DEFAULT_EQ = load_equilibrium(model_variant="phix12")
 
 
 @pytest.mark.parametrize(
@@ -15,9 +15,9 @@ DEFAULT_EQ = import_equilibrium(model_variant="phix12")
         pytest.param(DEFAULT_EQ, id="equilibrium"),
     ],
 )
-def test_import_phix_rtc(equilibrium):
+def test_import_rtc(equilibrium):
     world = World()
-    rtc = import_phix_rtc(world, equilibrium)
+    rtc = load_rtc(world, equilibrium)
     assert isinstance(rtc, RayTransferCylinder)
     assert rtc.bins == 13326
     assert rtc.material.grid_shape == (90, 1, 165)

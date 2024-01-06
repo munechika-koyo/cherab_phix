@@ -17,13 +17,13 @@ from cherab.openadas import OpenADAS
 from cherab.tools.equilibrium import EFITEquilibrium
 
 from ..machine.wall_outline import VESSEL_WALL
-from .equilibrium import import_equilibrium
+from .equilibrium import load_equilibrium
 from .species import PHiXSpecies
 
-__all__ = ["import_plasma"]
+__all__ = ["load_plasma"]
 
 
-def import_plasma(
+def load_plasma(
     parent: Node, equilibrium: str = "phix10", species: object | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
     """Helper function of generating PHiX plasma with emissions model:
@@ -49,14 +49,14 @@ def import_plasma(
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World
-        >>> from cherab.phix.plasma import import_plasma
+        >>> from cherab.phix.plasma import load_plasma
         >>>
         >>> world = World()
-        >>> plasma, eq = import_plasma(world)
+        >>> plasma, eq = load_plasma(world)
     """
     print(f"loading plasma (data from: {equilibrium})...")
     # create equilibrium instance
-    eq = import_equilibrium(model_variant=equilibrium)
+    eq = load_equilibrium(model_variant=equilibrium)
 
     # create atomic data source
     adas = OpenADAS(permit_extrapolation=True)
@@ -123,13 +123,3 @@ def import_plasma(
     ]
 
     return (plasma, eq)
-
-
-# For debugging
-if __name__ == "__main__":
-    from raysect.core import World
-
-    world = World()
-    plasma, eq = import_plasma(world)
-    print([i for i in plasma.models])
-    pass

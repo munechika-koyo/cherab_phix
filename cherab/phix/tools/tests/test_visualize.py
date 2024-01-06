@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1 import ImageGrid
 from raysect.optical import World
 
-from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.phix.tools.raytransfer import load_rtc
 from cherab.phix.tools.visualize import (
     set_axis_properties,
     set_cbar_format,
@@ -85,7 +85,7 @@ def test_set_norm(mode, vmin, vmax, expected_norm, expectation):
             None, None, None, True, np.linspace(0, 12e3, 10), "scalar", 8, id="custom levels"
         ),
         pytest.param(
-            import_phix_rtc(World()), None, None, False, None, "scalar", None, id="no contour (rtc)"
+            load_rtc(World()), None, None, False, None, "scalar", None, id="no contour (rtc)"
         ),
     ],
 )
@@ -136,7 +136,7 @@ def test_show_profile(
             1,
             None,
             None,
-            import_phix_rtc(World()),
+            load_rtc(World()),
             "single",
             "scalar",
             does_not_raise(),

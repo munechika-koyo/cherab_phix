@@ -7,12 +7,12 @@ from raysect.core import Node, translate
 from cherab.tools.equilibrium import EFITEquilibrium
 from cherab.tools.raytransfer import RayTransferCylinder
 
-from ..plasma import import_equilibrium
+from ..plasma import load_equilibrium
 
-__all__ = ["import_phix_rtc"]
+__all__ = ["load_rtc"]
 
 
-def import_phix_rtc(
+def load_rtc(
     parent: Node, equilibrium: EFITEquilibrium | None = None, grid_size: float = 2.0e-3
 ) -> RayTransferCylinder:
     """This is a helper function to easily set up the RayTransfer Cylinder object on PHiX
@@ -29,7 +29,7 @@ def import_phix_rtc(
         Raysect's scene-graph parent node
     equilibrium
         :obj:`~cherab.tools.equilibrium.efit.EFITEquilibrium` object, by default
-        the instance loaded by `.import_equilibrium` function.
+        the instance loaded by `.load_equilibrium` function.
     grid_size
         1 voxel size :math:`(dr=dz)`, by default ``2.0e-3`` [m]
 
@@ -43,9 +43,9 @@ def import_phix_rtc(
     .. prompt:: python >>> auto
 
         >>> from raysect.optical import World
-        >>> from cherab.phix.tools.raytransfer import import_phix_rtc
+        >>> from cherab.phix.tools.raytransfer import load_rtc
         >>> world = World()
-        >>> rtc = import_phix_rtc(world)
+        >>> rtc = load_rtc(world)
         >>> rtc.bins
         13326
 
@@ -61,7 +61,7 @@ def import_phix_rtc(
     """
     # check arguments
     if equilibrium is None:
-        equilibrium = import_equilibrium()
+        equilibrium = load_equilibrium()
 
     if not isinstance(equilibrium, EFITEquilibrium):
         message = "The equilibrium argument must be a valid EFITEquilibrium object."

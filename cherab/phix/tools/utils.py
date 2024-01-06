@@ -8,7 +8,7 @@ from raysect.optical import World
 
 from cherab.tools.raytransfer import RayTransferCylinder
 
-from .raytransfer import import_phix_rtc
+from .raytransfer import load_rtc
 
 __all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
 
@@ -94,7 +94,7 @@ def calc_contours(
     z
         The z-coorinate of the profile values. The default is calculated by `rtc`.
     rtc
-        RayTransferCylinder instance, by default returned instance of `.import_phix_rtc`.
+        RayTransferCylinder instance, by default returned instance of `.load_rtc`.
 
     Returns
     -------
@@ -107,7 +107,7 @@ def calc_contours(
     if z is None or r is None:
         if rtc is None:
             world = World()
-            rtc = import_phix_rtc(world)
+            rtc = load_rtc(world)
 
         z = np.linspace(-1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2])
         r = np.linspace(

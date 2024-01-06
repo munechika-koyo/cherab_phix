@@ -6,7 +6,7 @@ import pytest
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from raysect.optical import Spectrum
+from raysect.optical.spectrum import Spectrum
 
 from cherab.phix.observer.fast_camera.colour import (
     phantom_rgb_to_srgb,
@@ -59,6 +59,7 @@ def test_plot_RGB_filter(wavelengths, figure, axes):
 
 def test_plot_samples():
     plot_samples()
+    plt.close("all")
 
 
 @pytest.mark.parametrize(

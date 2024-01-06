@@ -2,14 +2,14 @@ import numpy as np
 import pytest
 from raysect.optical import World
 
-from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.phix.tools.raytransfer import load_rtc
 from cherab.phix.tools.utils import calc_contours, profile_1D_to_2D, profile_2D_to_1D
 
 
 @pytest.fixture
 def rtc():
     world = World()
-    rtc = import_phix_rtc(world)
+    rtc = load_rtc(world)
     return rtc
 
 
