@@ -1,6 +1,6 @@
 """Module to offer the helper function to populate an EFITequilibrium instance."""
 import json
-from pathlib import Path
+from importlib.resources import files
 
 from raysect.core import Point2D
 
@@ -30,9 +30,8 @@ def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
         >>> from cherab.phix.plasma import impot_equilibrium
         >>> equilibrium = impot_equilibrium()
     """
-    example_file = Path(__file__).parent.resolve() / "data" / f"{model_variant}.json"
-    with open(example_file, "r") as fh:
-        eq_data = json.load(fh)
+    with files("cherab.phix.plasma.data").joinpath(f"{model_variant}.json").open("r") as f:
+        eq_data = json.load(f)
 
     r = eq_data["r"]
     z = eq_data["z"]
@@ -72,9 +71,3 @@ def import_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     )
 
     return equilibrium
-
-
-# For debugging
-if __name__ == "__main__":
-    eq = import_equilibrium(model_variant="phix12")
-    pass

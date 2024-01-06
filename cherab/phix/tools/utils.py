@@ -13,8 +13,8 @@ from .raytransfer import import_phix_rtc
 __all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
 
 
-def profile_1D_to_2D(data_1D, rtc: RayTransferCylinder) -> NDArray:
-    """Convert 1D vector to 2D array according to raytrasfer object's ``voxel_map``.
+def profile_1D_to_2D(data_1D: NDArray, rtc: RayTransferCylinder) -> NDArray:
+    """Convert 1D vector to 2D array according to raytrasfer object's ``invert_voxel_map``.
 
     Parameters
     ----------
@@ -28,24 +28,27 @@ def profile_1D_to_2D(data_1D, rtc: RayTransferCylinder) -> NDArray:
     numpy.ndarray
         2D array converted from 1D vector
     """
-    data_2D = np.zeros(rtc.material.grid_shape[::2])
-    for i in range(rtc.bins):
-        index = np.where(rtc.voxel_map.squeeze() == i)
-        data_2D[index] = data_1D[i]
+    if data_1D.ndim != 1:
+        raise ValueError("data_1D must be 1D array")
 
-    return data_2D
+    indices = rtc.invert_voxel_map()
+    data_array = np.zeros(rtc.material.grid_shape)
+    for index, data in zip(indices, data_1D):  # noqa: B905
+        data_array[index] = data
+
+    return data_array.squeeze()
 
 
 def profile_2D_to_1D(
-    data_2D,
+    data_2D: NDArray,
     rtc: RayTransferCylinder,
 ) -> NDArray:
     """Convert 2D array to 1D vector according to raytrasfer object's ``voxel_map``.
 
     Parameters
     ----------
-    data_2D : 2Darray (vector-like)
-        1D array data
+    data_2D : numpy.ndarray (N, M)
+        2D array data, the shape of which must be same as a 2-D voxel map
     rtc
         cherab's raytransfer cylinder object
 
@@ -54,11 +57,19 @@ def profile_2D_to_1D(
     numpy.ndarray
         (N, ) 1D array converted from data_2D
     """
-    map_matrix = np.squeeze(rtc.voxel_map)
+    if data_2D.ndim != 2:
+        raise ValueError("data_2D must be 2D array")
+
+    voxel_map = rtc.voxel_map.squeeze()
+    if voxel_map.shape != data_2D.shape:
+        raise ValueError("data_2D shape must be same as raytransfer's voxel_map")
+
     data_1D = np.zeros(rtc.bins)
-    for i in range(rtc.bins):
-        index = np.where(map_matrix == i)  # transform voxel 2D index into 1D rtc.bins index
-        data_1D[i] = data_2D[index][0]
+    for row in range(voxel_map.shape[0]):
+        for col in range(voxel_map.shape[1]):
+            index = voxel_map[row, col]
+            if index != -1:
+                data_1D[index] = data_2D[row, col]
 
     return data_1D
 

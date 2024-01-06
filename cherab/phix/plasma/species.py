@@ -30,8 +30,8 @@ class PHiXSpecies:
     electron_distribution : :obj:`~raysect.core.math.function.float.function3d.base.Function3D`
         electron distribution function
     composition : list of :obj:`~cherab.core.Species`
-        composition of plasma species, each information of whixh is
-        element, charge, density_distribution, temperature_distribution, bulk_velocity_distribution.
+        Each species has some attributes such as element, charge, density_distribution,
+        temperature_distribution and bulk_velocity_distribution.
     """
 
     def __init__(self, equilibrium: EFITEquilibrium | None = None):
@@ -117,15 +117,15 @@ class PHiXSpecies:
         Parameters
         ----------
         element
-            element name registored in cherabs elements.pyx, by default None
+            element name registered in cherab elements.pyx, by default None
         charge
             element's charge state, by default 0
         density
-            density distribution, by default Constant3D(1.0e19)
+            density distribution, by default `Constant3D(1.0e19)`
         temperature
-            temperature distribution, by default Constant3D(1.0e2)
+            temperature distribution, by default `Constant3D(1.0e2)`
         bulk_velocity
-            bulk velocity, by default ConstantVector3D(0)
+            bulk velocity, by default `ConstantVector3D(0)`
         """
 
         if element is None:
@@ -135,12 +135,12 @@ class PHiXSpecies:
         try:
             # extract specified element object
             element = getattr(elements, element)
-        except AttributeError:
+        except AttributeError as e:
             message = (
-                f"element name '{element}' is not implemented."
-                f"You can implement manually using Element class"
+                f"element name '{element}' is not implemented. "
+                f"You can implement '{element}' manually using Element class"
             )
-            raise NotImplementedError(message) from None
+            raise NotImplementedError(message) from e
 
         # element mass
         element_mass = element.atomic_weight * atomic_mass
@@ -183,7 +183,7 @@ class PHiXSpecies:
                 mask[ir, 0, iz] = not self.eq.inside_limiter(r_tmp, z_tmp)
 
         # plot
-        for sample, title, clabel in zip(
+        for sample, title, clabel in zip(  # noqa: B905
             [dens, temp],
             ["electron density[1/m$^3$]", "electron temperature[eV]"],
             ["density [1/m$^3$]", "temperature [eV]"],
@@ -211,7 +211,7 @@ class PHiXSpecies:
             )
 
             # plot
-            for sample, title, clabel in zip(
+            for sample, title, clabel in zip(  # noqa: B905
                 [dens, temp],
                 [
                     f"{species.element.name}+{species.charge} density [1/m$^3$]",
@@ -240,7 +240,7 @@ class PHiXSpecies:
             self.electron_distribution.density,
             self.electron_distribution.effective_temperature,
         ]
-        for func, ylabel, title in zip(
+        for func, ylabel, title in zip(  # noqa: B905
             funcs,
             ["density [1/m$^3$]", "temperature [eV]"],
             ["electron density", "electron temperature"],
@@ -258,12 +258,3 @@ class PHiXSpecies:
             plt.title(title)
 
         plt.show()
-
-
-# For debugging
-if __name__ == "__main__":
-    from cherab.phix.plasma import import_equilibrium
-
-    eq = import_equilibrium()
-    species = PHiXSpecies(eq)
-    species.plot_distribution()

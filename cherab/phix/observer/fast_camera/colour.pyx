@@ -1,12 +1,12 @@
 """Module to offer colour functionalities"""
 from __future__ import annotations
 
-from pathlib import Path
+from importlib.resources import files
 
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from numpy import linspace, loadtxt, zeros
+from numpy import asarray, linspace, load, zeros
 
 cimport cython
 from numpy cimport float64_t, import_array, ndarray
@@ -27,18 +27,19 @@ __all__ = [
 
 import_array()
 
-# Path to directry saving fas-camera's RGB color filter curves
-DIR = Path(__file__).parent / "sensitivity"
-
-# load RGB sensitivity curv samples (unit [A/W])
-R_samples = loadtxt(DIR / "R.txt", delimiter=",")
-G_samples = loadtxt(DIR / "G.txt", delimiter=",")
-B_samples = loadtxt(DIR / "B.txt", delimiter=",")
+# Load Phantom LAB110 camera RGB sensitivity curves
+resource = files("cherab.phix.observer.fast_camera.data.sensitivity")
+with resource.joinpath("red.npz").open("rb") as file:
+    red_samples = dict(load(file))
+with resource.joinpath("green.npz").open("rb") as file:
+    green_samples = dict(load(file))
+with resource.joinpath("blue.npz").open("rb") as file:
+    blue_samples = dict(load(file))
 
 # interpolation using cubic spline
-filter_r = Interpolator1DArray(R_samples[:, 0], R_samples[:, 1], "cubic", "nearest", 50.0)
-filter_g = Interpolator1DArray(G_samples[:, 0], G_samples[:, 1], "cubic", "nearest", 50.0)
-filter_b = Interpolator1DArray(B_samples[:, 0], B_samples[:, 1], "cubic", "nearest", 50.0)
+filter_red = Interpolator1DArray(red_samples["wavelength"], red_samples["sensitivity"], "cubic", "nearest", 50.0)
+filter_green = Interpolator1DArray(green_samples["wavelength"], green_samples["sensitivity"], "cubic", "nearest", 50.0)
+filter_blue = Interpolator1DArray(blue_samples["wavelength"], blue_samples["sensitivity"], "cubic", "nearest", 50.0)
 
 
 @cython.boundscheck(False)
@@ -78,9 +79,9 @@ cpdef double[:, ::1] resample_phantom_rgb(double min_wavelength, double max_wave
     rgb_mv = rgb
     # sampling rgb filter in wavelengths
     for i, wavelength in enumerate(spectrum.wavelengths):
-        rgb_mv[i, 0] = filter_r(wavelength)
-        rgb_mv[i, 1] = filter_g(wavelength)
-        rgb_mv[i, 2] = filter_b(wavelength)
+        rgb_mv[i, 0] = filter_red(wavelength)
+        rgb_mv[i, 1] = filter_green(wavelength)
+        rgb_mv[i, 2] = filter_blue(wavelength)
 
     return rgb_mv
 
@@ -163,11 +164,11 @@ cpdef (double, double, double) phantom_rgb_to_srgb(double r, double g, double b)
 
     Parameters
     ----------
-    r: float
+    r : float
         phantom R
-    g: float
+    g : float
         phantom G
-    b: float
+    b : float
         phantom B
 
     Returns
@@ -209,9 +210,10 @@ def plot_samples():
     .. image:: ../_static/images/plots/rgb_sensitivity.png
     """
     _, ax = plt.subplots()
-    ax.plot(R_samples[:, 0], R_samples[:, 1], color="r", label="R")
-    ax.plot(G_samples[:, 0], G_samples[:, 1], color="g", label="G")
-    ax.plot(B_samples[:, 0], B_samples[:, 1], color="b", label="B")
+    ax.plot(red_samples["wavelength"], red_samples["sensitivity"], color="r", label="R")
+    ax.plot(green_samples["wavelength"], green_samples["sensitivity"], color="g", label="G")
+    ax.plot(blue_samples["wavelength"], blue_samples["sensitivity"], color="b", label="B")
+    ax.axhline(c="k", ls="--", zorder=0)
     ax.set_xlim(350, 780)
     ax.set_xlabel("wavelength [nm]")
     ax.set_ylabel("sensitivity [A/W]")
@@ -254,6 +256,10 @@ def plot_RGB_filter(
     """
     if wavelengths is None:
         wavelengths = linspace(350, 780, 500)
+    else:
+        wavelengths = asarray(wavelengths)
+        if wavelengths.ndim != 1:
+            raise ValueError("wavelengths must be 1D vector-like.")
 
     if not isinstance(ax, Axes):
         if not isinstance(fig, Figure):
@@ -263,10 +269,12 @@ def plot_RGB_filter(
     else:
         fig = ax.get_figure()
 
-    ax.plot(wavelengths, [filter_r(i) for i in wavelengths], color="r", label="R")
-    ax.plot(wavelengths, [filter_g(i) for i in wavelengths], color="g", label="G")
-    ax.plot(wavelengths, [filter_b(i) for i in wavelengths], color="b", label="B")
+    ax.plot(wavelengths, [filter_red(i) for i in wavelengths], color="r", label="R")
+    ax.plot(wavelengths, [filter_green(i) for i in wavelengths], color="g", label="G")
+    ax.plot(wavelengths, [filter_blue(i) for i in wavelengths], color="b", label="B")
 
+    ax.set_xlim(wavelengths.min(), wavelengths.max())
+    ax.set_ylim(ymin=0.0)
     ax.set_xlabel("wavelength [nm]")
     ax.set_ylabel("sensitivity [A/W]")
 
