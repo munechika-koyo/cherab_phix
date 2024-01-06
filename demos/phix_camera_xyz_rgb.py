@@ -15,10 +15,10 @@ from raysect.optical.observer import (
     SpectralPowerPipeline2D,
 )
 
-from cherab.phix.machine import import_phix_mesh
-from cherab.phix.observer import import_phix_camera
+from cherab.phix.machine import load_pfc_mesh
+from cherab.phix.observer import load_camera
 from cherab.phix.observer.fast_camera.colour import RGBPipeline2D
-from cherab.phix.plasma import import_plasma
+from cherab.phix.plasma import load_plasma
 
 # Source root path
 ROOT = Path(__file__).parent.parent
@@ -31,13 +31,13 @@ ROOT = Path(__file__).parent.parent
 world = World()
 
 # import plasma
-plasma, eq = import_plasma(world)
+plasma, eq = load_plasma(world)
 
 # import phix mesh
-mesh = import_phix_mesh(world, reflection=True)
+mesh = load_pfc_mesh(world, reflection=True)
 
 # import phix camera
-camera = import_phix_camera(world)
+camera = load_camera(world)
 
 # %%
 # Define Observer pipeline
@@ -57,8 +57,8 @@ camera.frame_sampler = sampler
 # %%
 # Set camera parameters
 # ---------------------
-# pixels = (128, 256)  # [px]
-# camera.pixels = pixels  # if you change pixel resolution
+pixels = (128, 256)  # [px]
+camera.pixels = pixels  # if you change pixel resolution
 camera.spectral_rays = 1
 camera.spectral_bins = 50
 camera.per_pixel_samples = 10

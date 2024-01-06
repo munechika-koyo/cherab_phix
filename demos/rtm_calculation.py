@@ -11,12 +11,12 @@ from textwrap import dedent
 import numpy as np
 from raysect.core.scenegraph import print_scenegraph
 from raysect.optical import World
-from raysect.optical.observer import FullFrameSampler2D
+from raysect.optical.observer.sampler2d import FullFrameSampler2D
 
-from cherab.phix.machine import import_phix_mesh
-from cherab.phix.observer import import_phix_camera
-from cherab.phix.plasma import import_equilibrium
-from cherab.phix.tools.raytransfer import import_phix_rtc
+from cherab.phix.machine import load_pfc_mesh
+from cherab.phix.observer import load_camera
+from cherab.phix.plasma import load_equilibrium
+from cherab.phix.tools.raytransfer import load_rtc
 from cherab.tools.raytransfer import RayTransferPipeline2D
 
 # %%
@@ -57,16 +57,16 @@ sys.stdout = Logger(SAVE_DIR / "log.txt")
 world = World()
 
 # import phix equilibrium
-eq = import_equilibrium()
+eq = load_equilibrium()
 
 # import phix machine configuration
-mesh = import_phix_mesh(world, reflection=True)
+mesh = load_pfc_mesh(world, reflection=True)
 
 # import phix raytrasfer matrix
-rtm = import_phix_rtc(world, equilibrium=eq)
+rtm = load_rtc(world, equilibrium=eq)
 
 # import phix camera
-camera = import_phix_camera(world)
+camera = load_camera(world)
 
 # %%
 # Define Observer pipeline

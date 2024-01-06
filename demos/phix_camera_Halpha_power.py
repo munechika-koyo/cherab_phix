@@ -1,7 +1,7 @@
 """
 Ray-tracing simulation of fast camera
 =====================================
-Here, we simulate fast camera measurement focusing on :math:`\\text{H}_\\alpha` emission.
+Here, we simulate fast camera measurement focusing on H-alpha emission.
 """
 from datetime import datetime
 from pathlib import Path
@@ -12,9 +12,9 @@ from matplotlib import pyplot as plt
 from raysect.optical import World
 from raysect.optical.observer import PowerPipeline2D, SpectralPowerPipeline2D
 
-from cherab.phix.machine import import_phix_mesh
-from cherab.phix.observer import import_phix_camera
-from cherab.phix.plasma import import_plasma
+from cherab.phix.machine import load_pfc_mesh
+from cherab.phix.observer import load_camera
+from cherab.phix.plasma import load_plasma
 
 ROOT = Path(__file__).parent.parent
 
@@ -26,26 +26,27 @@ ROOT = Path(__file__).parent.parent
 world = World()
 
 # import plasma
-plasma, eq = import_plasma(world)
+plasma, eq = load_plasma(world)
 
 # import phix mesh
-mesh = import_phix_mesh(world, reflection=True)
+mesh = load_pfc_mesh(world, reflection=True)
 
 # import phix camera
-camera = import_phix_camera(world)
+camera = load_camera(world)
 
 # %%
 # Define Observer pipeline
 # ------------------------
-power = PowerPipeline2D(display_progress=False, name="power")
-spectral = SpectralPowerPipeline2D(display_progress=False, name="Spectrul_Power")
+power = PowerPipeline2D(name="power")
+spectral = SpectralPowerPipeline2D(name="Spectrul_Power")
 camera.pipelines = [power, spectral]
 
 # %%
 # Set camera parameters
 # ---------------------
-camera.min_wavelength = 650
-camera.max_wavelength = 660
+camera.pixels = (128, 256)
+camera.min_wavelength = 655.5
+camera.max_wavelength = 657
 camera.spectral_rays = 1
 camera.spectral_bins = 50
 camera.per_pixel_samples = 10

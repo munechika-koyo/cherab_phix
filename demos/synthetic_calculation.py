@@ -13,9 +13,9 @@ from matplotlib import pyplot as plt
 from raysect.optical import World
 from raysect.optical.observer import PowerPipeline2D, RGBAdaptiveSampler2D, RGBPipeline2D
 
-from cherab.phix.machine import import_phix_mesh
-from cherab.phix.observer import import_phix_camera
-from cherab.phix.plasma import import_plasma
+from cherab.phix.machine import load_pfc_mesh
+from cherab.phix.observer import load_camera
+from cherab.phix.plasma import load_plasma
 
 # %%
 # Path deffinition
@@ -55,13 +55,13 @@ sys.stdout = Logger(SAVE_DIR / "log.txt")
 world = World()
 
 # import plasma
-plasma, eq = import_plasma(world)
+plasma, eq = load_plasma(world)
 
 # import phix mesh
-mesh = import_phix_mesh(world, reflection=True)
+mesh = load_pfc_mesh(world, reflection=True)
 
 # import phix camera
-camera = import_phix_camera(world)
+camera = load_camera(world)
 
 # %%
 # Define Observer pipeline
