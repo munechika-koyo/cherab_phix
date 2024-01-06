@@ -12,7 +12,7 @@ build-backend = "mesonpy"
 [project]
 name = "cherab-phix"
 description = "Cherab spectroscopy framework: PHiX machine configuration"
-version = "1.2.0.dev0"
+version = "2.0.0.dev0"
 readme = "README.md"
 authors = [
     { name = "Koyo Munechika", email = "munechika.koyo@torus.nr.titech.ac.jp" },
@@ -29,11 +29,11 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Cython",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">= 3.8, < 3.11"
+requires-python = ">= 3.9, < 3.11"
 dependencies = [
     "numpy",
     "scipy",
@@ -135,3 +135,9 @@ skip = "pp* *_ppc64le *_i686 *_s390x"
 build-frontend = "build"
 test-requires = "pytest"
 test-command = "pytest --pyargs cherab.phix"
+
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure."
+]
