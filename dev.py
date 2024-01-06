@@ -227,6 +227,40 @@ def cython_lint():
 
 
 #######
+
+
+@cli.command()
+def test():
+    """Run tests.
+
+    Try to run all tests including pytest, import test, etc.
+    """
+    # === import test ===============================================
+    cmd = ["python", "-c", "import cherab.phix"]
+    click.echo(" ".join([str(p) for p in cmd]))
+
+    ret = subprocess.call(cmd)
+    if ret == 0:
+        print("✅ Importing test Passed")
+    else:
+        print("💥 Importing test Faild")
+        sys.exit(1)
+
+    # === pytest ====================================================
+    cmd = ["pytest", "--pyargs", "cherab.phix"]
+    click.echo(" ".join([str(p) for p in cmd]))
+
+    ret = subprocess.call(cmd)
+    if ret == 0:
+        print("✅ Pytest Passed")
+    else:
+        print("💥 Pytest Faild")
+        sys.exit(1)
+
+
+#######
+
+
 def config(tool: str):
     """Load configure data from pyproject.toml for tool table."""
     pyproject = BASE_DIR / "pyproject.toml"
