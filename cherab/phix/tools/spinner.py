@@ -222,7 +222,7 @@ class Spinner:
 
         if self._spin_process:
             self._stop_spin.set()
-            self._spin_process.join()
+            self._spin_process.join(timeout=0.5)
 
         self._clear_line()
         self._show_cursor()
