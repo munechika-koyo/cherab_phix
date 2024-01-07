@@ -17,6 +17,7 @@ from cherab.openadas import OpenADAS
 from cherab.tools.equilibrium import EFITEquilibrium
 
 from ..machine.wall_outline import VESSEL_WALL
+from ..tools import Spinner
 from .equilibrium import load_equilibrium
 from .species import PHiXSpecies
 
@@ -24,17 +25,24 @@ __all__ = ["load_plasma"]
 
 
 def load_plasma(
-    parent: Node, equilibrium: str = "phix10", species: object | None = None
+    parent: Node, eq_model: str = "phix10", species: object | None = None
 ) -> tuple[Plasma, EFITEquilibrium]:
-    """Helper function of generating PHiX plasma with emissions model:
-    :math:`\\mathrm{H}\\alpha, \\mathrm{H}\\beta, \\mathrm{H}\\gamma, \\mathrm{H}\\delta`.
+    """Helper function of generating PHiX plasma.
+
+    The plasma model is constructed by the plasma shape from the equilibrium data, the particle
+    species data including each particle's density and temperature profile which was estimated from
+    the experiment data, and the emission model of bremsstrahlung and line emission (H-alpha,
+    H-beta, H-gamma, and H-delta).
+
+    The equilibrium data is loaded by :func:`.load_equilibrium`.
 
     Parameters
     ----------
     parent
         Raysect's scene-graph parent node
-    equilibrium
-        equilibrium json file name in which TSC data is stored, by default ``"phix10"``
+    eq_model
+        equilibrium model name, by default ``"phix10"``.
+        This name corresponds to the json file name in the data directory.
     species
         user-defined species object having composition which is a list of
         :obj:`~cherab.core.Species` objects and electron distribution function attributes,
@@ -53,73 +61,85 @@ def load_plasma(
         >>>
         >>> world = World()
         >>> plasma, eq = load_plasma(world)
+        ✅ loading plasma ... (data from: phix10)
     """
-    print(f"loading plasma (data from: {equilibrium})...")
-    # create equilibrium instance
-    eq = load_equilibrium(model_variant=equilibrium)
+    with Spinner(f"loading plasma ... (data from: {eq_model})") as sp:
+        try:
+            # create equilibrium instance
+            eq = load_equilibrium(model_variant=eq_model)
 
-    # create atomic data source
-    adas = OpenADAS(permit_extrapolation=True)
+            # create atomic data source
+            adas = OpenADAS(permit_extrapolation=True)
 
-    # generate plasma object instance
-    plasma = Plasma(parent=parent, name="PHiX_plasma")
+            # generate plasma object instance
+            plasma = Plasma(parent=parent, name="PHiX_plasma")
 
-    # setting plasma properties
-    plasma.atomic_data = adas
-    plasma.integrator = NumericalIntegrator(step=0.001)
-    plasma.b_field = VectorAxisymmetricMapper(eq.b_field)
+            # setting plasma properties
+            plasma.atomic_data = adas
+            plasma.integrator = NumericalIntegrator(step=0.001)
+            plasma.b_field = VectorAxisymmetricMapper(eq.b_field)
 
-    # create plasma geometry as subtraction of two cylinders
-    inner_radius = VESSEL_WALL[:, 0].min()
-    outer_radius = VESSEL_WALL[:, 0].max()
-    height = VESSEL_WALL[:, 1].max() - VESSEL_WALL[:, 1].min()
+            # create plasma geometry as subtraction of two cylinders
+            inner_radius = VESSEL_WALL[:, 0].min()
+            outer_radius = VESSEL_WALL[:, 0].max()
+            height = VESSEL_WALL[:, 1].max() - VESSEL_WALL[:, 1].min()
 
-    inner_cylinder = Cylinder(inner_radius, height)
-    outer_cylinder = Cylinder(outer_radius, height)
+            inner_cylinder = Cylinder(inner_radius, height)
+            outer_cylinder = Cylinder(outer_radius, height)
 
-    plasma.geometry = Subtract(outer_cylinder, inner_cylinder)
-    plasma.geometry_transform = translate(0, 0, VESSEL_WALL[:, 1].min())
+            plasma.geometry = Subtract(outer_cylinder, inner_cylinder)
+            plasma.geometry_transform = translate(0, 0, VESSEL_WALL[:, 1].min())
 
-    # apply species to plasma
-    if not (hasattr(species, "composition") and hasattr(species, "electron_distribution")):
-        species = PHiXSpecies(equilibrium=eq)
+            # apply species to plasma
+            if not (hasattr(species, "composition") and hasattr(species, "electron_distribution")):
+                species = PHiXSpecies(equilibrium=eq)
 
-    if isinstance(composition := getattr(species, "composition", None), Iterable):
-        for element in composition:
-            if not isinstance(element, Species):
-                raise TypeError("element of composition attr must be a cherab.core.Species object.")
-        plasma.composition = composition
-    else:
-        raise TypeError("composition attr must be an iterable object.")
+            if isinstance(composition := getattr(species, "composition", None), Iterable):
+                for element in composition:
+                    if not isinstance(element, Species):
+                        raise TypeError(
+                            "element of composition attr must be a cherab.core.Species object."
+                        )
+                plasma.composition = composition
+            else:
+                raise TypeError("composition attr must be an iterable object.")
 
-    if isinstance(
-        electron_distribution := getattr(species, "electron_distribution", None),
-        DistributionFunction,
-    ):
-        plasma.electron_distribution = electron_distribution
-    else:
-        raise TypeError("electron_distribution must be a cherab.core.DistributionFunction object.")
+            if isinstance(
+                electron_distribution := getattr(species, "electron_distribution", None),
+                DistributionFunction,
+            ):
+                plasma.electron_distribution = electron_distribution
+            else:
+                raise TypeError(
+                    "electron_distribution must be a cherab.core.DistributionFunction object."
+                )
 
-    # apply emission from plasma
-    h_alpha = Line(hydrogen, 0, (3, 2))  # , wavelength=656.279)
-    h_beta = Line(hydrogen, 0, (4, 2))  # , wavelength=486.135)
-    h_gamma = Line(hydrogen, 0, (5, 2))  # , wavelength=434.0472)
-    h_delta = Line(hydrogen, 0, (6, 2))  # , wavelength=410.1734)
-    # ciii_777 = Line(
-    #     carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
-    # )  # , wavelength=770.743)
-    plasma.models = [
-        Bremsstrahlung(),
-        ExcitationLine(h_alpha),
-        ExcitationLine(h_beta),
-        ExcitationLine(h_gamma),
-        ExcitationLine(h_delta),
-        # ExcitationLine(ciii_777),
-        RecombinationLine(h_alpha),
-        RecombinationLine(h_beta),
-        RecombinationLine(h_gamma),
-        RecombinationLine(h_delta),
-        # RecombinationLine(ciii_777),
-    ]
+            # apply emission from plasma
+            h_alpha = Line(hydrogen, 0, (3, 2))  # , wavelength=656.279)
+            h_beta = Line(hydrogen, 0, (4, 2))  # , wavelength=486.135)
+            h_gamma = Line(hydrogen, 0, (5, 2))  # , wavelength=434.0472)
+            h_delta = Line(hydrogen, 0, (6, 2))  # , wavelength=410.1734)
+            # ciii_777 = Line(
+            #     carbon, 2, ("1s2 2p(2P°) 3d 1D°", " 1s2 2p(2P°) 3p  1P")
+            # )  # , wavelength=770.743)
+            plasma.models = [
+                Bremsstrahlung(),
+                ExcitationLine(h_alpha),
+                ExcitationLine(h_beta),
+                ExcitationLine(h_gamma),
+                ExcitationLine(h_delta),
+                # ExcitationLine(ciii_777),
+                RecombinationLine(h_alpha),
+                RecombinationLine(h_beta),
+                RecombinationLine(h_gamma),
+                RecombinationLine(h_delta),
+                # RecombinationLine(ciii_777),
+            ]
+
+            sp.ok()
+
+        except Exception as e:
+            sp.fail()
+            raise e
 
     return (plasma, eq)

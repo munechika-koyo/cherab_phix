@@ -9,7 +9,7 @@ from cherab.tools.equilibrium import EFITEquilibrium
 
 
 @pytest.mark.parametrize(
-    ["equilibrium", "expectation"],
+    ["eq_model", "expectation"],
     [
         pytest.param("phix10", does_not_raise(), id="phix10"),
         pytest.param("phix11", pytest.raises(FileNotFoundError), id="phix11"),
@@ -18,9 +18,9 @@ from cherab.tools.equilibrium import EFITEquilibrium
         pytest.param("phix14", does_not_raise(), id="phix14"),
     ],
 )
-def test_load_plasma(equilibrium, expectation):
+def test_load_plasma(eq_model, expectation):
     with expectation:
         world = World()
-        plasma, eq = load_plasma(world, equilibrium=equilibrium)
+        plasma, eq = load_plasma(world, eq_model=eq_model)
         assert isinstance(plasma, Plasma)
         assert isinstance(eq, EFITEquilibrium)
