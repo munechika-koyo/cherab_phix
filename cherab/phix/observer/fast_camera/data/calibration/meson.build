@@ -13,7 +13,7 @@ data_sources = [
   'shot_17393_ideal.ccc',
 ]
 
-py3.install_sources(
+py.install_sources(
   data_sources,
   subdir: 'cherab/phix/observer/fast_camera/data/calibration',
 )

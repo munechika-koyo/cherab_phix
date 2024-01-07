@@ -15,7 +15,7 @@ data_sources = [
   'gray.npz',
 ]
 
-py3.install_sources(
+py.install_sources(
   data_sources,
   subdir: 'cherab/phix/observer/fast_camera/data/sensitivity',
 )

@@ -15,7 +15,7 @@ data_sources = [
   'phix14.json',
 ]
 
-py3.install_sources(
+py.install_sources(
   data_sources,
   subdir: 'cherab/phix/plasma/data',
 )

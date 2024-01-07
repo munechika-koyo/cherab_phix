@@ -16,7 +16,7 @@ data_sources = [
   'data/PCTFE.json',
 ]
 
-py3.install_sources(
+py.install_sources(
   data_sources,
   subdir: 'cherab/lhd/machine/material/data',
 )

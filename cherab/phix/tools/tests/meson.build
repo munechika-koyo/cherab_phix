@@ -13,10 +13,10 @@ py.install_sources(
 
 
 data_sources = [
-  'Halpha_emissivity.npz',
+  'data/Halpha_emissivity.npz',
 ]
 
-py3.install_sources(
+py.install_sources(
   data_sources,
   subdir: 'cherab/phix/tools/tests/data'
 )
