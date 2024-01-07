@@ -30,8 +30,17 @@ def load_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
         >>> from cherab.phix.plasma import impot_equilibrium
         >>> equilibrium = impot_equilibrium()
     """
-    with files("cherab.phix.plasma.data").joinpath(f"{model_variant}.json").open("r") as f:
-        eq_data = json.load(f)
+    model_variants = [f.stem for f in files("cherab.phix.plasma.data").glob("*.json")]  # type: ignore
+    model_variants.sort()
+
+    try:
+        with files("cherab.phix.plasma.data").joinpath(f"{model_variant}.json").open("r") as f:
+            eq_data = json.load(f)
+    except FileNotFoundError as e:
+        raise FileNotFoundError(
+            f"equilibrium data for '{model_variant}' is not found. "
+            + f"Please select one from {model_variants}"
+        ) from e
 
     r = eq_data["r"]
     z = eq_data["z"]
