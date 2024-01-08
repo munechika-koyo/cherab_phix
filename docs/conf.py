@@ -161,6 +161,7 @@ intersphinx_mapping = {
     "plotly": ("https://plotly.com/python-api-reference/", None),
     "calcam": ("https://euratom-software.github.io/calcam/html/", None),
     "contourpy": ("https://contourpy.readthedocs.io/en/latest/", None),
+    "cherab-inversion": ("https://cherab-inversion.readthedocs.io/en/stable/", None),
 }
 
 intersphinx_timeout = 10
@@ -183,7 +184,7 @@ nbsphinx_thumbnails = {
     "notebooks/observer/fast_camera_LoS": "_static/images/nbsphinx_thumbnails/PHiX_CAD_LoS.png",
     "notebooks/observer/fast_camera_raytracing": "_static/images/plots/rgb.png",
     "notebooks/others/Integral_approx": "_static/images/index-images/example_gallery.png",
-    "notebooks/inversion/rtm2svd": "_static/images/index-images/example_gallery.png",
+    "notebooks/others/rtm2svd": "_static/images/index-images/example_gallery.png",
     "notebooks/inversion/tomography_experiment": "_static/images/frames.gif",
 }
 

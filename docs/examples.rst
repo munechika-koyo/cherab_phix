@@ -28,12 +28,14 @@ Observer
 
 Inversion
 ----------
+Tomographic inversion examples use the :obj:`cherab.inversion` package, which is not included in the
+`cherab.phix` package. Please see the `documentation <https://cherab-inversion.readthedocs.io/>`_
+for the :obj:`cherab.inversion` package if you wish to use this functionality.
+
 .. nbgallery::
     :glob:
 
-    notebooks/inversion/L_curve
     notebooks/inversion/calc_rtm
-    notebooks/inversion/rtm2svd
     notebooks/inversion/RTM_analysis
     notebooks/inversion/tomography_synthetic
     notebooks/inversion/tomography_experiment
