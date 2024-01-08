@@ -14,7 +14,8 @@ __all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
 
 
 def profile_1D_to_2D(data_1D: NDArray, rtc: RayTransferCylinder) -> NDArray:
-    """Convert 1D vector to 2D array according to raytrasfer object's ``invert_voxel_map``.
+    """Convert 1D vector to 2D array according to raytrasfer object's
+    :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferObject.invert_voxel_map`.
 
     Parameters
     ----------
@@ -43,7 +44,8 @@ def profile_2D_to_1D(
     data_2D: NDArray,
     rtc: RayTransferCylinder,
 ) -> NDArray:
-    """Convert 2D array to 1D vector according to raytrasfer object's ``voxel_map``.
+    """Convert 2D array to 1D vector according to raytrasfer object's
+    :obj:`~cherab.tools.raytransfer.raytransfer.RayTransferObject.voxel_map`.
 
     Parameters
     ----------

@@ -27,8 +27,8 @@ def load_equilibrium(model_variant: str = "phix10") -> EFITEquilibrium:
     --------
     .. prompt:: python >>> auto
 
-        >>> from cherab.phix.plasma import impot_equilibrium
-        >>> equilibrium = impot_equilibrium()
+        >>> from cherab.phix.plasma import load_equilibrium
+        >>> equilibrium = load_equilibrium()
     """
     model_variants = [f.stem for f in files("cherab.phix.plasma.data").glob("*.json")]  # type: ignore
     model_variants.sort()

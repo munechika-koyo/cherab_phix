@@ -31,8 +31,8 @@ def load_plasma(
 
     The plasma model is constructed by the plasma shape from the equilibrium data, the particle
     species data including each particle's density and temperature profile which was estimated from
-    the experiment data, and the emission model of bremsstrahlung and line emission (H-alpha,
-    H-beta, H-gamma, and H-delta).
+    the experiment data, and the emission model of bremsstrahlung and line emission (Hα, Hβ, Hγ, and
+    Hδ).
 
     The equilibrium data is loaded by :func:`.load_equilibrium`.
 

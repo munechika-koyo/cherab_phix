@@ -179,6 +179,7 @@ def show_PFCs_3D(fig: Figure | None = None, fig_size: tuple[int, int] = (700, 50
 
     Returns
     -------
+    :obj:`~plotly.graph_objects.Figure`
         plotly Figure object
 
     Examples
