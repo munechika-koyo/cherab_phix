@@ -62,7 +62,9 @@
    :recursive:
 {% for item in all_modules %}
 {% if not item.endswith("tests") %}
+{% if not item.endswith("data") %}
    {{ item.split(".")[-1] }}
+{% endif %}
 {% endif %}
 {%- endfor %}
 {% endif %}
