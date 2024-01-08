@@ -32,6 +32,8 @@ the following command to complete the configuration:
 If you are curiouse about it more, please see the `pre-commit HP <https://pre-commit.com>`_.
 
 
+.. _dev-cli:
+
 The ``dev.py`` interface
 ------------------------
 This interface has many options, allowing you to perform all regular development-related tasks

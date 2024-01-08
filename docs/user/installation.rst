@@ -8,9 +8,9 @@ Installation
 
 .. note::
 
-    Currently (7/7/2023), ``cherab-phix`` recommends using python3.8 or 3.9 because there are built
+    Currently (1/3/2024), ``cherab-phix`` recommends using python3.9 or 3.10 because there are built
     distributions in the `raysect`_ and `cherab`_ dependencies at PyPI.
-    Although the user can take the python3.10+, both `raysect`_ and `cherab`_ must be compiled manually
+    Although the user can take the python3.11+, both `raysect`_ and `cherab`_ must be compiled manually
     from sources.
 
     The rest of dependencies are listed in ``pyproject.toml`` file in source directory,
@@ -69,34 +69,52 @@ can be accomplished by the following commands at the source root directory:
     git lfs fetch
 
 
-Building and Installing
------------------------
-For pip users, run the following command:
+Editable installation
+---------------------
+The editable installation is the way to install the package without copying the source codes to
+the python site-packages directory by adding the source path to the python import path.
+To not violate existing python packages, the editable installation is recommended to be performed
+in a virtual environment using ``venv`` or ``conda``.
+
+1. ``venv`` + ``pip``
+*********************
+The user who is familiar with ``venv`` can use the following commands:
 
 .. prompt:: bash
 
-    python -m pip install -e .[dev,doc]
+    python -m venv cherab-phix-dev  # create a virtual environment
+    source cherab-phix-dev/bin/activate  # activate the virtual environment
+    python -m pip install -vv --no-build-isolation --editable .[dev,doc]  # install the package and dependencies
 
-``-e`` or ``--editable`` option allows the user to install the package as the editable mode.
+``--editable`` option allows the user to install the package as the editable mode.
 
-For conda users, creating a virtual environment is the most useful process:
-
-.. prompt:: bash
-
-    conda env create -f environment.yaml  # `mamba` works too for this command
-    conda activate cherab-phix-dev
-
-And the same pip command above enables the user to install the package.
-
-Alternatively, the ``dev.py`` CLI is available:
+2. ``conda`` + ``pip``
+**********************
+The user who is familiar with ``conda`` can use the following commands:
 
 .. prompt:: bash
 
-    python dev.py build
-    python dev.py install
+    conda env create -f environment.yaml  # create a virtual environment and install dependencies
+    conda activate cherab-phix-dev  # activate the virtual environment
+    python -m pip install -vv --no-build-isolation --no-deps --editable .  # install the package
 
-These commands enable the user to compile cython codes and install it as the editable mode.
-This interface has some options, allowing you to perform all regular development-related tasks
+`mamba <https://mamba.readthedocs.io/en/latest/>`_ instead of ``conda`` is the recommended command
+to create a virtual environment and install dependencies much faster.
+
+
+3. ``conda`` + ``dev.py`` CLI
+******************************
+There is a CLI interface ``dev.py`` to perform all regular development-related tasks
 (building, building docs, formatting codes, etc.).
-Here we document a few of the most commonly used options; run ``python dev.py --help`` or ``--help``
-on each of the subcommands for more details.
+The user can also use this CLI to install the package as the ``setuptools``'s editable mode.
+Please try the following commands if there is something wrong with the above commands:
+
+.. prompt:: bash
+
+    conda env create -f environment.yaml  # create a virtual environment and install dependencies
+    conda activate cherab-phix-dev  # activate the virtual environment
+    python dev.py build  # compile cython codes
+    python dev.py install  # install the package as the editable mode
+
+
+The details of the CLI can be found at :ref:`dev-cli`.
