@@ -3,7 +3,7 @@ import pytest
 from raysect.optical import World
 
 from cherab.phix.tools.raytransfer import load_rtc
-from cherab.phix.tools.utils import calc_contours, profile_1D_to_2D, profile_2D_to_1D
+from cherab.phix.tools.utils import calc_contours, profile_1D_to_2D, profile_2D_to_1D, rz_grids
 
 
 @pytest.fixture
@@ -40,3 +40,9 @@ def test_profile_2D_to_1D(rtc, data_1d, data_2d):
 def test_calc_contours(rtc, data_2d):
     contours = calc_contours(data_2d, 0.5, rtc=rtc)
     assert len(contours) == 3
+
+
+def test_rz_grid(rtc):
+    r_grid, z_grid = rz_grids(rtc)
+    assert r_grid.shape == (rtc.material.grid_shape[0],)
+    assert z_grid.shape == (rtc.material.grid_shape[2],)

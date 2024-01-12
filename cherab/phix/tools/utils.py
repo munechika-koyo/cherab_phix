@@ -10,7 +10,7 @@ from cherab.tools.raytransfer import RayTransferCylinder
 
 from .raytransfer import load_rtc
 
-__all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours"]
+__all__ = ["profile_1D_to_2D", "profile_2D_to_1D", "calc_contours", "rz_grids"]
 
 
 def profile_1D_to_2D(data_1D: NDArray, rtc: RayTransferCylinder) -> NDArray:
@@ -111,14 +111,63 @@ def calc_contours(
             world = World()
             rtc = load_rtc(world)
 
-        z = np.linspace(-1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2])
-        r = np.linspace(
-            rtc.material.rmin,
-            rtc.material.rmin + rtc.material.dr * rtc.material.grid_shape[0],
-            rtc.material.grid_shape[0],
-        )
+        r, z = rz_grids(rtc)
 
     # create contour generator
     cont_gen = contour_generator(x=r, y=z, z=np.flipud(profile.T))
 
     return cont_gen.lines(level)
+
+
+def rz_grids(rtc: RayTransferCylinder) -> tuple[np.ndarray, np.ndarray]:
+    """Compute the :math:`R - Z` grids from the given RayTransferCylinder object.
+
+    Each grid point corresponds to the center of each cell.
+
+    Parameters
+    ----------
+    rtc
+        RayTransferCylinder object
+
+    Returns
+    -------
+    tuple[numpy.ndarray, numpy.ndarray]
+        (:math:`R` grid 1-D array, :math:`Z` grid 1-D array)
+
+    Examples
+    --------
+    .. prompt:: python >>> auto
+
+        >>> from raysect.optical import World
+        >>> from cherab.phix.tools.raytransfer import load_rtc
+        >>> from cherab.phix.tools.utils import rz_grids
+        >>> world = World()
+        >>> rtc = load_rtc(world)
+        >>> r, z = rz_grids(rtc)
+        >>> r.shape
+        (90,)
+        >>> z.shape
+        (165,)
+
+    Let us plot some grid points.
+
+    .. prompt:: python >>> auto
+
+        >>> rr, zz = np.meshgrid(r, z)
+        >>> import matplotlib.pyplot as plt
+        >>> plt.scatter(rr[:5, :5], zz[:5, :5], marker=".", color="k")
+
+    .. image:: ../../_static/images/plots/rz_grids.png
+    """
+    dr, dz = rtc.material.dr, rtc.material.dz
+    nr, _, nz = rtc.material.grid_shape
+
+    rmin = rtc.material.rmin + 0.5 * dr
+    zmin = rtc.transform[2, 3] + 0.5 * dz
+    rmax = rmin + (nr - 1) * dr
+    zmax = zmin + (nz - 1) * dz
+
+    r = np.linspace(rmin, rmax, nr, endpoint=True)
+    z = np.linspace(zmin, zmax, nz, endpoint=True)
+
+    return r, z
