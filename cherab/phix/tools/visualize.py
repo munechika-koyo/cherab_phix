@@ -1,10 +1,13 @@
 """Modules to offer visualization tools."""
 from __future__ import annotations
 
+from typing import Literal, TypeAlias
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
-from matplotlib.cm import ScalarMappable
+from matplotlib.axis import XAxis, YAxis
+from matplotlib.cm import ScalarMappable, get_cmap
 from matplotlib.colors import Colormap, ListedColormap, LogNorm, Normalize, SymLogNorm
 from matplotlib.figure import Figure
 from matplotlib.ticker import (
@@ -18,7 +21,7 @@ from matplotlib.ticker import (
     ScalarFormatter,
     SymmetricalLogLocator,
 )
-from mpl_toolkits.axes_grid1.axes_grid import CbarAxesBase, ImageGrid
+from mpl_toolkits.axes_grid1.axes_grid import ImageGrid
 from numpy.typing import NDArray
 from raysect.optical import Ray, World
 
@@ -26,22 +29,25 @@ from cherab.tools.raytransfer.raytransfer import RayTransferCylinder
 
 from ..machine.wall_outline import INNER_LIMITER, OUTER_LIMITER
 from .raytransfer import load_rtc
-from .utils import calc_contours
+from .utils import calc_contours, rz_grids
 
 __all__ = [
     "plot_ray",
     "show_profiles",
     "show_profile",
-    "set_axis_properties",
-    "set_cbar_format",
+    "set_xy_axis_ticks",
+    "set_axis_format",
     "set_norm",
     "CMAP_RED",
 ]
 
+# Type aliases
+PlotMode: TypeAlias = Literal["scalar", "log", "centered", "symlog", "asinh"]
+FormatMode: TypeAlias = Literal["scalar", "log", "symlog", "asinh", "percent", "eng"]
 
 # custom Red colormap extracted from "RdBu_r"
-cmap = plt.get_cmap("RdBu_r")
-CMAP_RED = ListedColormap(cmap(np.linspace(0.5, 1.0, 256)))
+cmap = get_cmap("RdBu_r")
+CMAP_RED = ListedColormap(list(cmap(np.linspace(0.5, 1.0, 256))))
 
 
 def plot_ray(ray: Ray, world: World):
@@ -73,8 +79,8 @@ def show_profiles(
     vmax: float | None = None,
     vmin: float | None = None,
     axes_pad: float = 0.02,
-    cbar_mode: str = "single",
-    plot_mode: str = "scalar",
+    cbar_mode: Literal["single", "each"] = "single",
+    plot_mode: PlotMode = "scalar",
     linear_width: float = 1.0,
 ) -> tuple[Figure, ImageGrid]:
     """Show in-phix-limiter 2D profiles such as emission profile.
@@ -106,13 +112,10 @@ def show_profiles(
     axes_pad
         ImageGrid's parameter to set the interval between axes, by default 0.02
     cbar_mode
-        ImgeGrid's parameter to set colorbars in ``"single"`` axes or ``"each"`` axes,
-        by default ``"single"``
+        ImgeGrid's parameter to set colorbars, by default ``"single"``
     plot_mode
-        the way of normalize the data scale.
-        Must select one in {``"scalar"``, ``"log"``, ``"centered"``, ``"symlog"``, ``"asinh"``},
-        by default ``"scalar"``.
-        Each mode corresponds to the :obj:`~matplotlib.colors.Normalize` object as follows.
+        the way of normalize the data scale, by default ``"scalar"``.
+        Each mode corresponds to the specific :obj:`~matplotlib.colors.Normalize` object.
     linear_width
         linear width of asinh/symlog norm, by default 1.0
 
@@ -194,8 +197,8 @@ def show_profiles(
         grids[i].plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
         grids[i].plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "k")
 
-        # set each axis properties
-        set_axis_properties(grids[i])
+        # set both x and y axis properties
+        set_xy_axis_ticks(grids[i])
 
     # set axis labels
     nrow, ncol = grids.get_geometry()
@@ -207,10 +210,10 @@ def show_profiles(
     # create colorbar objects and store them into a list
     cbars = []
     if cbar_mode == "each":
-        for i, grid in enumerate(grids):
+        for i, grid in enumerate(grids.axes_all):
             extend = _set_cbar_extend(vmins[i], vmaxs[i], _vmins[i], _vmaxs[i])
             cbar = plt.colorbar(grid.images[0], grids.cbar_axes[i], extend=extend)
-            set_cbar_format(cbar.ax, plot_mode, linear_width=linear_width)
+            set_axis_format(cbar.ax.yaxis, plot_mode, linear_width=linear_width)
             cbars.append(cbar)
 
     else:  # cbar_mode == "single"
@@ -220,7 +223,7 @@ def show_profiles(
         norm = set_norm(plot_mode, vmin, vmax, linear_width=linear_width)
         mappable = ScalarMappable(norm=norm, cmap=cmap)
         cbar = plt.colorbar(mappable, grids.cbar_axes[0], extend=extend)
-        set_cbar_format(cbar.ax, plot_mode, linear_width=linear_width)
+        set_axis_format(cbar.ax.yaxis, plot_mode, linear_width=linear_width)
         cbars.append(cbar)
 
     # set colorbar label at the last cax
@@ -231,16 +234,16 @@ def show_profiles(
 
 def show_profile(
     axes: Axes,
-    profile: NDArray,
+    profile,
     cmap: str | Colormap = CMAP_RED,
     rtc: RayTransferCylinder | None = None,
     vmax: float | None = None,
     vmin: float | None = None,
     plot_contour: bool = True,
     levels: NDArray | None = None,
-    plot_mode: str = "scalar",
+    plot_mode: PlotMode = "scalar",
     linear_width: float = 1.0,
-    aspect: str = "equal",
+    aspect: Literal["equal", "auto"] = "equal",
 ) -> list[NDArray] | None:
     """Show in-phix-limiter 2D profile with :obj:`~matplotlib.axes.Axes.pcolormesh` and plot their
     contours.
@@ -264,10 +267,8 @@ def show_profile(
     levels : 1D array-like, optional
         contour's level array, by default 1D array having 10 numbers in range of 0 to the maximum value
     plot_mode
-        change the way of normalize the data scale.
-        Must select one in {``"scalar"``, ``"log"``, ``"centered"``, ``"symlog"``, ``"asinh"``},
-        by default ``"scalar"``.
-        Each mode corresponds to the :obj:`~matplotlib.colors.Normalize` object as follows.
+        change the way of normalize the data scale, by default ``"scalar"``.
+        Each mode corresponds to the specific :obj:`~matplotlib.colors.Normalize` object.
     linear_width
         linear width of asinh/symlog norm, by default 1.0
     aspect
@@ -278,6 +279,14 @@ def show_profile(
     list[NDArray] | None
         list of contour line array :math:`(R, Z)` if `plot_contour` is True.
     """
+    # validate profile
+    try:
+        profile = np.asarray_chkfinite(profile)
+    except Exception as e:
+        raise ValueError("profile must be 2D array-like.") from e
+    if profile.ndim != 2:
+        raise ValueError("profile must be 2D array-like.")
+
     # set axes option
     axes.set_aspect(aspect)
 
@@ -287,17 +296,12 @@ def show_profile(
         rtc = load_rtc(world)
 
     # RZ grid
-    z = np.linspace(-1 * rtc.transform[2, 3], rtc.transform[2, 3], rtc.material.grid_shape[2])
-    r = np.linspace(
-        rtc.material.rmin,
-        rtc.material.rmin + rtc.material.dr * rtc.material.grid_shape[0],
-        rtc.material.grid_shape[0],
-    )
+    r, z = rz_grids(rtc)
     rr, zz = np.meshgrid(r, z)
 
     # set vmax, vmin
-    vmax = np.asarray_chkfinite(profile).max() if vmax is None else vmax
-    vmin = np.asarray_chkfinite(profile).min() if vmin is None else vmin
+    vmax = np.amax(profile) if vmax is None else vmax
+    vmin = np.amin(profile) if vmin is None else vmin
 
     # set norm
     norm = set_norm(plot_mode, vmin, vmax, linear_width=linear_width)
@@ -328,43 +332,77 @@ def show_profile(
     axes.plot(OUTER_LIMITER[:, 0], OUTER_LIMITER[:, 1], "k")
     axes.plot(INNER_LIMITER[:, 0], INNER_LIMITER[:, 1], "k")
 
-    # set each axis properties
-    set_axis_properties(axes)
+    # set both x and y axis properties
+    set_xy_axis_ticks(axes)
 
     return lines
 
 
-def set_axis_properties(axes: Axes) -> None:
-    """Set x-, y-axis property.
-
-    This function set axis properties such as tick direction, tick size, and so on.
-    The minor tick interval is set to 0.05.
+def set_xy_axis_ticks(
+    axes: Axes,
+    bases: tuple[float, float] = (5e-2, 5e-2),
+) -> None:
+    """Set minor locators and ticks parameters of both x and y axes.
 
     Parameters
     ----------
     axes
-        matplotlib Axes object
+        matplotlib Axes object to set ticks
+    bases
+        base of minor ticks
+
+    Examples
+    --------
+
+    .. prompt:: python
+
+        import numpy as np
+        from matplotlib import pyplot as plt
+        from cherab.phix.tools.visualize import set_xy_axis_ticks
+
+        x = np.linspace(0, 1, 100)
+        y = np.sin(2 * np.pi * x)
+
+        fig, axes = plt.subplots(1, 2)
+        axes[0].plot(x, y)
+        axes[1].plot(x, y)
+        set_xy_axis_ticks(axes[1])
+        plt.show()
+
+
+    .. figure:: ../../_static/images/set_xy_axis_ticks.png
+        :align: center
+
+        The right figure is configured by `set_xy_axis_ticks` function.
     """
-    axes.xaxis.set_minor_locator(MultipleLocator(0.05))
-    axes.yaxis.set_minor_locator(MultipleLocator(0.05))
+    axes.xaxis.set_minor_locator(MultipleLocator(bases[0]))
+    axes.yaxis.set_minor_locator(MultipleLocator(bases[1]))
     axes.tick_params(direction="in", labelsize=10, which="both", top=True, right=True)
 
 
-def set_cbar_format(
-    cax: CbarAxesBase | Axes, formatter: str, linear_width: float = 1.0, **kwargs
+def set_axis_format(
+    axis: XAxis | YAxis,
+    formatter: FormatMode | PlotMode,
+    linear_width: float = 1.0,
+    offset_position: Literal["left", "right"] = "left",
+    **kwargs,
 ) -> None:
-    """Set colorbar's locator and formatter.
+    """Set axis format.
+
+    Set specified axis major formatter and both corresponding major and minor locators.
 
     Parameters
     ----------
-    cax
-        colorbar axes object
+    axis
+        matplotlib axis object
     formatter
-        formatter for colorbar yaxis major locator.
-        Must select one in
-        {``"scalar"``, ``"log"``, ``"symlog"``, ``"asinh"``, ``percent``, ``eng``}
+        formatter mode of the axis. Values in non-implemented modes are set to
+        :obj:`~matplotlib.ticker.ScalarFormatter` with ``useMathText=True``.
     linear_width
         linear width of asinh/symlog norm, by default 1.0
+    offset_position
+        position of the offset text like :math:`\\times 10^3`, by default ``"left"``.
+        This parameter only affects `~matplotlib.axis.YAxis` object.
     **kwargs
         keyword arguments for formatter
     """
@@ -400,21 +438,21 @@ def set_cbar_format(
         major_locator = AutoLocator()
         minor_locator = AutoMinorLocator()
 
-    # set colorbar's locator and formatter
-    cax.yaxis.set_offset_position("left")
-    cax.yaxis.set_major_formatter(fmt)
-    cax.yaxis.set_major_locator(major_locator)
-    cax.yaxis.set_minor_locator(minor_locator)
+    # set axis properties
+    if isinstance(axis, YAxis):
+        axis.set_offset_position(offset_position)
+    axis.set_major_formatter(fmt)
+    axis.set_major_locator(major_locator)
+    axis.set_minor_locator(minor_locator)
 
 
-def set_norm(mode: str, vmin: float, vmax: float, linear_width: float = 1.0) -> Normalize:
-    """Set variouse :obj:`~matplotlib.colors.Normalize` object.
+def set_norm(mode: PlotMode, vmin: float, vmax: float, linear_width: float = 1.0) -> Normalize:
+    """Set specific :obj:`~matplotlib.colors.Normalize` object.
 
     Parameters
     ----------
     mode
         the way of normalize the data scale.
-        Must select one in {``"scalar"``, ``"log"``, ``"centered"``, ``"symlog"``, ``"asinh"``}
     vmin
         minimum value of the profile.
     vmax
@@ -435,7 +473,7 @@ def set_norm(mode: str, vmin: float, vmax: float, linear_width: float = 1.0) -> 
         norm = LogNorm(vmin=vmin, vmax=vmax)
 
     elif mode == "symlog":
-        norm = SymLogNorm(linthresh=linear_width, vmin=-1 * absolute, vmax=absolute)
+        norm = SymLogNorm(linthresh=linear_width, vmin=-1 * absolute, vmax=absolute)  # type: ignore
 
     elif mode == "centered":
         norm = Normalize(vmin=-1 * absolute, vmax=absolute)

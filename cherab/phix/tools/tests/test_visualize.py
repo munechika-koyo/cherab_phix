@@ -14,9 +14,9 @@ from raysect.optical import World
 
 from cherab.phix.tools.raytransfer import load_rtc
 from cherab.phix.tools.visualize import (
-    set_axis_properties,
-    set_cbar_format,
+    set_axis_format,
     set_norm,
+    set_xy_axis_ticks,
     show_profile,
     show_profiles,
 )
@@ -33,8 +33,8 @@ def profile2d():
     return np.load(path)["emiss"]
 
 
-def test_set_axis_properties(axes):
-    set_axis_properties(axes)
+def test_set_xy_axis_ticks(axes):
+    set_xy_axis_ticks(axes)
 
 
 @pytest.mark.parametrize(
@@ -49,10 +49,12 @@ def test_set_axis_properties(axes):
         pytest.param("eng", {"unit": "m"}, "eng", does_not_raise(), id="eng"),
     ],
 )
-def test_set_cbar_format(formatter, kwargs, expected_formatter, expectation):
+def test_set_axis_format(formatter, kwargs, expected_formatter, expectation):
     _, ax = plt.subplots()
     with expectation:
-        set_cbar_format(ax, formatter, **kwargs)
+        set_axis_format(ax.xaxis, formatter, **kwargs)
+        assert expected_formatter.capitalize() in ax.xaxis.get_major_formatter().__class__.__name__
+        set_axis_format(ax.yaxis, formatter, **kwargs)
         assert expected_formatter.capitalize() in ax.yaxis.get_major_formatter().__class__.__name__
 
 
