@@ -297,7 +297,6 @@ def show_profile(
 
     # RZ grid
     r, z = rz_grids(rtc)
-    rr, zz = np.meshgrid(r, z)
 
     # set vmax, vmin
     vmax = np.amax(profile) if vmax is None else vmax
@@ -311,7 +310,7 @@ def show_profile(
     profile = np.ma.masked_array(profile, mask)
 
     # show pcolormesh
-    axes.pcolormesh(rr, zz, np.flipud(profile.T), cmap=cmap, norm=norm, shading="auto")
+    axes.pcolormesh(r, z, profile.T, cmap=cmap, norm=norm, shading="auto")
 
     # plot contour
     if plot_contour:
@@ -340,7 +339,8 @@ def show_profile(
 
 def set_xy_axis_ticks(
     axes: Axes,
-    bases: tuple[float, float] = (5e-2, 5e-2),
+    x_interval: float | None = 5e-2,
+    y_interval: float | None = 5e-2,
 ) -> None:
     """Set minor locators and ticks parameters of both x and y axes.
 
@@ -348,8 +348,10 @@ def set_xy_axis_ticks(
     ----------
     axes
         matplotlib Axes object to set ticks
-    bases
-        base of minor ticks
+    x_interval
+        interval of x axis, by default 5e-2
+    y_interval
+        interval of y axis, by default 5e-2
 
     Examples
     --------
@@ -375,8 +377,10 @@ def set_xy_axis_ticks(
 
         The right figure is configured by `set_xy_axis_ticks` function.
     """
-    axes.xaxis.set_minor_locator(MultipleLocator(bases[0]))
-    axes.yaxis.set_minor_locator(MultipleLocator(bases[1]))
+    if isinstance(x_interval, float):
+        axes.xaxis.set_minor_locator(MultipleLocator(x_interval))
+    if isinstance(y_interval, float):
+        axes.yaxis.set_minor_locator(MultipleLocator(y_interval))
     axes.tick_params(direction="in", labelsize=10, which="both", top=True, right=True)
 
 

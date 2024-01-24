@@ -114,7 +114,7 @@ def calc_contours(
         r, z = rz_grids(rtc)
 
     # create contour generator
-    cont_gen = contour_generator(x=r, y=z, z=np.flipud(profile.T))
+    cont_gen = contour_generator(x=r, y=z, z=profile.T)
 
     return cont_gen.lines(level)
 
