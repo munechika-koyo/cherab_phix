@@ -1,4 +1,5 @@
 """Subpackage for Plasma-related modules."""
+
 from .equilibrium import load_equilibrium
 from .plasma import emission_hydrogen_balmer, load_plasma
 

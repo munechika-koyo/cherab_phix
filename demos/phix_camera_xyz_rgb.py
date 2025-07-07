@@ -4,6 +4,7 @@ Ray-tracing simulation of fast camera
 Here, we simulate fast camera measurement with different pipelines and
 focus on three hydrogen balmer lines emission.
 """
+
 from datetime import datetime
 from pathlib import Path
 from textwrap import dedent

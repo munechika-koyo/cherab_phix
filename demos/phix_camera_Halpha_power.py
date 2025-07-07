@@ -3,6 +3,7 @@ Ray-tracing simulation of fast camera
 =====================================
 Here, we simulate fast camera measurement focusing on H-alpha emission.
 """
+
 from datetime import datetime
 from pathlib import Path
 from textwrap import dedent

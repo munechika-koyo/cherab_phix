@@ -1,4 +1,5 @@
 """Module defining dielectric material classes."""
+
 import json
 from pathlib import Path
 

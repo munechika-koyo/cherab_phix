@@ -1,4 +1,5 @@
 """Module to offer helper function to load fast camera installed in phix."""
+
 from importlib.resources import files
 from pathlib import Path
 

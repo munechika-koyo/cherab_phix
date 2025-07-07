@@ -1,4 +1,5 @@
 """Module defining metal material classes."""
+
 import json
 from pathlib import Path
 

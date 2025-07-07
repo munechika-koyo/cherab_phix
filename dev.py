@@ -1,4 +1,5 @@
 """Developper CLI: building (meson) sources in place, document, etc."""
+
 import os
 import shutil
 import subprocess

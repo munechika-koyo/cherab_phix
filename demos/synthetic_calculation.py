@@ -2,6 +2,7 @@
 Ray-tracing simulation of fast camera
 =====================================
 """
+
 import sys
 from datetime import datetime
 from io import TextIOBase
