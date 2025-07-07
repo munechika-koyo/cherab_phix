@@ -1,4 +1,5 @@
 """Module to offer the helper function to populate an EFITequilibrium instance."""
+
 import json
 from importlib.resources import files
 

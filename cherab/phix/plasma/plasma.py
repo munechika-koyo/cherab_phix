@@ -1,4 +1,5 @@
 """Module to offer an helper function to load a plasma object."""
+
 from __future__ import annotations
 
 from collections.abc import Iterable

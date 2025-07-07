@@ -1,4 +1,5 @@
 """Modules to offer visualization tools."""
+
 from __future__ import annotations
 
 from typing import Literal, TypeAlias

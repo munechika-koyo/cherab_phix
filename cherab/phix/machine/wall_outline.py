@@ -1,4 +1,5 @@
 """Resource module for the limiter wall outline."""
+
 from __future__ import annotations
 
 import numpy as np

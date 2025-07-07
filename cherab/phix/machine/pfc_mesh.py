@@ -1,4 +1,5 @@
 """Module to offer helper function to load plasma facing component meshes."""
+
 from __future__ import annotations
 
 from collections import defaultdict

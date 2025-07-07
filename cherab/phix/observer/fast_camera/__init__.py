@@ -1,4 +1,5 @@
 """Subpackage for Fast Camera."""
+
 from .camera import load_camera
 from .colour import (
     phantom_rgb_to_srgb,

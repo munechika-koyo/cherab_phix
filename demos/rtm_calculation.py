@@ -2,6 +2,7 @@
 Calculate RayTransfer Matrix with PHiX Fast Camera
 ==================================================
 """
+
 import sys
 from datetime import datetime
 from io import TextIOBase
