@@ -57,7 +57,7 @@ docs = [
     "pillow",
     "pydata-sphinx-theme < 0.15",
     "pygments >= 2.11.0",
-    "sphinx < 8.0",
+    "sphinx <9.2",
     "sphinx-codeautolink",
     "sphinx-copybutton",
     "sphinx-design",
