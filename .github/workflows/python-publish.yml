@@ -27,7 +27,7 @@ jobs:
         docker run -v ${{ github.workspace }}:/io quay.io/pypa/manylinux_2_28_x86_64 /bin/bash /io/scripts/build_dist.sh
 
     - name: Set up Python 🐍 3.9
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: 3.9
 
