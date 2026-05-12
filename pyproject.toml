@@ -40,7 +40,7 @@ dependencies = [
     "matplotlib < 3.6",  # cherab v1.4.0 dependency
     "contourpy",
     "plotly",
-    "cherab == 1.4.0",
+    "cherab ==1.5.0",
     "calcam",
 ]
 license = { file = "LICENSE.md" }
