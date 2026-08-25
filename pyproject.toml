@@ -55,7 +55,7 @@ docs = [
     "nbsphinx",
     "pandoc",
     "pillow",
-    "pydata-sphinx-theme < 0.15",
+    "pydata-sphinx-theme <0.22",
     "pygments >= 2.11.0",
     "sphinx < 8.0",
     "sphinx-codeautolink",
