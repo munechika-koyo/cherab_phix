@@ -50,7 +50,7 @@ docs = [
     "docutils",
     "ipykernel",
     "ipywidgets",
-    "jinja2 < 3.1",
+    "jinja2 <3.2",
     "nbconvert >= 7.3",
     "nbsphinx",
     "pandoc",
