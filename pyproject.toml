@@ -37,7 +37,7 @@ requires-python = ">= 3.8, < 3.11"
 dependencies = [
     "numpy",
     "scipy",
-    "matplotlib < 3.6",  # cherab v1.4.0 dependency
+    "matplotlib <3.12",  # cherab v1.4.0 dependency
     "contourpy",
     "plotly",
     "cherab == 1.4.0",
